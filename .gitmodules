@@ -1,0 +1,3 @@
+[submodule "troop105treedrive/themes/cayman-hugo-theme"]
+	path = troop105treedrive/themes/cayman-hugo-theme
+	url = https://github.com/zwbetz-gh/cayman-hugo-theme.git
