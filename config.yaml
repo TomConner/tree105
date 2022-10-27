@@ -5,12 +5,6 @@ defaultContentLanguage: en
 title: Cayman
 theme: cayman-hugo-theme
 
-# Google analytics
-googleAnalytics: UA-123456789-1
-
-# Disqus comments
-disqusShortname: yourdiscussshortname
-
 # Syntax highlighting
 pygmentsCodefences: true
 pygmentsStyle: pygments
@@ -23,15 +17,15 @@ permalinks:
 
 params:
   # Header text, can be markdown
-  project_name: Cayman Hugo Theme
-  project_tagline: A clean, responsive Hugo theme, ported from the original Jekyll Cayman theme
+  project_name: 2023 Pembroke Troop 105 Tree Drive
+  project_tagline: Let the Scouts Pick Up and Recycle Your Christmas Tree!
 
   # Date format for post list and single pages
   # For more date formats see https://gohugo.io/functions/format/
   dateFormat: 2006-01-02
 
   # Footer text, can be markdown
-  footer: Made with [Hugo](https://gohugo.io/). Themed by [Cayman](https://github.com/zwbetz-gh/cayman-hugo-theme). Deployed to [Netlify](https://www.netlify.com/).
+  #footer: (replaced with shortcode)
 
   # If true, the CSS/JS for Katex math typesetting are enabled
   katex: true
@@ -62,18 +56,15 @@ params:
 
 menu:
   nav:
-    - name: Blog
+    - name: Welcome
       url: /
       weight: 1
-    - name: Tags
-      url: /tags/
+    - name: Details
+      url: /details/
       weight: 2
-    - name: About
-      url: /about/
-      weight: 3
     - name: Register
       url: /register/
       weight: 3
-    - name: RSS
-      url: /index.xml
+    - name: Lost & Found
+      url: /lostfound/
       weight: 4
