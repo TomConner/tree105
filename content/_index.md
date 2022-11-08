@@ -10,7 +10,7 @@ title: Christmas Tree Curbside Pickup & Recycling
 
 ## Donation
 
-Amount: $12 **per tree**, payable as you choose:
+Amount: $15 **per tree**, payable as you choose:
 
 * Pay online with [registration](register).
 * Attach plastic bag with cash or check payable to Troop 105.
