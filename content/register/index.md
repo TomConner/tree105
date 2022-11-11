@@ -6,6 +6,10 @@ date: 2019-03-29
 
 DRAFT ONLY!! Registration not yet working. This is only a test.
 
+{{< google-form-t105 >}}
+
+DRAFT ONLY!! Registration not yet working. This is only a test.
+
 {{< paypal-buttons-t105 >}}
 
 You don’t have a tree but would like to donate to Troop 105?
