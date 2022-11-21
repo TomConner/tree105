@@ -3,12 +3,7 @@ title: "Register"
 date: 2019-03-29
 ---
 
-
-DRAFT ONLY!! Registration not yet working. This is only a test.
-
-{{< google-form-t105 >}}
-
-DRAFT ONLY!! Registration not yet working. This is only a test.
+{{< register-form >}}
 
 {{< paypal-buttons-t105 >}}
 
