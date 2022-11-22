@@ -3,7 +3,13 @@ title: "Register"
 date: 2019-03-29
 ---
 
+Step 1. Fill in your address and contact information.
+
+
 {{< register-form >}}
+
+Step 2.
+
 
 {{< paypal-buttons-t105 >}}
 

@@ -1,11 +1,10 @@
 ---
-title: "Details"
+title: "Pickup Day"
 date: 2019-03-29
 ---
 
 The Scouts of Troop 105 will be in your Pembroke neighborhood on Saturday, January 7, 2023 to pick up your Christmas tree curbside in exchange for a $15 donation.  To register for your tree to be picked up, please click here or go to the Register tab at the top of this website.  Please register by January 6th.  **Thank you** to the Pembroke residents who support our effort each year!
 
-## Curbside Pickup Day
 
 Saturday January 7, 2023
 9:00 am – 3:00 pm
