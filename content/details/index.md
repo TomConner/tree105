@@ -13,9 +13,8 @@ Please have your tree out by the curb by 9:00 am.
 
 ## Artificial Tree or No Tree?
 
-If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, please go to the bottom of our Registration page to make a donation via Venmo or Zelle or please mail your donation to us at:
+If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, TODO
 
-{{< address >}}
 
 ## Leaving Your Tree for Curbside Pickup
 

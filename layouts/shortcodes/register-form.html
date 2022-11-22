@@ -7,35 +7,44 @@
     <p></p>
 
     <label for="rfirstname">First Name</label>
-    <input type="text" name="rfirstname"></input> <!-- Optional -->
+    <input type="text" name="rfirstname"></input> 
     <label for="rlastname">Last Name</label>
-    <input type="text" name="rlastname"></input> <!-- Optional -->
+    <input type="text" name="rlastname"></input> 
     <p></p>
     <label for="remail">Email</label>
-    <input type="text" name="remail"> <!-- Optional -->
+    <input type="email" name="remail"> 
     <p></p>
-    <label for="rphone">Mobile Phone (optional)</label>
-    <input type="text" name="rphone"> <!-- Optional -->
+    <label for="rphone">Phone</label>
+    <input type="text" name="rphone"> 
     
     <h3>Pickup Location</h3>
     <p></p>
     <label for="raddress">Address</label>
-    <input type="text" name="raddress"></input> <!-- Optional -->
+    <input type="text" name="raddress"></input> 
     <p></p>
     <label for="rtown">Town</label>
-    <input type="text" name="rtown" value="Pembroke"></input> <!-- Optional -->
+    <input type="text" name="rtown" value="Pembroke"></input> 
     <label for="rstate">State</label>
     <input type="text" name="rstate" value="MA"></input>
+    <p></p>
+    <label for="rcomment">Comment</label>
+    <input type="text" name="rcomment"></input>
 
     <h3>Payment</h3>
     <label for="rnumtrees">Number of Trees</label>
-    <input type="text" name="rnumtrees" value="1"></input>
+    <input type="number" name="rnumtrees" id="rnumtrees"></input>
     <p></p>
-    <label>Amount to pay: $15</label>
+    <label>Amount to pay: $ <span id="amount"></span></label>
+    <p></p>
+    <label for="pmethod">Payment Method</label>
+    <br/>
+    <input type="radio" id="cashcheck" name="pmethod" value="cashcheck">
+    <label for="cashcheck">Pay by cash or check attached to tree on pickup day.</label><br>
+    <input type="radio" id="online" name="pmethod" value="online">
+    <label for="css">Pay online now.</label><br>
 
     <p></p>
     
-
     <input type="submit" value="Submit" />
 </form>
 
@@ -58,5 +67,15 @@
       event.preventDefault();
     }
 
+    function onChangeNumTrees(event) {
+      count = event.target.value;
+      console.log(count);
+      document.getElementById("amount").innerText = count * 15;
+    }
+
     document.getElementById("registerform").addEventListener("submit", formSubmit);
+    document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
+    document.getElementById("cashcheck").checked = true;
+    document.getElementById("rnumtrees").value = 1;
+    document.getElementById("amount").innerText = 15;
 </script>
