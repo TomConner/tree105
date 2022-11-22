@@ -1,4 +1,6 @@
-<form action="https://tree105-reg-mcme3i32aq-uc.a.run.app" method="post">
+
+    
+<form id="registerform">
 
     <h3>Contact Info</h3>
     
@@ -36,3 +38,25 @@
 
     <input type="submit" value="Submit" />
 </form>
+
+<script>
+    function formSubmit(event) {
+      var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
+      var request = new XMLHttpRequest();
+      request.open('POST', url, true);
+      request.onload = function() { // request successful
+        // we can use server response to our request now
+        console.log(request.responseText);
+      };
+    
+      request.onerror = function() {
+        // request failed
+        console.log("failed");
+      };
+    
+      request.send(new FormData(event.target));
+      event.preventDefault();
+    }
+
+    document.getElementById("registerform").addEventListener("submit", formSubmit);
+</script>
