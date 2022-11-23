@@ -28,18 +28,22 @@
     <input type="text" name="rstate" value="MA"></input>
     <p></p>
     <label for="rcomment">Comment</label>
-    <input type="text" name="rcomment"></input>
+    <input type="textarea" name="rcomment"></input>
 
     <h3>Payment</h3>
     <label for="rnumtrees">Number of Trees</label>
     <input type="number" name="rnumtrees" id="rnumtrees"></input>
+
+    <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
+    <label for="rextra">Additional Donation Amount</label>
+    <input type="number" name="rextra" id="rextra"></input>
     <p></p>
     <label>Amount to pay: $ <span id="amount"></span></label>
     <p></p>
     <label for="pmethod">Payment Method</label>
     <br/>
     <input type="radio" id="cashcheck" name="pmethod" value="cashcheck">
-    <label for="cashcheck">Pay by cash or check attached to tree on pickup day.</label><br>
+    <label for="cashcheck">Attach cash or check payable to Troop 105 to tree on pickup day.</label><br>
     <input type="radio" id="online" name="pmethod" value="online">
     <label for="css">Pay online now.</label><br>
 
@@ -68,13 +72,15 @@
     }
 
     function onChangeNumTrees(event) {
-      count = event.target.value;
+      count = document.getElementById("rnumtrees").value;
+      extra = document.getElementById("rextra").value;
       console.log(count);
-      document.getElementById("amount").innerText = count * 15;
+      document.getElementById("amount").innerText = (count * 15) + extra + "TODO int";
     }
 
     document.getElementById("registerform").addEventListener("submit", formSubmit);
     document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
+    document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
     document.getElementById("cashcheck").checked = true;
     document.getElementById("rnumtrees").value = 1;
     document.getElementById("amount").innerText = 15;
