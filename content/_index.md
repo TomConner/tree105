@@ -19,4 +19,6 @@ title: Christmas Tree Curbside Pickup & Recycling
 
 {{< register-form >}}
 
-## Thank You
+### Thank You
+
+We appreciate your support.

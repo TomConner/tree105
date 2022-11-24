@@ -7,36 +7,36 @@
     <p></p>
 
     <label for="rfirstname">First Name</label>
-    <input type="text" name="rfirstname"></input> 
+    <input type="text" name="rfirstname" required></input> 
     <label for="rlastname">Last Name</label>
-    <input type="text" name="rlastname"></input> 
+    <input type="text" name="rlastname" required></input> 
     <p></p>
     <label for="remail">Email</label>
-    <input type="email" name="remail"> 
+    <input type="email" name="remail" required> 
     <p></p>
     <label for="rphone">Phone</label>
-    <input type="text" name="rphone"> 
+    <input type="text" name="rphone" required> 
     
     <h3>Pickup Location</h3>
     <p></p>
     <label for="raddress">Address</label>
-    <input type="text" name="raddress"></input> 
+    <input type="text" name="raddress" required></input> 
     <p></p>
     <label for="rtown">Town</label>
-    <input type="text" name="rtown" value="Pembroke"></input> 
+    <input type="text" name="rtown" value="Pembroke" required></input> 
     <label for="rstate">State</label>
-    <input type="text" name="rstate" value="MA"></input>
+    <input type="text" name="rstate" value="MA" required></input>
     <p></p>
     <label for="rcomment">Comment</label>
     <input type="textarea" name="rcomment"></input>
 
     <h3>Payment</h3>
     <label for="rnumtrees">Number of Trees</label>
-    <input type="number" name="rnumtrees" id="rnumtrees"></input>
+    <input type="number" name="rnumtrees" id="rnumtrees" required></input>
 
     <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
     <label for="rextra">Additional Donation Amount</label>
-    <input type="number" name="rextra" id="rextra"></input>
+    <input type="number" name="rextra" id="rextra" required></input>
     <p></p>
     <label>Amount to pay: $ <span id="amount"></span></label>
     <p></p>
@@ -52,12 +52,14 @@
     <input type="submit" id="submit" value="Register" />
 </form>
 
+<p></p>
 <div id="paypal-button-container"></div>
 
 <script src="https://www.paypal.com/sdk/js?client-id=AdHIRx2G1Rfz6nVvl1AlBg3m1lB49ueXMizGxXWE9JM5245qq60JOe4X2Nc2gp9UYrVCpdwbMuY8sSlh&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
 
 <script>
   function renderPaypalButtons(amount) {
+    document.getElementById("paypal-button-container").innerHTML = "<p>To pay by credit or debit card, use PayPal.</p>"
     const fundingSources = [
         paypal.FUNDING.PAYPAL,
         paypal.FUNDING.VENMO
@@ -140,10 +142,10 @@
     renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
   }
 
-  function onChangeNumTrees(event) {
+  function onChangeNumTrees() {
     count = document.getElementById("rnumtrees").value;
     extra = parseInt(document.getElementById("rextra").value);
-    console.log(count);
+    console.log(`${count} trees, ${extra} extra`);
     amount = (count * 15) + extra;
     document.getElementById("amount").innerText = amount;
   }
@@ -167,5 +169,7 @@
   document.getElementById("online").addEventListener("click", onChangePaymentMethod);
   document.getElementById("cashcheck").checked = true;
   document.getElementById("rnumtrees").value = 1;
-  document.getElementById("amount").innerText = 15;
+  document.getElementById("rextra").value = 0;
+  onChangeNumTrees();
+  console.log('ready');
 </script>
