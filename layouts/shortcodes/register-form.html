@@ -45,43 +45,127 @@
     <input type="radio" id="cashcheck" name="pmethod" value="cashcheck">
     <label for="cashcheck">Attach cash or check payable to Troop 105 to tree on pickup day.</label><br>
     <input type="radio" id="online" name="pmethod" value="online">
-    <label for="css">Pay online now.</label><br>
+    <label for="css">Pay online with credit/debit card, Venmo, or PayPal.</label><br>
 
     <p></p>
     
-    <input type="submit" value="Submit" />
+    <input type="submit" id="submit" value="Register" />
 </form>
 
+<div id="paypal-button-container"></div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AdHIRx2G1Rfz6nVvl1AlBg3m1lB49ueXMizGxXWE9JM5245qq60JOe4X2Nc2gp9UYrVCpdwbMuY8sSlh&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
+
 <script>
-    function formSubmit(event) {
-      var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
-      var request = new XMLHttpRequest();
-      request.open('POST', url, true);
-      request.onload = function() { // request successful
-        // we can use server response to our request now
-        console.log(request.responseText);
-      };
-    
-      request.onerror = function() {
-        // request failed
-        console.log("failed");
-      };
-    
-      request.send(new FormData(event.target));
-      event.preventDefault();
-    }
+  function renderPaypalButtons(amount) {
+    const fundingSources = [
+        paypal.FUNDING.PAYPAL,
+        paypal.FUNDING.VENMO
+      ]
 
-    function onChangeNumTrees(event) {
-      count = document.getElementById("rnumtrees").value;
-      extra = document.getElementById("rextra").value;
-      console.log(count);
-      document.getElementById("amount").innerText = (count * 15) + extra + "TODO int";
-    }
+    for (const fundingSource of fundingSources) {
+      const paypalButtonsComponent = paypal.Buttons({
+        fundingSource: fundingSource,
 
-    document.getElementById("registerform").addEventListener("submit", formSubmit);
-    document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
-    document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
-    document.getElementById("cashcheck").checked = true;
-    document.getElementById("rnumtrees").value = 1;
-    document.getElementById("amount").innerText = 15;
+        // optional styling for buttons
+        // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
+        style: {
+          shape: 'rect',
+          height: 40,
+        },
+
+        // set up the transaction
+        createOrder: (data, actions) => {
+          // pass in any options from the v2 orders create call:
+          // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
+          const createOrderPayload = {
+            purchase_units: [
+              {
+                amount: {
+                  value: amount,
+                },
+              },
+            ],
+          }
+
+          return actions.order.create(createOrderPayload)
+        },
+
+        // finalize the transaction
+        onApprove: (data, actions) => {
+          const captureOrderHandler = (details) => {
+            const payerName = details.payer.name.given_name
+            console.log('Transaction completed!')
+          }
+
+          return actions.order.capture().then(captureOrderHandler)
+        },
+
+        // handle unrecoverable errors
+        onError: (err) => {
+          console.error(
+            'An error prevented the buyer from checking out with PayPal',
+          )
+        },
+      })
+
+      if (paypalButtonsComponent.isEligible()) {
+        paypalButtonsComponent
+          .render('#paypal-button-container')
+          .catch((err) => {
+            console.error('PayPal Buttons failed to render')
+          })
+      } else {
+        console.log('The funding source is ineligible')
+      }
+    }
+  }
+  function formSubmit(event) {
+    var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
+    var request = new XMLHttpRequest();
+    request.open('POST', url, true);
+    request.onload = function() { // request successful
+      // we can use server response to our request now
+      console.log(request.responseText);
+    };
+  
+    request.onerror = function() {
+      // request failed
+      console.log("failed");
+    };
+  
+    request.send(new FormData(event.target));
+    event.preventDefault();
+
+    renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
+  }
+
+  function onChangeNumTrees(event) {
+    count = document.getElementById("rnumtrees").value;
+    extra = parseInt(document.getElementById("rextra").value);
+    console.log(count);
+    amount = (count * 15) + extra;
+    document.getElementById("amount").innerText = amount;
+  }
+
+  function onChangePaymentMethod() {
+    console.log("ldsfkj");
+    button = document.getElementById("submit");
+    if (document.getElementById("cashcheck").checked) {
+      button.value = "Register";
+    } else if (document.getElementById("online").checked) {
+      button.value = "Continue to payment";
+    } else {
+      button.value = "Submit";
+    }
+  }
+
+  document.getElementById("registerform").addEventListener("submit", formSubmit);
+  document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
+  document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
+  document.getElementById("cashcheck").addEventListener("click", onChangePaymentMethod);
+  document.getElementById("online").addEventListener("click", onChangePaymentMethod);
+  document.getElementById("cashcheck").checked = true;
+  document.getElementById("rnumtrees").value = 1;
+  document.getElementById("amount").innerText = 15;
 </script>
