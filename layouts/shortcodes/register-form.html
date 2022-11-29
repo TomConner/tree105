@@ -48,6 +48,8 @@
     <label for="css">Pay online with credit/debit card, Venmo, or PayPal.</label><br>
 
     <p></p>
+    <p><strong id="formmessage"></strong></p>
+
     
     <input type="submit" id="submit" value="Register" />
 </form>
@@ -187,5 +189,9 @@
   document.getElementById("rnumtrees").value = 1;
   document.getElementById("rextra").value = 0;
   onChangeNumTrees();
+  document.getElementById("registerform").addEventListener("input", (event) => {
+    isvalid = document.getElementById("registerform").checkValidity();
+    document.getElementById("formmessage").innerText = isvalid ? "" : "Please complete the form.";
+  });
   console.log('ready');
 </script>
