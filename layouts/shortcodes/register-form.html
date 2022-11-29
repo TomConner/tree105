@@ -152,7 +152,10 @@
     request.send(urlencodeFormData(new FormData(event.target)));
     event.preventDefault();
 
-    renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
+    if (document.getElementById("online").checked) {
+      document.getElementById("paypal-button-container").hidden = false;
+      renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
+    }
   }
 
   function onChangeNumTrees() {
@@ -165,13 +168,11 @@
 
   function onChangePaymentMethod() {
     button = document.getElementById("submit");
+    document.getElementById("paypal-button-container").hidden = true;
     if (document.getElementById("cashcheck").checked) {
       button.value = "Register";
-      document.getElementById("paypal-button-container").hidden = true;
     } else if (document.getElementById("online").checked) {
       button.value = "Continue to payment";
-      document.getElementById("paypal-button-container").hidden = false;
-      renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
     } else {
       button.value = "Submit";
     }
