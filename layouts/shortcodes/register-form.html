@@ -42,9 +42,9 @@
     <p></p>
     <label for="rpmethod">Payment Method</label>
     <br/>
-    <input type="radio" id="cashcheck" name="pmethod" value="cashcheck">
+    <input type="radio" id="cashcheck" name="rpmethod" value="cashcheck">
     <label for="cashcheck">Attach cash or check payable to Troop 105 to tree on pickup day.</label><br>
-    <input type="radio" id="online" name="pmethod" value="online">
+    <input type="radio" id="online" name="rpmethod" value="online">
     <label for="css">Pay online with credit/debit card, Venmo, or PayPal.</label><br>
 
     <p></p>
@@ -164,12 +164,14 @@
   }
 
   function onChangePaymentMethod() {
-    console.log("ldsfkj");
     button = document.getElementById("submit");
     if (document.getElementById("cashcheck").checked) {
       button.value = "Register";
+      document.getElementById("paypal-button-container").hidden = true;
     } else if (document.getElementById("online").checked) {
       button.value = "Continue to payment";
+      document.getElementById("paypal-button-container").hidden = false;
+      renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
     } else {
       button.value = "Submit";
     }
