@@ -48,10 +48,12 @@
     <label for="css">Pay online with credit/debit card, Venmo, or PayPal.</label><br>
 
     <p></p>
-    <p><strong id="formmessage"></strong></p>
-
+    <p><strong id="message1"></strong></p>
     
     <input type="submit" id="submit" value="Register" />
+
+    <p><strong id="message2"></strong></p>
+
 </form>
 
 <p></p>
@@ -61,11 +63,12 @@
 
 <script>
   function renderPaypalButtons(amount) {
-    document.getElementById("paypal-button-container").innerHTML = "<p>To pay by credit or debit card, use PayPal.</p>"
+    //document.getElementById("paypal-button-container").innerHTML = "<p>To pay by credit or debit card, use PayPal.</p>"
     const fundingSources = [
-        paypal.FUNDING.PAYPAL,
-        paypal.FUNDING.VENMO
-      ]
+        paypal.FUNDING.VENMO,
+        paypal.FUNDING.CARD,
+        paypal.FUNDING.PAYPAL
+    ]
 
     for (const fundingSource of fundingSources) {
       const paypalButtonsComponent = paypal.Buttons({
@@ -90,8 +93,21 @@
                 },
               },
             ],
+            shipping: {
+              options: [
+                  {
+                      id: "CURB_PICKUP",
+                      label: "Pickup",
+                      type: "PICKUP",
+                      selected: true,
+                      amount: {
+                          value: "0",
+                          currency_code: "USD"
+                      }
+                  }
+              ]
+            }
           }
-
           return actions.order.create(createOrderPayload)
         },
 
@@ -140,23 +156,36 @@
     var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
     var request = new XMLHttpRequest();
     request.open('POST', url, true);
+    message1 = document.getElementById("message1")
+    message2 = document.getElementById("message2")
+    intend_pay_online = document.getElementById("online").checked;
+    amount = parseInt(document.getElementById("amount").innerText);
+
     request.onload = function() { // request successful
       // we can use server response to our request now
       console.log(request.responseText);
+      message1.innerText = "Registration sent. We will confirm by email within three days.";
+      message2.innerText = intend_pay_online ? 
+        `Not yet paid. Please continue to payment of $${amount}` :
+        "You're all set. Thank you for your support.";
     };
   
     request.onerror = function() {
+      console.log(request.responseText);
       // request failed
-      console.log("failed");
-    };
+      message1.innerText = 
+        "Registration failed. Please try again later or contact treedrive105@gmail.com";
+     };
   
+
+    message1.innerText = "Processing";
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
     request.send(urlencodeFormData(new FormData(event.target)));
     event.preventDefault();
 
-    if (document.getElementById("online").checked) {
-      document.getElementById("paypal-button-container").hidden = false;
-      renderPaypalButtons(parseInt(document.getElementById("amount").innerText));
+    if (intend_pay_online) {
+      //document.getElementById("paypal-button-container").hidden = false;
+      renderPaypalButtons(amount);
     }
   }
 
@@ -168,30 +197,28 @@
     document.getElementById("amount").innerText = amount;
   }
 
-  function onChangePaymentMethod() {
-    button = document.getElementById("submit");
-    document.getElementById("paypal-button-container").hidden = true;
-    if (document.getElementById("cashcheck").checked) {
-      button.value = "Register";
-    } else if (document.getElementById("online").checked) {
-      button.value = "Continue to payment";
-    } else {
-      button.value = "Submit";
-    }
-  }
-
   document.getElementById("registerform").addEventListener("submit", formSubmit);
   document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
   document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
-  document.getElementById("cashcheck").addEventListener("click", onChangePaymentMethod);
-  document.getElementById("online").addEventListener("click", onChangePaymentMethod);
   document.getElementById("cashcheck").checked = true;
   document.getElementById("rnumtrees").value = 1;
   document.getElementById("rextra").value = 0;
   onChangeNumTrees();
   document.getElementById("registerform").addEventListener("input", (event) => {
+    message1 = document.getElementById("message1")
     isvalid = document.getElementById("registerform").checkValidity();
-    document.getElementById("formmessage").innerText = isvalid ? "" : "Please complete the form.";
+    MSG_INVALID = "Please complete the form.";
+    button = document.getElementById("submit");
+    document.getElementById("paypal-button-container").innerHTML = "";
+    if (document.getElementById("cashcheck").checked) {
+      button.value = "Register";
+      message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
+    } else if (document.getElementById("online").checked) {
+      button.value = "Continue to payment";
+      message1.innerText = isvalid ? "Press button to register and pay." : MSG_INVALID;
+    } else {
+      button.value = "Submit";
+    }
   });
   console.log('ready');
 </script>
