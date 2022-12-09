@@ -10,7 +10,7 @@ paginate = 5
 ignoreErrors = ["error-remote-getjson"]
 
 [params]
-title = "2023 Chistmas Tree Drive"
+title = "2023 Christmas Tree Drive"
 description = "Pembroke Troop 105"
 # gravatar = "soho@example.com"
 images = ["profile-tree.png"]
