@@ -43,9 +43,11 @@
     <label for="rpmethod">Payment Method</label>
     <br/>
     <input type="radio" id="cashcheck" name="rpmethod" value="cashcheck">
-    <label for="cashcheck">Attach cash or check payable to Troop 105 to tree on pickup day.</label><br>
-    <input type="radio" id="online" name="rpmethod" value="online">
-    <label for="css">Pay online with credit/debit card, Venmo, or PayPal.</label><br>
+    <label for="cashcheck">Pay on pickup day by cash or check payable to Troop 105 (attach to tree).</label><br>
+    <input type="radio" id="venmo" name="rpmethod" value="venmo">
+    <label for="css">Pay now by Venmo.</label><br>
+    <input type="radio" id="card" name="rpmethod" value="card">
+    <label for="css">Pay now by credit/debit card or PayPal.</label><br>
 
     <p></p>
     <p><strong id="message1"></strong></p>
@@ -53,6 +55,10 @@
     <input type="submit" id="submit" value="Register" />
 
     <p><strong id="message2"></strong></p>
+
+    <p id="messageVenmo" hidden="true">     
+      <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
+    </p>
 
 </form>
 
@@ -63,9 +69,7 @@
 
 <script>
   function renderPaypalButtons(amount) {
-    //document.getElementById("paypal-button-container").innerHTML = "<p>To pay by credit or debit card, use PayPal.</p>"
     const fundingSources = [
-        paypal.FUNDING.VENMO,
         paypal.FUNDING.CARD,
         paypal.FUNDING.PAYPAL
     ]
@@ -108,6 +112,7 @@
               ]
             }
           }
+          console.log("createOrder");
           return actions.order.create(createOrderPayload)
         },
 
@@ -116,6 +121,9 @@
           const captureOrderHandler = (details) => {
             const payerName = details.payer.name.given_name
             console.log('Transaction completed!')
+            message1.innerText = "";
+            message2.innerText = "Thank you for your payment. We will reconfirm by email.";
+            document.getElementById("paypal-button-container").hidden = true;
           }
 
           return actions.order.capture().then(captureOrderHandler)
@@ -152,22 +160,36 @@
     return s;
   }
 
+  function displayPaymentInstructions() {
+    if (intend_pay_venmo) {
+      messageVenmo.hidden = false;
+      message1.innerText = "Registration sent. We will confirm by email within three days. Thank you for your support.";
+      message2.innerText = `Please use the Venmo app to pay $${amount} to @Pembroke-Troop105. A person will confirm your payment within 3 days. You won't see any confirmation here.`;
+    } else if (intend_pay_card) {
+      messageVenmo.hidden = true;
+      message1.innerText = "Registration sent. We will confirm by email within three days. Thank you for your support.";
+      message2.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
+    } else {
+      messageVenmo.hidden = true;
+      message1.innerText = "";
+      message2.innerText = `You're all set. A person will confirm your registration within three days. Thank you for your support.`
+    }
+  }
+
   function formSubmit(event) {
     var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
     var request = new XMLHttpRequest();
     request.open('POST', url, true);
     message1 = document.getElementById("message1")
     message2 = document.getElementById("message2")
-    intend_pay_online = document.getElementById("online").checked;
+    intend_pay_card = document.getElementById("card").checked;
+    intend_pay_venmo = document.getElementById("venmo").checked;
     amount = parseInt(document.getElementById("amount").innerText);
 
     request.onload = function() { // request successful
       // we can use server response to our request now
       console.log(request.responseText);
-      message1.innerText = "Registration sent. We will confirm by email within three days.";
-      message2.innerText = intend_pay_online ? 
-        `Not yet paid. Please continue to payment of $${amount}. You can use PayPal, or a credit/debit card, or Venmo (on mobile: Venmo works only on Safari for iOS and Chrome on Android)` :
-        "You're all set. Thank you for your support.";
+      displayPaymentInstructions();
     };
   
     request.onerror = function() {
@@ -183,8 +205,7 @@
     request.send(urlencodeFormData(new FormData(event.target)));
     event.preventDefault();
 
-    if (intend_pay_online) {
-      //document.getElementById("paypal-button-container").hidden = false;
+    if (intend_pay_card) {
       renderPaypalButtons(amount);
     }
   }
@@ -213,9 +234,12 @@
     if (document.getElementById("cashcheck").checked) {
       button.value = "Register";
       message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
-    } else if (document.getElementById("online").checked) {
-      button.value = "Continue to payment";
-      message1.innerText = isvalid ? "Press button to register and pay." : MSG_INVALID;
+    } else if (document.getElementById("venmo").checked) {
+      button.value = "Continue to Venmo payment";
+      message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
+    } else if (document.getElementById("card").checked) {
+      button.value = "Continue to card payment";
+      message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
     } else {
       button.value = "Submit";
     }
