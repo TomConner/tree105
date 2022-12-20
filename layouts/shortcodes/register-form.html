@@ -64,8 +64,9 @@
 
 <p></p>
 <div id="paypal-button-container"></div>
+<p>&nbsp;</p>
 
-<script src="https://www.paypal.com/sdk/js?client-id=AdHIRx2G1Rfz6nVvl1AlBg3m1lB49ueXMizGxXWE9JM5245qq60JOe4X2Nc2gp9UYrVCpdwbMuY8sSlh&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AdHIRx2G1Rfz6nVvl1AlBg3m1lB49ueXMizGxXWE9JM5245qq60JOe4X2Nc2gp9UYrVCpdwbMuY8sSlh&currency=USD&intent=capture" data-sdk-integration-source="integrationbuilder"></script>
 
 <script>
   function renderPaypalButtons(amount) {
@@ -163,16 +164,13 @@
   function displayPaymentInstructions() {
     if (intend_pay_venmo) {
       messageVenmo.hidden = false;
-      message1.innerText = "Registration sent. We will confirm by email within three days. Thank you for your support.";
-      message2.innerText = `Please use the Venmo app to pay $${amount} to @Pembroke-Troop105. A person will confirm your payment within 3 days. You won't see any confirmation here.`;
+      window.location.assign('venmoinstructions');
     } else if (intend_pay_card) {
       messageVenmo.hidden = true;
-      message1.innerText = "Registration sent. We will confirm by email within three days. Thank you for your support.";
-      message2.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
+      window.location.assign('paypalsent');
     } else {
       messageVenmo.hidden = true;
-      message1.innerText = "";
-      message2.innerText = `You're all set. A person will confirm your registration within three days. Thank you for your support.`
+      window.location.assign('registered');
     }
   }
 
