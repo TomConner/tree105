@@ -122,9 +122,7 @@
           const captureOrderHandler = (details) => {
             const payerName = details.payer.name.given_name
             console.log('Transaction completed!')
-            message1.innerText = "";
-            message2.innerText = "Thank you for your payment. We will reconfirm by email.";
-            document.getElementById("paypal-button-container").hidden = true;
+            window.location.assign('paypalsent');
           }
 
           return actions.order.capture().then(captureOrderHandler)
@@ -167,7 +165,8 @@
       window.location.assign('venmoinstructions');
     } else if (intend_pay_card) {
       messageVenmo.hidden = true;
-      window.location.assign('paypalsent');
+      message2.innerText = "";
+      message1.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
     } else {
       messageVenmo.hidden = true;
       window.location.assign('registered');
