@@ -2,16 +2,27 @@
 title: Christmas Tree Curbside Pickup & Recycling
 ---
 
+# Tree Pickup Saturday
+
 ## Christmas Tree Curbside Pickup & Recycling
 
-* Pickup Day Saturday, January 7, 2023
+* Pickup Day **tomorrow** Saturday, January 7, 2023
 * Place your tree curbside by 9:00 am.
 * Donate $15 per tree.
 * No tinsel, nails/screws or ornaments should be left on the tree.
 * No artificial trees, tree stands, wire, or other metal.
 * For residents of Pembroke, MA
 * Special instructions for pickup? Comments in registration form.
-* Questions or issues on pickup day? Email <tree@pembroket105.org>
+
+## Contact Info
+
+Questions or issues?
+* Email <treedrive105@gmail.com>
+* Text (781) 236-4777 (mobile)
+* Call (781) 236-4777 (mobile)
+
+## Thank You
+
 * **Thank You** to Top Notch Tree for chipping hundreds of trees
 * **Thank You** Pembroke residents who support our effort each year!
 
