@@ -6,7 +6,8 @@ title: Christmas Tree Curbside Pickup & Recycling
 
 ## Christmas Tree Curbside Pickup & Recycling
 
-* Pickup Day **tomorrow** Saturday, January 7, 2023
+* Pickup Day is **in progress now**, Saturday, January 7, 2023
+* **THANK YOU** to all who registered for your support!
 * Place your tree curbside by 9:00 am.
 * Donate $15 per tree.
 * No tinsel, nails/screws or ornaments should be left on the tree.
