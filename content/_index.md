@@ -6,6 +6,12 @@ title: Christmas Tree Curbside Pickup & Recycling
 
 ## Christmas Tree Curbside Pickup & Recycling
 
+2024 Tree Drive planning is underway!
+
+Check back in the second half of November for details and registration!
+
+## Last Year's Drive
+
 * Pickup day was Saturday, January 7, 2023. 
 * **THANK YOU** to all who registered!
 * Place your tree curbside by 9:00 am.
