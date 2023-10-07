@@ -28,9 +28,11 @@ jobs:
         run: hugo version ; find . | grep -v git | sort
 
       - name: Upload 
+        if: always()
         run: zip built.zip .
 
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: my-artifact
           path: .
