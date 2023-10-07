@@ -35,7 +35,7 @@ jobs:
         if: always()
         with:
           name: my-artifact
-          path: build.zip
+          path: built.zip
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
