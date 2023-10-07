@@ -21,11 +21,19 @@ jobs:
           hugo-version: '0.111.0'
           # extended: true
 
+      - name: Build
+        run: hugo --minify
+
       - name: What is here
         run: hugo version ; find . | grep -v git | sort
 
-      - name: Build
-        run: hugo --minify
+      - name: Upload 
+        run: zip built.zip .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: .
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
