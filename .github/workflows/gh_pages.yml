@@ -29,7 +29,7 @@ jobs:
 
       - name: Upload 
         if: always()
-        run: zip built.zip content public themes archetypes layouts
+        run: zip built.zip -r content public themes archetypes layouts
 
       - uses: actions/upload-artifact@v3
         if: always()
