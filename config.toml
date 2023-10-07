@@ -1,4 +1,4 @@
-baseurl = "https://www.thatswho.site"
+baseurl = "https://www.troop105treedrive.com"
 languageCode = "en"
 title = "2023 Chistmas Tree Drive"
 theme = "soho"
@@ -10,7 +10,7 @@ paginate = 5
 ignoreErrors = ["error-remote-getjson"]
 
 [params]
-title = "2023 Christmas Tree Drive"
+title = "2024 Christmas Tree Drive"
 description = "Pembroke Troop 105"
 # gravatar = "soho@example.com"
 images = ["profile-tree.png"]

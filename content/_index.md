@@ -2,13 +2,16 @@
 title: Christmas Tree Curbside Pickup & Recycling
 ---
 
+# 2024 Tree Drive planning is underway!
+
+## Check back in the second half of November for details and registration!
+
+----
+
 # Tree Pickup Saturday
 
 ## Christmas Tree Curbside Pickup & Recycling
 
-2024 Tree Drive planning is underway!
-
-Check back in the second half of November for details and registration!
 
 ## Last Year's Drive
 
