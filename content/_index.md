@@ -2,7 +2,7 @@
 title: Christmas Tree Curbside Pickup & Recycling
 ---
 
-# 2024 Tree Drive planning is underway!
+# 2024 Tree Drive pickup day will be Saturday, January 6, 2024.
 
 ## Check back in the second half of November for details and registration!
 
@@ -15,7 +15,7 @@ title: Christmas Tree Curbside Pickup & Recycling
 
 ## Last Year's Drive
 
-* Pickup day was Saturday, January 7, 2023. 
+* Pickup day was Saturday, January 6, 2024. 
 * **THANK YOU** to all who registered!
 * Place your tree curbside by 9:00 am.
 * Donate $15 per tree.
@@ -36,9 +36,9 @@ Questions or issues?
 * **Thank You** to Top Notch Tree for chipping hundreds of trees
 * **Thank You** Pembroke residents who support our effort each year!
 
-## Register for Pickup (Closed for 2023)
+## Register for Pickup (Check back before Thanksgiving.)
 
-The 2023 tree drive is completed. Registration for 2024 will open later this year.
+Registration for 2024 will open in mid-November.
 
 <!-- {{< register-form >}}
  -->
