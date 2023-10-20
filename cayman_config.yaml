@@ -1,6 +1,4 @@
-#baseURL: https://troop105treedrive.com
-#baseURL: https://TomConner.github.io/tree105
-baseURL: https://www.thatswho.site
+baseURL: https://troop105treedrive.com
 languageCode: en-us
 defaultContentLanguage: en
 title: Cayman
@@ -18,7 +16,7 @@ permalinks:
 
 params:
   # Header text, can be markdown
-  project_name: 2023 Pembroke Troop 105 Tree Drive
+  project_name: 2024 Pembroke Troop 105 Tree Drive
   project_tagline: Let the Scouts Pick Up and Recycle Your Christmas Tree!
 
   # Date format for post list and single pages
