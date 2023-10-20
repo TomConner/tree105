@@ -8,9 +8,12 @@ Depends on Hugo and uses a theme via a git submodule.  First time after cloning 
 git submodule update --init --recursive
 ```
 
-Then to run locally, install Hugo and 
+Then to run locally, install Hugo and its prerequisites and then `hugo server`.
 
 ```sh
-hugo serve
+go version
+sass --version # or brew install sass/sass/sass
+hugo version # or brew install hugo
+hugo server
 ```
 
