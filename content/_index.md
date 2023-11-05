@@ -40,5 +40,9 @@ Questions or issues?
 
 Registration for 2024 will open in mid-November.
 
-<!-- {{< register-form >}}
- -->
+{{< register-form >}}
+
+
+## and some stripe payment now
+
+[payment](pay-online)
