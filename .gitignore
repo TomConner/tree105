@@ -1,3 +1,6 @@
 public/
 themes/**
 .python-version
+.vscode
+server/.env
+__pycache__
