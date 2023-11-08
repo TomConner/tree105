@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Stripe Elements with the PaymentIntent's clientSecret,
   // then mount the payment element.
   const elements = stripe.elements({ clientSecret });
+  const addressElement = elements.create('address');
+  addressElement.mount('#address-element');
   const paymentElement = elements.create('payment');
   paymentElement.mount('#payment-element');
   // Create and mount the linkAuthentication Element to enable autofilling customer payment details
@@ -36,17 +38,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // If the customer's email is known when the page is loaded, you can
   // pass the email to the linkAuthenticationElement on mount:
   //
-  //   linkAuthenticationElement.mount("#link-authentication-element",  {
-  //     defaultValues: {
-  //       email: 'jenny.rosen@example.com',
-  //     }
-  //   })
+  linkAuthenticationElement.mount("#link-authentication-element",  {
+    defaultValues: {
+      email: 'jenny.rosen@example.com',
+    }
+  })
   // If you need access to the email address entered:
   //
-  //  linkAuthenticationElement.on('change', (event) => {
-  //    const email = event.value.email;
-  //    console.log({ email });
-  //  })
+  linkAuthenticationElement.on('change', (event) => {
+    const email = event.value.email;
+    console.log({ email });
+    console.log(event);
+  })
 
   // When the form is submitted...
   const form = document.getElementById('payment-form');
