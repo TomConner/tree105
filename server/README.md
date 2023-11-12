@@ -69,3 +69,19 @@ python3 -m flask run --port=4242
 ```
 
 5. Go to `localhost:4242` in your browser to see the demo
+
+## Docker
+
+### 
+
+### Build server image
+
+```sh
+docker buildx build . -t tomconner/tree105:latest --push
+```
+
+### Run server image
+
+```sh
+docker run --name tree105 --rm -p 4242:4242 -it tomconner/tree105:latest
+```

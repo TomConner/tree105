@@ -1,0 +1,9 @@
+
+version: "3.9"
+services:
+  app:
+    image: tomconner/tree105:latest
+    volumes:
+      - public:/app/public
+volumes:
+  public:

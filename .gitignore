@@ -4,3 +4,4 @@ themes/**
 .vscode
 server/.env
 __pycache__
+.hugo_build.lock
