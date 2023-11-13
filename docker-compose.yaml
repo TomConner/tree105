@@ -1,9 +1,55 @@
 
 version: "3.9"
 services:
-  app:
-    image: tomconner/tree105:latest
+
+  caddy:
+    image: caddy:2.7.5
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    working_dir: /tree105/caddy
     volumes:
-      - public:/app/public
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - outside
+      - default
+
+  server:
+    build:
+      context: ./server
+    working_dir: /tree105/server
+    command: python server.py
+    ports:
+      - "4242:4242"
+    volumes:
+      - .:/tree105
+    networks:
+      - default
+
+  hugo:
+    build:
+      context: ./generator
+    working_dir: /tree105/generator
+    command: hugo server -v -s /tree105/generator -d /tree105/public --bind "0.0.0.0" --port 1313
+    ports:
+      - "1313:1313"
+    volumes:
+      - .:/tree105
+    networks:
+      - default
+      
 volumes:
-  public:
+  tree105:
+  caddy_data:
+    external: true
+  caddy_config:
+
+networks:
+  outside:
+    external: true
