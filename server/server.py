@@ -49,6 +49,7 @@ def create_payment():
                 'enabled': True,
             }
         )
+        app.logger.info("payment intent created")
 
         # Send PaymentIntent details to the front end.
         return jsonify({'clientSecret': intent.client_secret})
