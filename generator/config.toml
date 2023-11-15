@@ -1,6 +1,6 @@
 baseurl = "https://troop105treedrive.com"
 languageCode = "en"
-title = "2024 Chistmas Tree Drive"
+title = "2024 Christmas Tree Drive"
 theme = "soho"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
@@ -20,6 +20,7 @@ license = "CC BY-SA 4.0"
 licenseURL = "https://creativecommons.org/licenses/by-sa/4.0"
 builtWith = true
 mainSections = ["post"]
+mobile= "781-202-5522"
 
 ## Set custom theme color.
 # themeColor = "#fc2803"
