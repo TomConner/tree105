@@ -8,15 +8,13 @@
 
     <link rel="stylesheet" href="/css/stripe-base.css" />
     <script src="https://js.stripe.com/v3/"></script>
-
-    <script src="/js/utils.js" defer></script>
     <script src="/js/stripe-payment.js" defer></script>
   </head>
   <body>
     <main>
-      <h1>Stripe Payment</h1>
+      <h1>Register for Tree Pickup</h1>
 
-      <p>Pay for Tree Pickup using Stripe</p>
+      <!-- <p>Pay for Tree Pickup using Stripe</p> -->
 
       <form id="payment-form">
         <div id="link-authentication-element">
@@ -25,16 +23,18 @@
         <div id="address-element">
           <!-- Elements will create address element here -->
         </div>
-        <div id="payment-element">
-          <!-- Elements will create form elements here -->
-        </div>
-        <button id="submit">Pay now</button>
+        
+        <section id="section-pay-stripe">
+          <div id="payment-element">
+            <!-- Elements will create form elements here -->
+          </div>
+        </section>
+        <button id="button-pay-now" disabled="true">Pay now</button>
+        <button id="button-pay-later" disabled="true">Register now, pay later</button>
         <div id="error-message">
           <!-- Display error message to your customers here -->
         </div>
       </form>
-
-      <div id="messages" role="alert" style="display: none;"></div>
     </main>
   </body>
 </html>

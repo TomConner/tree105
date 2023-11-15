@@ -1,59 +1,101 @@
+say = (message) => {
+  console.log('stripe payment: ' + message)
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Load the publishable key from the server. The publishable key
   // is set in your .env file.
   const {publishableKey} = await fetch('/config').then((r) => r.json());
   if (!publishableKey) {
-    addMessage(
-      'No publishable key returned from the server. Please check `.env` and try again'
-    );
-    alert('Please set your Stripe publishable API key in the .env file');
+    say('no publishableKey');
   }
 
   const stripe = Stripe(publishableKey, {
     apiVersion: '2020-08-27',
   });
 
-  // On page load, we create a PaymentIntent on the server so that we have its clientSecret to
+  // On page load, create a PaymentIntent on the server so that we have its clientSecret to
   // initialize the instance of Elements below. The PaymentIntent settings configure which payment
   // method types to display in the PaymentElement.
+  //
   const {
     error: backendError,
     clientSecret
   } = await fetch('/create-payment-intent').then(r => r.json());
   if (backendError) {
-    addMessage(backendError.message);
+    say(backendError.message);
   }
-  addMessage(`Client secret returned.`);
+  say(`client secret returned`);
 
-  // Initialize Stripe Elements with the PaymentIntent's clientSecret,
-  // then mount the payment element.
-  const elements = stripe.elements({ clientSecret });
-  const addressElement = elements.create('address', { mode: 'billing' });
-  addressElement.mount('#address-element');
-  addMessage(`address.`);
-  const paymentElement = elements.create('payment');
-  paymentElement.mount('#payment-element');
-  // Create and mount the linkAuthentication Element to enable autofilling customer payment details
+  // Initialize Stripe Elements with the PaymentIntent's clientSecret
+  //
+  const loader = 'auto';
+  const elements = stripe.elements({ clientSecret, loader });
+
+  // Create and mount the linkAuthentication Element to enable 
+  // autofilling customer payment details
+  //
   const linkAuthenticationElement = elements.create("linkAuthentication");
   linkAuthenticationElement.mount("#link-authentication-element");
+  say(`link mounted`);
+
+  // TODO default email
   // If the customer's email is known when the page is loaded, you can
   // pass the email to the linkAuthenticationElement on mount:
   //
-  linkAuthenticationElement.mount("#link-authentication-element",  {
-    defaultValues: {
-      email: 'jenny.rosen@example.com',
+  // linkAuthenticationElement.mount("#link-authentication-element",  {
+  //   defaultValues: {
+  //     email: 'jenny.rosen@example.com',
+  //   }
+  // })
+
+  // Obtain the email entered
+  //
+  // linkAuthenticationElement.on('change', (event) => {
+  //   const email = event.value.email;
+  //   console.log({ email });
+  //   console.log(event);
+  //   // TODO save email when committed
+  // })
+
+  // Get a reference to the payment form and its sections
+  //
+  const form = document.getElementById('payment-form');
+  const buttonPayNow = document.getElementById('button-pay-now');
+  const buttonPayLater = document.getElementById('button-pay-later');
+  const sectionPayStripe = document.getElementById('section-pay-stripe');
+  const stripeError = document.getElementById('error-message');
+
+  // Create and mount the address element
+  //
+  const options = { mode: 'billing' };
+  const addressElement = elements.create('address', options);
+  addressElement.mount('#address-element');
+  say(`address mounted`);
+
+  enableButtonsWhenReady = () => {
+    // TODO conditional on both email and address
+    buttonPayLater.disabled = false;
+    buttonPayNow.disabled = false;
+  }
+
+  // Buffer address
+  addressElement.on('change', (event) => {
+    if (event.complete){
+      enableButtonsWhenReady();
+      // Extract potentially complete address
+      const address = event.value.address;
+      say("" + address);
+
     }
   })
-  // If you need access to the email address entered:
+
+  // Show Stripe payment fields if user so chooses
   //
-  linkAuthenticationElement.on('change', (event) => {
-    const email = event.value.email;
-    console.log({ email });
-    console.log(event);
-  })
+  const paymentElement = elements.create('payment');
+  paymentElement.mount('#payment-element');
 
   // When the form is submitted...
-  const form = document.getElementById('payment-form');
   let submitted = false;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -61,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Disable double submission of the form
     if(submitted) { return; }
     submitted = true;
-    form.querySelector('button').disabled = true;
+    buttonPayNow.disabled = true;
 
     const nameInput = document.querySelector('#name');
 
@@ -71,7 +113,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const {error: stripeError} = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/return.html`,
+        // TODO return page
+        return_url: `${window.location.origin}/return.html`, 
       }
     });
 
@@ -80,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // reenable the form.
       submitted = false;
-      form.querySelector('button').disabled = false;
+      buttonPayNow.disabled = false;
       return;
     }
   });
