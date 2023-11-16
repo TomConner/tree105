@@ -20,21 +20,12 @@ stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 static_dir = str(os.path.abspath(os.path.join(__file__ , "..", os.getenv("STATIC_DIR"))))
 app = Flask(__name__, static_folder=static_dir, static_url_path="", template_folder=static_dir)
 
-@app.route('/', methods=['GET'])
-def get_root():
-    return render_template('index.html')
-
-@app.route('/pay-online', methods=['GET'])
-def get_pay_online():
-    return render_template('pay-online/index.html')
-
-
-@app.route('/config', methods=['GET'])
+@app.route('/api/v1/config', methods=['GET'])
 def get_config():
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
 
 
-@app.route('/create-payment-intent', methods=['GET'])
+@app.route('/api/v1/create-payment-intent', methods=['GET'])
 def create_payment():
     # Create a PaymentIntent with the amount, currency, and a payment method type.
     #
@@ -59,7 +50,7 @@ def create_payment():
         return jsonify({'error': {'message': str(e)}}), 400
 
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/api/v1/webhook', methods=['POST'])
 def webhook_received():
     # You can use webhooks to receive information about asynchronous payment events.
     # For more about our webhook events check out https://stripe.com/docs/webhooks.

@@ -1,4 +1,3 @@
-
 version: "3.9"
 services:
 
@@ -14,6 +13,7 @@ services:
     working_dir: /tree105/caddy
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./public:/public
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -32,7 +32,7 @@ services:
     networks:
       - default
 
-  hugo:
+  generator:
     build:
       context: ./generator
     working_dir: /tree105/generator

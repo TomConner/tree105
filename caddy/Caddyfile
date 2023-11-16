@@ -1,3 +1,11 @@
 dev.troop105treedrive.com {
-    reverse_proxy tree105-server-1:4242
+    handle /api/* {
+        reverse_proxy tree105-server-1:4242
+    }
+    file_server /.well-known/* browse {
+        root ./public
+    }
+    handle {
+        reverse_proxy tree105-generator-1:1313
+    }
 }
