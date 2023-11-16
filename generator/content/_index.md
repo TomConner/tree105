@@ -14,13 +14,4 @@ title: Christmas Tree Pickup & Recycling
 * **Thank You** to Top Notch Tree for chipping hundreds of trees
 * **Thank You** Pembroke residents who support our effort each year!
 
-## Register
-
-Registration for 2024 will open soon.
-
 {{< register-form >}}
-
-
-## and some stripe payment now
-
-[payment](pay-online)

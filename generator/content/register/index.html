@@ -12,9 +12,25 @@
   </head>
   <body>
     <main>
-      <h1>Register for Tree Pickup</h1>
+      <h1 id="register">Register for Tree Pickup</h1>
 
+    <label for="rphone">Phone</label>
+    <input type="text" name="rphone" required> 
       <!-- <p>Pay for Tree Pickup using Stripe</p> -->
+    <p></p>
+    <label for="rcomment">Comment</label>
+    <input type="textarea" name="rcomment"></input>
+
+    <h3>Payment</h3>
+    <label for="rnumtrees">Number of Trees</label>
+    <input type="number" name="rnumtrees" id="rnumtrees" required></input>
+
+    <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
+    <label for="rextra">Additional Donation Amount</label>
+    <input type="number" name="rextra" id="rextra" required></input>
+    <p></p>
+    <label>Amount to pay: $ <span id="amount"></span></label>
+    <p></p>
 
       <form id="payment-form">
         <div id="link-authentication-element">

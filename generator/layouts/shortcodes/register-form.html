@@ -1,6 +1,7 @@
 
     
 <form id="registerform">
+    <!--
 
     <h3>Contact Info</h3>
     
@@ -26,6 +27,12 @@
     <input type="text" name="rtown" value="Pembroke" required></input> 
     <label for="rstate">State</label>
     <input type="text" name="rstate" value="MA" required></input>
+    -->
+    
+
+
+
+    <!--
     <p></p>
     <label for="rcomment">Comment</label>
     <input type="textarea" name="rcomment"></input>
@@ -40,6 +47,15 @@
     <p></p>
     <label>Amount to pay: $ <span id="amount"></span></label>
     <p></p>
+    -->
+
+
+
+
+
+
+
+    <!--
     <label for="rpmethod">Payment Method</label>
     <br/>
     <input type="radio" id="cashcheck" name="rpmethod" value="cashcheck">
@@ -55,6 +71,7 @@
     <input type="submit" id="submit" value="Register" />
 
     <p><strong id="message2"></strong></p>
+    -->
 
     <p id="messageVenmo" hidden="true">     
       <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
@@ -62,187 +79,189 @@
 
 </form>
 
-<p></p>
-<div id="paypal-button-container"></div>
-<p>&nbsp;</p>
+<style>
+  iframe {
+    width: 100%;
+    height: 5000px; /* You can adjust this as needed */
+    border: none;
+  }
+</style>
+<iframe src="/register"></iframe>
 
-<p>TODO payment</p>
-<!-- 
-<script src="https://www.paypal.com/sdk/js?client-id=AdHIRx2G1Rfz6nVvl1AlBg3m1lB49ueXMizGxXWE9JM5245qq60JOe4X2Nc2gp9UYrVCpdwbMuY8sSlh&currency=USD&intent=capture" data-sdk-integration-source="integrationbuilder"></script>
--->
+<p></p>
 
 <script>
-  function renderPaypalButtons(amount) {
-    const fundingSources = [
-        paypal.FUNDING.CARD,
-        paypal.FUNDING.PAYPAL
-    ]
+  // function renderPaypalButtons(amount) {
+  //   const fundingSources = [
+  //       paypal.FUNDING.CARD,
+  //       paypal.FUNDING.PAYPAL
+  //   ]
 
-    for (const fundingSource of fundingSources) {
-      const paypalButtonsComponent = paypal.Buttons({
-        fundingSource: fundingSource,
+  //   for (const fundingSource of fundingSources) {
+  //     const paypalButtonsComponent = paypal.Buttons({
+  //       fundingSource: fundingSource,
 
-        // optional styling for buttons
-        // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
-        style: {
-          shape: 'rect',
-          height: 40,
-        },
+  //       // optional styling for buttons
+  //       // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
+  //       style: {
+  //         shape: 'rect',
+  //         height: 40,
+  //       },
 
-        // set up the transaction
-        createOrder: (data, actions) => {
-          // pass in any options from the v2 orders create call:
-          // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
-          const createOrderPayload = {
-            purchase_units: [
-              {
-                amount: {
-                  value: amount,
-                },
-              },
-            ],
-            shipping: {
-              options: [
-                  {
-                      id: "CURB_PICKUP",
-                      label: "Pickup",
-                      type: "PICKUP",
-                      selected: true,
-                      amount: {
-                          value: "0",
-                          currency_code: "USD"
-                      }
-                  }
-              ]
-            }
-          }
-          console.log("createOrder");
-          return actions.order.create(createOrderPayload)
-        },
+  //       // set up the transaction
+  //       createOrder: (data, actions) => {
+  //         // pass in any options from the v2 orders create call:
+  //         // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
+  //         const createOrderPayload = {
+  //           purchase_units: [
+  //             {
+  //               amount: {
+  //                 value: amount,
+  //               },
+  //             },
+  //           ],
+  //           shipping: {
+  //             options: [
+  //                 {
+  //                     id: "CURB_PICKUP",
+  //                     label: "Pickup",
+  //                     type: "PICKUP",
+  //                     selected: true,
+  //                     amount: {
+  //                         value: "0",
+  //                         currency_code: "USD"
+  //                     }
+  //                 }
+  //             ]
+  //           }
+  //         }
+  //         console.log("createOrder");
+  //         return actions.order.create(createOrderPayload)
+  //       },
 
-        // finalize the transaction
-        onApprove: (data, actions) => {
-          const captureOrderHandler = (details) => {
-            const payerName = details.payer.name.given_name
-            console.log('Transaction completed!')
-            window.location.assign('paypalsent');
-          }
+  //       // finalize the transaction
+  //       onApprove: (data, actions) => {
+  //         const captureOrderHandler = (details) => {
+  //           const payerName = details.payer.name.given_name
+  //           console.log('Transaction completed!')
+  //           window.location.assign('paypalsent');
+  //         }
 
-          return actions.order.capture().then(captureOrderHandler)
-        },
+  //         return actions.order.capture().then(captureOrderHandler)
+  //       },
 
-        // handle unrecoverable errors
-        onError: (err) => {
-          console.error(
-            'An error prevented the buyer from checking out with PayPal',
-          )
-        },
-      })
+  //       // handle unrecoverable errors
+  //       onError: (err) => {
+  //         console.error(
+  //           'An error prevented the buyer from checking out with PayPal',
+  //         )
+  //       },
+  //     })
 
-      if (paypalButtonsComponent.isEligible()) {
-        paypalButtonsComponent
-          .render('#paypal-button-container')
-          .catch((err) => {
-            console.error('PayPal Buttons failed to render')
-          })
-      } else {
-        console.log('The funding source is ineligible')
-      }
-    }
-  }
+  //     if (paypalButtonsComponent.isEligible()) {
+  //       paypalButtonsComponent
+  //         .render('#paypal-button-container')
+  //         .catch((err) => {
+  //           console.error('PayPal Buttons failed to render')
+  //         })
+  //     } else {
+  //       console.log('The funding source is ineligible')
+  //     }
+  //   }
+  // }
 
-  function urlencodeFormData(fd){
-    var s = '';
-    function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
-    for(var pair of fd.entries()){
-        if(typeof pair[1]=='string'){
-            s += (s?'&':'') + encode(pair[0])+'='+encode(pair[1]);
-        }
-    }
-    return s;
-  }
+  // function urlencodeFormData(fd){
+  //   var s = '';
+  //   function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
+  //   for(var pair of fd.entries()){
+  //       if(typeof pair[1]=='string'){
+  //           s += (s?'&':'') + encode(pair[0])+'='+encode(pair[1]);
+  //       }
+  //   }
+  //   return s;
+  // }
 
-  function displayPaymentInstructions() {
-    if (intend_pay_venmo) {
-      messageVenmo.hidden = false;
-      window.location.assign('venmoinstructions');
-    } else if (intend_pay_card) {
-      messageVenmo.hidden = true;
-      message2.innerText = "";
-      message1.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
-    } else {
-      messageVenmo.hidden = true;
-      window.location.assign('registered');
-    }
-  }
+  // function displayPaymentInstructions() {
+  //   if (intend_pay_venmo) {
+  //     messageVenmo.hidden = false;
+  //     window.location.assign('venmoinstructions');
+  //   } else if (intend_pay_card) {
+  //     messageVenmo.hidden = true;
+  //     message2.innerText = "";
+  //     message1.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
+  //   } else {
+  //     messageVenmo.hidden = true;
+  //     window.location.assign('registered');
+  //   }
+  // }
 
-  function formSubmit(event) {
-    var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
-    var request = new XMLHttpRequest();
-    request.open('POST', url, true);
-    message1 = document.getElementById("message1")
-    message2 = document.getElementById("message2")
-    intend_pay_card = document.getElementById("card").checked;
-    intend_pay_venmo = document.getElementById("venmo").checked;
-    amount = parseInt(document.getElementById("amount").innerText);
+  // function formSubmit(event) {
+  //   var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
+  //   var request = new XMLHttpRequest();
+  //   request.open('POST', url, true);
+  //   message1 = document.getElementById("message1")
+  //   message2 = document.getElementById("message2")
+  //   intend_pay_card = document.getElementById("card").checked;
+  //   intend_pay_venmo = document.getElementById("venmo").checked;
+  //   amount = parseInt(document.getElementById("amount").innerText);
 
-    request.onload = function() { // request successful
-      // we can use server response to our request now
-      console.log(request.responseText);
-      displayPaymentInstructions();
-    };
+  //   request.onload = function() { // request successful
+  //     // we can use server response to our request now
+  //     console.log(request.responseText);
+  //     displayPaymentInstructions();
+  //   };
   
-    request.onerror = function() {
-      console.log(request.responseText);
-      // request failed
-      message1.innerText = 
-        "Registration failed. Please try again later or contact treedrive105@gmail.com";
-     };
+  //   request.onerror = function() {
+  //     console.log(request.responseText);
+  //     // request failed
+  //     message1.innerText = 
+  //       "Registration failed. Please try again later or contact treedrive105@gmail.com";
+  //    };
   
 
-    message1.innerText = "Processing";
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
-    request.send(urlencodeFormData(new FormData(event.target)));
-    event.preventDefault();
+  //   message1.innerText = "Processing";
+  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
+  //   request.send(urlencodeFormData(new FormData(event.target)));
+  //   event.preventDefault();
 
-    if (intend_pay_card) {
-      renderPaypalButtons(amount);
-    }
-  }
+  //   if (intend_pay_card) {
+  //     renderPaypalButtons(amount);
+  //   }
+  // }
 
-  function onChangeNumTrees() {
-    count = document.getElementById("rnumtrees").value;
-    extra = parseInt(document.getElementById("rextra").value);
-    console.log(`${count} trees, ${extra} extra`);
-    amount = (count * 15) + extra;
-    document.getElementById("amount").innerText = amount;
-  }
+  // function onChangeNumTrees() {
+  //   count = document.getElementById("rnumtrees").value;
+  //   extra = parseInt(document.getElementById("rextra").value);
+  //   console.log(`${count} trees, ${extra} extra`);
+  //   amount = (count * 15) + extra;
+  //   document.getElementById("amount").innerText = amount;
+  // }
 
-  document.getElementById("registerform").addEventListener("submit", formSubmit);
-  document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
-  document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
-  document.getElementById("cashcheck").checked = true;
-  document.getElementById("rnumtrees").value = 1;
-  document.getElementById("rextra").value = 0;
-  onChangeNumTrees();
-  document.getElementById("registerform").addEventListener("input", (event) => {
-    message1 = document.getElementById("message1")
-    isvalid = document.getElementById("registerform").checkValidity();
-    MSG_INVALID = "Please complete the form.";
-    button = document.getElementById("submit");
-    document.getElementById("paypal-button-container").innerHTML = "";
-    if (document.getElementById("cashcheck").checked) {
-      button.value = "Register";
-      message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
-    } else if (document.getElementById("venmo").checked) {
-      button.value = "Continue to Venmo payment";
-      message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
-    } else if (document.getElementById("card").checked) {
-      button.value = "Continue to card payment";
-      message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
-    } else {
-      button.value = "Submit";
-    }
-  });
-  console.log('ready');
+  // document.getElementById("registerform").addEventListener("submit", formSubmit);
+  // document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
+  // document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
+  // document.getElementById("cashcheck").checked = true;
+  // document.getElementById("rnumtrees").value = 1;
+  // document.getElementById("rextra").value = 0;
+  // onChangeNumTrees();
+  // document.getElementById("registerform").addEventListener("input", (event) => {
+  //   message1 = document.getElementById("message1")
+  //   isvalid = document.getElementById("registerform").checkValidity();
+  //   MSG_INVALID = "Please complete the form.";
+  //   button = document.getElementById("submit");
+  //   document.getElementById("paypal-button-container").innerHTML = "";
+  //   if (document.getElementById("cashcheck").checked) {
+  //     button.value = "Register";
+  //     message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
+  //   } else if (document.getElementById("venmo").checked) {
+  //     button.value = "Continue to Venmo payment";
+  //     message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
+  //   } else if (document.getElementById("card").checked) {
+  //     button.value = "Continue to card payment";
+  //     message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
+  //   } else {
+  //     button.value = "Submit";
+  //   }
+  // });
+  // console.log('ready');
 </script>

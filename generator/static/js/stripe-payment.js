@@ -5,7 +5,7 @@ say = (message) => {
 document.addEventListener('DOMContentLoaded', async () => {
   // Load the publishable key from the server. The publishable key
   // is set in your .env file.
-  const {publishableKey} = await fetch('/config').then((r) => r.json());
+  const {publishableKey} = await fetch(`/api/v1/config`).then((r) => r.json());
   if (!publishableKey) {
     say('no publishableKey');
   }
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const {
     error: backendError,
     clientSecret
-  } = await fetch('/create-payment-intent').then(r => r.json());
+  } = await fetch(`/api/v1/create-payment-intent`).then(r => r.json());
   if (backendError) {
     say(backendError.message);
   }
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       enableButtonsWhenReady();
       // Extract potentially complete address
       const address = event.value.address;
-      say("" + address);
+      say(`address ${address}`);
 
     }
   })
