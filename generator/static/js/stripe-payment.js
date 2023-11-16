@@ -1,5 +1,33 @@
-say = (message) => {
-  console.log('stripe payment: ' + message)
+function say(message) {
+  console.log(`stripe payment: ${message}`)
+}
+
+// ------- UI helpers -------
+
+function showMessage(messageText) {
+  const messageContainer = document.querySelector("#payment-message");
+
+  messageContainer.classList.remove("hidden");
+  messageContainer.textContent = messageText;
+
+  setTimeout(function () {
+    messageContainer.classList.add("hidden");
+    messageContainer.textContent = "";
+  }, 4000); 
+}
+
+// Show a spinner on payment submission
+function setLoading(isLoading) {
+  if (isLoading) {
+    // Disable the button and show a spinner
+    document.querySelector("#button-pay-now").disabled = true;
+    document.querySelector("#spinner").classList.remove("hidden");
+    document.querySelector("#button-text").classList.add("hidden");
+  } else {
+    document.querySelector("#button-pay-now").disabled = false;
+    document.querySelector("#spinner").classList.add("hidden");
+    document.querySelector("#button-text").classList.remove("hidden");
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -21,7 +49,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const {
     error: backendError,
     clientSecret
-  } = await fetch(`/api/v1/create-payment-intent`).then(r => r.json());
+  } = await fetch("/api/v1/create-payment-intent", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({trees: 1, extra: 5})
+  }).then(r => r.json());
   if (backendError) {
     say(backendError.message);
   }
@@ -51,12 +83,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Obtain the email entered
   //
-  // linkAuthenticationElement.on('change', (event) => {
-  //   const email = event.value.email;
-  //   console.log({ email });
-  //   console.log(event);
-  //   // TODO save email when committed
-  // })
+  let emailAddress = '';
+  linkAuthenticationElement.on('change', (event) => {
+    if (event.complete) {
+      const email = event.value.email;
+      console.log(`email ${email}`);
+      console.log(event);
+      emailAddress = email;
+    }
+  })
 
   // Get a reference to the payment form and its sections
   //
@@ -64,11 +99,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const buttonPayNow = document.getElementById('button-pay-now');
   const buttonPayLater = document.getElementById('button-pay-later');
   const sectionPayStripe = document.getElementById('section-pay-stripe');
-  const stripeError = document.getElementById('error-message');
 
   // Create and mount the address element
   //
-  const options = { mode: 'billing' };
+  const options = { 
+    mode: 'shipping',
+    fields: {
+      phone: 'always',
+    },
+    validation: {
+      phone: {required: 'always'},
+    }
+  };
   const addressElement = elements.create('address', options);
   addressElement.mount('#address-element');
   say(`address mounted`);
@@ -92,7 +134,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Show Stripe payment fields if user so chooses
   //
-  const paymentElement = elements.create('payment');
+
+  const paymentElementOptions = {
+    layout: "tabs", // TODO change payment option choice?
+  };
+  const paymentElement = elements.create('payment', paymentElementOptions);
   paymentElement.mount('#payment-element');
 
   // When the form is submitted...
@@ -113,18 +159,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const {error: stripeError} = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // TODO return page
-        return_url: `${window.location.origin}/return.html`, 
+        return_url: `${window.location.origin}/confirm`, 
+        receipt_email: emailAddress,
       }
     });
 
     if (stripeError) {
-      addMessage(stripeError.message);
+      showMessage(stripeError.message);
 
       // reenable the form.
       submitted = false;
       buttonPayNow.disabled = false;
       return;
     }
+
   });
 });

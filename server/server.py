@@ -3,7 +3,7 @@ import stripe
 import json
 import os
 
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
@@ -17,15 +17,21 @@ load_dotenv(find_dotenv())
 stripe.api_version = '2020-08-27'
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
-static_dir = str(os.path.abspath(os.path.join(__file__ , "..", os.getenv("STATIC_DIR"))))
-app = Flask(__name__, static_folder=static_dir, static_url_path="", template_folder=static_dir)
+app = Flask(__name__)
 
 @app.route('/api/v1/config', methods=['GET'])
 def get_config():
+    app.logger.info('config')
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
 
+def amount_from_request(data):
+    app.logger.info("amount_from_request")
+    app.logger.info(data)
+    amount = data["trees"] * 15 + data["extra"]
+    return amount*100
 
-@app.route('/api/v1/create-payment-intent', methods=['GET'])
+
+@app.route('/api/v1/create-payment-intent', methods=['POST'])
 def create_payment():
     # Create a PaymentIntent with the amount, currency, and a payment method type.
     #
@@ -33,21 +39,25 @@ def create_payment():
     #
     # [0] https://stripe.com/docs/api/payment_intents/create
     try:
+        data = json.loads(request.data)
         intent = stripe.PaymentIntent.create(
-            amount=1999,
-            currency='EUR',
+            amount=amount_from_request(data),
+            currency='usd',
+            # TODO force payment methods?
             automatic_payment_methods={
                 'enabled': True,
-            }
+            },
         )
-        app.logger.info("payment intent created")
+        app.logger.info("payment-intent")
 
         # Send PaymentIntent details to the front end.
         return jsonify({'clientSecret': intent.client_secret})
     except stripe.error.StripeError as e:
-        return jsonify({'error': {'message': str(e)}}), 400
+        app.logger.error(e, stack_info=True)
+        return "Error", 400
     except Exception as e:
-        return jsonify({'error': {'message': str(e)}}), 400
+        app.logger.error(e, stack_info=True)
+        return "Error", 500
 
 
 @app.route('/api/v1/webhook', methods=['POST'])
@@ -65,7 +75,8 @@ def webhook_received():
                 payload=request.data, sig_header=signature, secret=webhook_secret)
             data = event['data']
         except Exception as e:
-            return e
+            app.logger.error(e, stack_info=True)
+            return 500
         # Get the type of webhook event sent - used to check the status of PaymentIntents.
         event_type = event['type']
     else:

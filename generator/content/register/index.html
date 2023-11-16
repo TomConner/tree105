@@ -14,14 +14,11 @@
     <main>
       <h1 id="register">Register for Tree Pickup</h1>
 
-    <label for="rphone">Phone</label>
-    <input type="text" name="rphone" required> 
       <!-- <p>Pay for Tree Pickup using Stripe</p> -->
     <p></p>
     <label for="rcomment">Comment</label>
     <input type="textarea" name="rcomment"></input>
 
-    <h3>Payment</h3>
     <label for="rnumtrees">Number of Trees</label>
     <input type="number" name="rnumtrees" id="rnumtrees" required></input>
 
@@ -45,11 +42,12 @@
             <!-- Elements will create form elements here -->
           </div>
         </section>
-        <button id="button-pay-now" disabled="true">Pay now</button>
+        <button id="button-pay-now">
+          <div class="spinner hidden" id="spinner"></div>
+          <span id="button-text">Pay now</span>
+        </button>
         <button id="button-pay-later" disabled="true">Register now, pay later</button>
-        <div id="error-message">
-          <!-- Display error message to your customers here -->
-        </div>
+        <div id="payment-message" class="hidden"></div>
       </form>
     </main>
   </body>
