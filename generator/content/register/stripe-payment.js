@@ -13,7 +13,7 @@ function showMessage(messageText) {
   setTimeout(function () {
     messageContainer.classList.add("hidden");
     messageContainer.textContent = "";
-  }, 4000); 
+  }, 4000);
 }
 
 // Show a spinner on payment submission
@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Stripe Elements with the PaymentIntent's clientSecret
   //
   const loader = 'auto';
-  const elements = stripe.elements({ clientSecret, loader });
+  const elements = stripe.elements({ clientSecret }); //, loader });
 
-  // Create and mount the linkAuthentication Element to enable 
+  // Create and mount the linkAuthentication Element to enable
   // autofilling customer payment details
   //
   const linkAuthenticationElement = elements.create("linkAuthentication");
@@ -102,8 +102,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Create and mount the address element
   //
-  const options = { 
-    mode: 'shipping',
+  const options = {
+    mode: 'billing',
+    //mode: 'shipping',
     fields: {
       phone: 'always',
     },
@@ -138,8 +139,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const paymentElementOptions = {
     layout: "tabs", // TODO change payment option choice?
   };
-  const paymentElement = elements.create('payment', paymentElementOptions);
-  paymentElement.mount('#payment-element');
+  // const paymentElement = elements.create('payment', paymentElementOptions);
+  // paymentElement.mount('#payment-element');
 
   // When the form is submitted...
   let submitted = false;
@@ -159,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const {error: stripeError} = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/confirm`, 
+        return_url: `${window.location.origin}/confirm`,
         receipt_email: emailAddress,
       }
     });

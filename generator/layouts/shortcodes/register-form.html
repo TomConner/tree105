@@ -1,35 +1,150 @@
+<style>
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
 
-    
-<form id="registerform">
+:root {
+  --light-grey: #F6F9FC;
+  --dark-terminal-color: #0A2540;
+  --accent-color: #635BFF;
+  --radius: 3px;
+}
+#register {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  color: var(--dark-terminal-color);
+}
+
+main {
+  width: 480px;
+}
+form > * {
+  margin: 10px 0;
+}
+button {
+  background-color: var(--accent-color);
+}
+
+button {
+  background: var(--accent-color);
+  border-radius: var(--radius);
+  color: white;
+  border: 0;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+button:hover {
+  filter: contrast(115%);
+}
+button:active {
+  transform: translateY(0px) scale(0.98);
+  filter: brightness(0.9);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: none;
+}
+
+input, select {
+  display: block;
+  font-size: 1.1em;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 34px;
+}
+
+label {
+  display: block;
+}
+#order-form {
+  border: #F6F9FC solid 1px;
+  border-radius: var(--radius);
+  font-size: 80%;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+}
+a {
+  color: var(--accent-color);
+  font-weight: 900;
+}
+
+small {
+  font-size: .6em;
+}
+
+fieldset, input, select {
+  border: 1px solid #efefef;
+}
+
+#order-form {
+  border: #F6F9FC solid 1px;
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+}
+
+#messages {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
+  display: none; /* hide initially, then show once the first message arrives */
+  background-color: #0A253C;
+  color: #00D924;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: var(--radius);
+  font-size:0.7em;
+}
+
+</style>
+
+<section id="register">
+<form id="order-form">
     <!--
 
     <h3>Contact Info</h3>
-    
+
     <p></p>
 
     <label for="rfirstname">First Name</label>
-    <input type="text" name="rfirstname" required></input> 
+    <input type="text" name="rfirstname" required></input>
     <label for="rlastname">Last Name</label>
-    <input type="text" name="rlastname" required></input> 
+    <input type="text" name="rlastname" required></input>
     <p></p>
     <label for="remail">Email</label>
-    <input type="email" name="remail" required> 
+    <input type="email" name="remail" required>
     <p></p>
     <label for="rphone">Phone</label>
-    <input type="text" name="rphone" required> 
-    
+    <input type="text" name="rphone" required>
+
     <h3>Pickup Location</h3>
     <p></p>
     <label for="raddress">Address</label>
-    <input type="text" name="raddress" required></input> 
+    <input type="text" name="raddress" required></input>
     <p></p>
     <label for="rtown">Town</label>
-    <input type="text" name="rtown" value="Pembroke" required></input> 
+    <input type="text" name="rtown" value="Pembroke" required></input>
     <label for="rstate">State</label>
     <input type="text" name="rstate" value="MA" required></input>
     -->
-    
 
+
+    <p></p>
+    <label for="rcomment">Comment</label>
+    <input type="textarea" name="rcomment"></input>
+
+    <label for="rnumtrees">Number of Trees</label>
+    <input type="number" name="rnumtrees" id="rnumtrees" required></input>
+
+    <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
+    <label for="rextra">Additional Donation Amount</label>
+    <input type="number" name="rextra" id="rextra" required></input>
+    <p></p>
+    <label>Amount to pay: $ <span id="amount"></span></label>
+    <p></p>
 
 
     <!--
@@ -67,17 +182,18 @@
 
     <p></p>
     <p><strong id="message1"></strong></p>
-    
+
     <input type="submit" id="submit" value="Register" />
 
     <p><strong id="message2"></strong></p>
     -->
 
-    <p id="messageVenmo" hidden="true">     
+    <p id="messageVenmo" hidden="true">
       <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
     </p>
 
 </form>
+</section>
 
 <style>
   iframe {
@@ -87,8 +203,6 @@
   }
 </style>
 <iframe src="/register"></iframe>
-
-<p></p>
 
 <script>
   // function renderPaypalButtons(amount) {
@@ -210,14 +324,14 @@
   //     console.log(request.responseText);
   //     displayPaymentInstructions();
   //   };
-  
+
   //   request.onerror = function() {
   //     console.log(request.responseText);
   //     // request failed
-  //     message1.innerText = 
+  //     message1.innerText =
   //       "Registration failed. Please try again later or contact treedrive105@gmail.com";
   //    };
-  
+
 
   //   message1.innerText = "Processing";
   //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
