@@ -14,6 +14,7 @@ class TreeModel(Model):
         database = database
 
 class Pickup(TreeModel):
+    lookup=CharField()
     name=CharField()
     address1=CharField()
     address2=CharField()
@@ -23,8 +24,17 @@ class Pickup(TreeModel):
 class Order(TreeModel):
     pass
 
-alphabet='ABCDEFGHJKMNPQRTUVWXYZ'
-alen=len(alphabet)
+
+def random_id():
+    alphabet='ABCDEFGHJKMNPQRTUVWXYZ'
+    return ''.join([alphabet[random.randint(0,len(alphabet)-1)] for i in range(4)])
+
+def new_lookup_id():
+    for i in range(100):
+        id = random_id()
+        if not Pickup.select().where(Pickup.lookup==id).exists():
+            return id
+    raise Exception("Could not generate a unique id")
 
 def init_or_connect():
     print("db init_or_connect")
