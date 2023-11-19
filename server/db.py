@@ -57,6 +57,3 @@ def before_request():
 def teardown_request():
     if not database.is_closed():
         database.close()
-
-def get_pickups():
-    return [p for p in Pickup.select()]

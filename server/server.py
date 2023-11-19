@@ -42,16 +42,15 @@ def get_config():
 
 @app.route('/api/v1/pickups', methods=['GET'])
 def get_pickups():
-    app.logger.info('pickups')
-    return jsonify(db.get_pickups())
+    app.logger.info(f"pickup")
+    pickups = Pickup.select().dicts()
+    return jsonify([p for p in pickups])
 
 @app.route('/api/v1/pickups/<lookup>', methods=['GET'])
 def get_pickup(lookup):
     app.logger.info(f"pickup {lookup}")
     pickup = Pickup.select().where(Pickup.lookup == lookup).dicts().get()
     return jsonify(pickup)
-
-    #return str(pickup)
 
 def amount_from_request(data):
     app.logger.info("amount_from_request")
