@@ -1,8 +1,8 @@
+// ------- UI helpers -------
+
 function say(message) {
   console.log(`stripe payment: ${message}`)
 }
-
-// ------- UI helpers -------
 
 function showMessage(messageText) {
   const messageContainer = document.querySelector("#payment-message");
@@ -15,6 +15,11 @@ function showMessage(messageText) {
     messageContainer.textContent = "";
   }, 4000);
 }
+
+publishMessage = (message) => {
+  window.parent.postMessage(message, window.location.origin);
+}
+
 
 // Show a spinner on payment submission
 function setLoading(isLoading) {
@@ -31,6 +36,7 @@ function setLoading(isLoading) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
   // Load the publishable key from the server. The publishable key
   // is set in your .env file.
   const {publishableKey} = await fetch(`/api/v1/config`).then((r) => r.json());
