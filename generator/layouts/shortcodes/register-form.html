@@ -14,11 +14,16 @@
   color: var(--dark-terminal-color);
 }
 
+#tree-messages {
+  font-size:0.8em;
+}
+
 main {
   width: 480px;
 }
 form > * {
-  margin: 10px 0;
+  top-margin: 10px;
+  bottom-margin: 2px;
 }
 button {
   background-color: var(--accent-color);
@@ -53,12 +58,23 @@ input, select {
   font-size: 1.1em;
   width: 100%;
   margin-bottom: 10px;
-  height: 34px;
+  padding: 12px;
+}
+
+input::placeholder {
+  font-weight: lighter;
+  opacity: 0.3;
 }
 
 label {
   display: block;
 }
+
+#order-form label {
+  display: block;
+  color:darkslategray;
+}
+
 #order-form {
   border: #F6F9FC solid 1px;
   border-radius: var(--radius);
@@ -67,6 +83,7 @@ label {
   margin: 20px 0;
   box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
 }
+
 a {
   color: var(--accent-color);
   font-weight: 900;
@@ -78,14 +95,6 @@ small {
 
 fieldset, input, select {
   border: 1px solid #efefef;
-}
-
-#order-form {
-  border: #F6F9FC solid 1px;
-  border-radius: var(--radius);
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
 }
 
 #messages {
@@ -133,41 +142,18 @@ fieldset, input, select {
 
 
     <p></p>
-    <label for="rcomment">Comment</label>
-    <input type="textarea" name="rcomment"></input>
+    <label class="tree" for="rcomment">Comment</label>
+    <input type="textarea" name="rcomment" placeholder="Anything we need to know"></input>
 
-    <label for="rnumtrees">Number of Trees</label>
+    <label class="tree" for="rnumtrees">Number of Trees</label>
     <input type="number" name="rnumtrees" id="rnumtrees" required></input>
 
-    <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
-    <label for="rextra">Additional Donation Amount</label>
+    <p id="tree-messages">If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
+    <label class="tree" for="rextra">Additional Donation Amount</label>
     <input type="number" name="rextra" id="rextra" required></input>
     <p></p>
     <label>Amount to pay: $ <span id="amount"></span></label>
     <p></p>
-
-
-    <!--
-    <p></p>
-    <label for="rcomment">Comment</label>
-    <input type="textarea" name="rcomment"></input>
-
-    <h3>Payment</h3>
-    <label for="rnumtrees">Number of Trees</label>
-    <input type="number" name="rnumtrees" id="rnumtrees" required></input>
-
-    <p>If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
-    <label for="rextra">Additional Donation Amount</label>
-    <input type="number" name="rextra" id="rextra" required></input>
-    <p></p>
-    <label>Amount to pay: $ <span id="amount"></span></label>
-    <p></p>
-    -->
-
-
-
-
-
 
 
     <!--
@@ -332,7 +318,6 @@ fieldset, input, select {
   //       "Registration failed. Please try again later or contact treedrive105@gmail.com";
   //    };
 
-
   //   message1.innerText = "Processing";
   //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
   //   request.send(urlencodeFormData(new FormData(event.target)));
@@ -343,39 +328,41 @@ fieldset, input, select {
   //   }
   // }
 
-  // function onChangeNumTrees() {
-  //   count = document.getElementById("rnumtrees").value;
-  //   extra = parseInt(document.getElementById("rextra").value);
-  //   console.log(`${count} trees, ${extra} extra`);
-  //   amount = (count * 15) + extra;
-  //   document.getElementById("amount").innerText = amount;
-  // }
+  function onChangeNumTrees() {
+    count = document.getElementById("rnumtrees").value;
+    extra = parseInt(document.getElementById("rextra").value);
+    console.log(`${count} trees, ${extra} extra`);
+    amount = (count * 15) + extra;
+    document.getElementById("amount").innerText = amount;
+  }
 
-  // document.getElementById("registerform").addEventListener("submit", formSubmit);
-  // document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
-  // document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
-  // document.getElementById("cashcheck").checked = true;
-  // document.getElementById("rnumtrees").value = 1;
-  // document.getElementById("rextra").value = 0;
-  // onChangeNumTrees();
-  // document.getElementById("registerform").addEventListener("input", (event) => {
-  //   message1 = document.getElementById("message1")
-  //   isvalid = document.getElementById("registerform").checkValidity();
-  //   MSG_INVALID = "Please complete the form.";
-  //   button = document.getElementById("submit");
-  //   document.getElementById("paypal-button-container").innerHTML = "";
-  //   if (document.getElementById("cashcheck").checked) {
-  //     button.value = "Register";
-  //     message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
-  //   } else if (document.getElementById("venmo").checked) {
-  //     button.value = "Continue to Venmo payment";
-  //     message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
-  //   } else if (document.getElementById("card").checked) {
-  //     button.value = "Continue to card payment";
-  //     message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
-  //   } else {
-  //     button.value = "Submit";
-  //   }
-  // });
-  // console.log('ready');
+  window.addEventListener("load", (event) => {
+    // document.getElementById("registerform").addEventListener("submit", formSubmit);
+    document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
+    document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
+    //document.getElementById("cashcheck").checked = true;
+    document.getElementById("rnumtrees").value = 1;
+    document.getElementById("rextra").value = 0;
+    onChangeNumTrees();
+    // document.getElementById("registerform").addEventListener("input", (event) => {
+    //   message1 = document.getElementById("message1")
+    //   isvalid = document.getElementById("registerform").checkValidity();
+    //   MSG_INVALID = "Please complete the form.";
+    //   button = document.getElementById("submit");
+    //   document.getElementById("paypal-button-container").innerHTML = "";
+    //   if (document.getElementById("cashcheck").checked) {
+    //     button.value = "Register";
+    //     message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
+    //   } else if (document.getElementById("venmo").checked) {
+    //     button.value = "Continue to Venmo payment";
+    //     message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
+    //   } else if (document.getElementById("card").checked) {
+    //     button.value = "Continue to card payment";
+    //     message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
+    //   } else {
+    //     button.value = "Submit";
+    //   }
+    // });
+    // console.log('ready');
+  });
 </script>
