@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv, find_dotenv
 
 import db
+from db import Pickup, Order
 
 load_dotenv(find_dotenv())
 
@@ -36,13 +37,21 @@ def db_teardown_request(exc):
 @app.route('/api/v1/config', methods=['GET'])
 def get_config():
     app.logger.info('config')
-    db.Pickup(name='test', address1='123 main st', address2='apt 1', town='town', state='MA').save()
+    db.Pickup(lookup="ABCD", name='tom', address1='123 main st', address2='apt 1', town='town', state='MA').save()
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
 
 @app.route('/api/v1/pickups', methods=['GET'])
 def get_pickups():
     app.logger.info('pickups')
     return jsonify(db.get_pickups())
+
+@app.route('/api/v1/pickups/<lookup>', methods=['GET'])
+def get_pickup(lookup):
+    app.logger.info(f"pickup {lookup}")
+    pickup = Pickup.select().where(Pickup.lookup == lookup).dicts().get()
+    return jsonify(pickup)
+
+    #return str(pickup)
 
 def amount_from_request(data):
     app.logger.info("amount_from_request")
