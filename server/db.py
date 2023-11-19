@@ -3,6 +3,8 @@ from peewee import SqliteDatabase
 from pathlib import Path
 from datetime import datetime
 import logging
+import random
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -15,6 +17,9 @@ class TreeModel(Model):
 
 class Pickup(TreeModel):
     lookup=CharField()
+
+class Address(TreeModel):
+    lookup=ForeignKeyField(Pickup, backref='address')
     name=CharField()
     address1=CharField()
     address2=CharField()
@@ -22,8 +27,10 @@ class Pickup(TreeModel):
     state=CharField()
 
 class Order(TreeModel):
-    pass
-
+    lookup=ForeignKeyField(Pickup, backref='Order')
+    comment=CharField()
+    trees=IntegerField()
+    extra=IntegerField()
 
 def random_id():
     alphabet='ABCDEFGHJKMNPQRTUVWXYZ'
@@ -42,7 +49,7 @@ def init_or_connect():
         print('initializing database')
         DB_FILE.parent.mkdir(parents=True, exist_ok=True)
         database.connect()
-        database.create_tables([Pickup, Order])
+        database.create_tables([Pickup, Address, Order])
         database.close()
     else:
         print('connecting to database')
@@ -57,3 +64,22 @@ def before_request():
 def teardown_request():
     if not database.is_closed():
         database.close()
+
+def get_pickups():
+    logger.debug('get_pickups')
+    return Pickup.select().dicts()
+
+def get_pickup(lookup):
+    logger.debug(f'get_pickup {lookup}')
+    return Pickup.select().where(Pickup.lookup == lookup).dicts().get()
+
+def create_pickup():
+    logger.debug('create_pickup')
+    lookup = new_lookup_id()
+    Pickup.create(lookup=lookup)
+    return lookup
+
+def update_pickup(lookup):
+    logger.debug(f'update_pickup {lookup}')
+    Pickup.update(updated=datetime.now()).where(Pickup.lookup == lookup).execute()
+    return lookup
