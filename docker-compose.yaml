@@ -3,6 +3,8 @@ services:
 
   caddy:
     image: caddy:2.7.5
+      # build:
+      #   context: ./caddy
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -10,6 +12,8 @@ services:
       - "80:80"
       - "443:443"
       - "443:443/udp"
+    # expose:
+    #   - 5678
     working_dir: /tree105/caddy
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
@@ -25,8 +29,10 @@ services:
       context: ./server
     working_dir: /tree105/server
     command: python server.py
+    #command: python -m debugpy --listen 0.0.0.0:5678 server.py
     ports:
       - "4242:4242"
+      # - "5678:5678"
     volumes:
       - .:/tree105
     networks:
@@ -43,7 +49,7 @@ services:
       - .:/tree105
     networks:
       - default
-      
+
 volumes:
   tree105:
   caddy_data:
