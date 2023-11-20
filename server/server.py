@@ -3,8 +3,9 @@ import stripe
 import json
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from dotenv import load_dotenv, find_dotenv
+from playhouse.shortcuts import model_to_dict
 
 import db
 
@@ -51,17 +52,18 @@ def get_pickups():
 
 @app.route('/api/v1/pickups/<lookup>', methods=['GET'])
 def get_pickup(lookup):
-    app.logger.info(f"pickup {lookup}")
-    return jsonify(db.get_pickup(lookup))
+    app.logger.info(f"GET pickup {lookup}")
+    pickup = db.get_pickup(lookup)
+    return jsonify(pickup) if pickup else jsonify({"error": "Pickup not found"}), 404
 
 @app.route('/api/v1/pickups', methods=['POST'])
 def post_pickup():
-    app.logger.info(f"post pickup")
-    return str(db.create_pickup())
+    app.logger.info(f"POST pickup")
+    return jsonify(db.create_pickup())
 
 @app.route('/api/v1/pickups/<lookup>', methods=['PUT'])
 def put_pickup(lookup):
-    app.logger.info(f"post pickup")
+    app.logger.info(f"PUT pickup")
     return str(db.update_pickup(lookup))
 
 @app.route('/api/v1/create-payment-intent', methods=['POST'])

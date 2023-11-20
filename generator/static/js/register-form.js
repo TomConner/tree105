@@ -1,5 +1,4 @@
-
-
+const originalLocalStorage = window.localStorage;
   // function urlencodeFormData(fd){
   //   var s = '';
   //   function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
@@ -86,14 +85,32 @@
     });
   }
 
+
   function loadOrderForm() {
-    // document.getElementById("registerform").addEventListener("submit", formSubmit);
-    document.getElementById("rnumtrees").addEventListener("input", onChangeNumTrees);
-    document.getElementById("rextra").addEventListener("input", onChangeNumTrees);
-    //document.getElementById("cashcheck").checked = true;
-    document.getElementById("rnumtrees").value = 1;
-    document.getElementById("rextra").value = 0;
+    console.debug("loadOrderForm");
+    const rnumtrees = document.getElementById("rnumtrees");
+    const rextra = document.getElementById("rextra");
+    const rcomment = document.getElementById("rcomment");
+    const pickup = getLocalItem("pickup")
+    if (pickup != null) {
+      rnumtrees.value = pickup.numtrees;
+      rextra.value = pickup.extra;
+      rcomment.value = pickup.comment;
+    } else {
+      // document.getElementById("registerform").addEventListener("submit", formSubmit);
+
+      //document.getElementById("cashcheck").checked = true;
+      rnumtrees.value = 1;
+      rextra.value = 0;
+      rcomment.value = "";
+    }
     onChangeNumTrees();
+    rnumtrees.addEventListener("input", onChangeNumTrees);
+    rextra.addEventListener("input", onChangeNumTrees);
+
+    const lookup_code = getLocalItem("lookup")
+    document.getElementById("lookup-code").innerText = `Lookup code: ${lookup_code}`;
+
     // document.getElementById("registerform").addEventListener("input", (event) => {
     //   message1 = document.getElementById("message1")
     //   isvalid = document.getElementById("registerform").checkValidity();
@@ -116,71 +133,96 @@
     // console.log('ready');
   }
 
-  function lookup() {
-    session_start = localStorage.getItem("session_start");
-    if (session_start == null) {
-      session_start = Date.now();
-      sessionStorage.setItem("session_start", session_start);
-    }
-    lookup_code = localStorage.getItem("lookup")
-    if (lookup_code != null) {
-      console.log(`lookup code from localStorage is ${lookup_code}`);
-      fetch(`/api/v1/pickups/${lookup_code}`)
-        .then((response) => response.json())
-        .then((pickup) => {
-          console.log(pickup);
-          // document.getElementById("rnumtrees").value = pickup.numtrees;
-          // document.getElementById("rextra").value = pickup.extra;
-          // document.getElementById("rcomment").value = pickup.comment;
-          // onChangeNumTrees();
-        });
+  // This function will be called when a message is received
+  function onStripeFrameMessage(event) {
+    // only trust messages from my own iframe
+    const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
+
+    // Check if the origin of the message is the expected one
+    if (!(expectedOrigins.includes(event.origin))) {
+        console.error('Invalid origin:', event.origin);
+        return; // Ignore the message
     } else {
-      // post to /api/v1/pickups
-      fetch('/api/v1/pickups', {method: "POST"})
-        .then((response) => response.text())
-        .then((text) => {
-          lookup_code = text;
-          console.log(`new lookup code is ${lookup_code}`);
-          localStorage.setItem("lookup", lookup_code);
-          // document.getElementById("rnumtrees").value = pickup.numtrees;
-          // document.getElementById("rextra").value = pickup.extra;
-          // document.getElementById("rcomment").value = pickup.comment;
-          // onChangeNumTrees();
-        });
+        console.debug('Valid origin:', event.origin);
     }
-    lookup_code = localStorage.getItem("lookup");
-    document.getElementById("lookup-code").innerText = `Lookup code: ${lookup_code}`;
-    loadOrderForm();
+
+    // Handle the message here
+    //console.debug('Stripe message:', event.data);
+
+    // TODO dispatch the message data to other parts of your application as needed
+    // For example: dispatchEvent(new CustomEvent('messageReceived', { detail: event.data }));
   }
 
-  window.addEventListener("load", (event) => {
-    lookup();
 
-    // This function will be called when a message is received
-    function onStripeFrameMessage(event) {
-        // only trust messages from my own iframe
-        const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
 
-        // Check if the origin of the message is the expected one
-        if (event.origin in expectedOrigins) {
-            console.error('Invalid origin:', event.origin);
-            return; // Ignore the message
-        } else {
-            console.debug('Valid origin:', event.origin);
-        }
+  async function newPickup() {
+    console.debug("POSTing to pickups");
+    // post to /api/v1/pickups
+    await fetch('/api/v1/pickups', {method: "POST"})
+      .then((response) => response.json())
+      .then((data) => {
+        console.debug(data);
+        lookup_code = data.lookup;
+        console.log(`new lookup code is ${lookup_code}`);
+        localStorage.setItem("lookup", lookup_code);
+        loadOrderForm();
+    });
+  }
 
-        // Handle the message here
-        console.log('Stripe message:', event.data);
-
-        // You can dispatch the message data to other parts of your application as needed
-        // For example: dispatchEvent(new CustomEvent('messageReceived', { detail: event.data }));
+  function getLocalItem(key) {
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item === undefined) {
+        return null;
+      }
+      if (!item) {
+        return null;
+      }
+      return item;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
+  }
 
-    // Assuming 'fooframe' is the ID of your iframe
-    const stripeFrame = document.querySelector("iframe#stripe-frame");
+  async function pageStart() {
+    console.debug("pageStart");
+    const lookup_code = getLocalItem("lookup");
+    if (lookup_code) {
+      console.debug(`lookup code from localStorage is ${lookup_code}; fetching pickup`);
+      try {
+        await fetch(`/api/v1/pickups/${lookup_code}`)
+        .then((response) => {
+          console.debug(response)
+          if (response.ok) {
+            pickup = response.json();
+            localStorage.setItem("pickup", pickup);
+            loadOrderForm();
+
+          } else {
+            console.log(`lookup code ${lookup_code} not found`);
+            localStorage.removeItem("lookup");
+            newPickup();
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem("lookup");
+        newPickup();
+      }
+    } else {
+      console.debug("no lookup code in localStorage");
+      newPickup();
+    }
+  }
+
+
+
+  window.addEventListener("load", (event) => {
+    pageStart();
 
     // Add the event listener to the iframe's window
+    const stripeFrame = document.querySelector("iframe#stripe-frame");
     stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
-
   });
 

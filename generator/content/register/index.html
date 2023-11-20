@@ -13,27 +13,62 @@
   <body>
     <main>
 
-      <!-- <p>Pay for Tree Pickup using Stripe</p> -->
-      <form id="payment-form">
-        <div id="link-authentication-element">
-          <!-- Elements will create authentication element here -->
-        </div>
-        <div id="address-element">
-          <!-- Elements will create address element here -->
-        </div>
-
-        <section id="section-pay-stripe">
-          <div id="payment-element">
-            <!-- Elements will create form elements here -->
+      <section id="stripe-address">
+        <!-- <p>Pay for Tree Pickup using Stripe</p> -->
+        <form id="address-form">
+          <div id="link-authentication-element">
+            <!-- Elements will create authentication element here -->
           </div>
-        </section>
-        <button id="button-pay-now">
-          <div class="spinner hidden" id="spinner"></div>
-          <span id="button-text">Pay now</span>
-        </button>
-        <button id="button-pay-later" disabled="true">Register now, pay later</button>
-        <div id="payment-message" class="hidden"></div>
-      </form>
+          <div id="address-element">
+            <!-- Elements will create address element here -->
+          </div>
+
+          <section id="section-pay-stripe">
+            <div id="payment-element">
+              <!-- Elements will create form elements here -->
+            </div>
+          </section>
+
+          <button id="button-pay-now" hidden="true">
+            <div class="spinner hidden" id="spinner"></div>
+            <span id="button-text">Pay</span>
+          </button>
+
+          <div id="payment-message" class="hidden"></div>
+
+          <button id="button-register">Register</button>
+
+          <section id="post-register" hidden="true">
+            <p><strong id="message2"></strong></p>
+            <p id="lookup-code"></p>
+          </section>
+
+        </form>
+      </section>
+
+      <section id="stripe-payment" hidden="true">
+        <!-- <p>Pay for Tree Pickup using Stripe</p> -->
+        <form id="payment-form">
+          <div id="link2-authentication-element">
+            <!-- Elements will create authentication element here -->
+          </div>
+          <div id="address2-element">
+            <!-- Elements will create address element here -->
+          </div>
+
+          <section id="section-pay-stripe2">
+            <div id="payment2-element">
+              <!-- Elements will create form elements here -->
+            </div>
+          </section>
+
+
+          <div id="payment-message" class="hidden"></div>
+        </form>
+      </section>
+
+
+
     </main>
   </body>
 </html>

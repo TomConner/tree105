@@ -101,9 +101,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Get a reference to the payment form and its sections
   //
-  const form = document.getElementById('payment-form');
-  const buttonPayNow = document.getElementById('button-pay-now');
-  const buttonPayLater = document.getElementById('button-pay-later');
+  const addressForm = document.getElementById('address-form');
+  const paymentForm = document.getElementById('payment-form');
+  const buttonRegister = document.getElementById('button-register');
+  const buttonPay = document.getElementById('button-pay');
   const sectionPayStripe = document.getElementById('section-pay-stripe');
 
   // Create and mount the address element
@@ -150,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // When the form is submitted...
   let submitted = false;
-  form.addEventListener('submit', async (e) => {
+  paymentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Disable double submission of the form

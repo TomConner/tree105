@@ -4,6 +4,7 @@ from pathlib import Path
 from datetime import datetime
 import logging
 import random
+from playhouse.shortcuts import model_to_dict
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -71,13 +72,19 @@ def get_pickups():
 
 def get_pickup(lookup):
     logger.debug(f'get_pickup {lookup}')
-    return Pickup.select().where(Pickup.lookup == lookup).dicts().get()
+    try:
+        # Assuming 'lookup' is a CharField in your Pickup model
+        return model_to_dict(Pickup.get(Pickup.lookup == lookup))
+        # Process the pickup object as needed
+    except Pickup.DoesNotExist:
+        # Handle the case where no record matches the condition
+        logger.error(f"Pickup with the lookup={lookup} does not exist.")
+        return None
 
 def create_pickup():
     logger.debug('create_pickup')
     lookup = new_lookup_id()
-    Pickup.create(lookup=lookup)
-    return lookup
+    return model_to_dict(Pickup.create(lookup=lookup))
 
 def update_pickup(lookup):
     logger.debug(f'update_pickup {lookup}')
