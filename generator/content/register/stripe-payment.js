@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // get lookup code from URL
   const params = new URLSearchParams(window.location.search);
   const lookup_code = params.get('q');
-  console.log(`lookup_code ${lookup_code}`)
+  console.log(`in frame, lookup_code ${lookup_code}`)
+  setLocalItem("lookup", lookup_code)
 
   // create PaymentIntent on server and fetch clientSecret
   const {
@@ -108,8 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   addressElement.on('change', (event) => {
     if (event.complete){
       // Extract potentially complete address
-      const address = event.value.address;
-      console.log(`addressElement event.value.address ${address}`);
+      const address = event.value;
       setLocalItem("address", JSON.stringify(address));
     }
   });
@@ -118,11 +118,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const buttonRegister = document.getElementById('button-register');
   buttonRegister.addEventListener('click', async (e) => {
     e.preventDefault();
-    const addressJSON = getLocalItem("address");
-    console.debug(`posting address ${addressJSON}`);
+    const address = JSON.parse(getLocalItem("address"));
+    const flat_address = address.address;
+    flat_address.name = address.name;
+    flat_address.phone = address.phone;
+    flat_address.email = getLocalItem("email");
+    console.debug("posting address");
+    console.debug(flat_address);
+    const lookup_code = getLocalItem("lookup");
+
     fetch(`/api/v1/addresses/${lookup_code}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(flat_address),
     }).then((response) => {
       if (response.ok) {
         console.log(response);

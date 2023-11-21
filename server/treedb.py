@@ -22,12 +22,15 @@ class Lookup(TreeModel):
 class Address(TreeModel):
     lookup=ForeignKeyField(Lookup, backref='addresses')
     created=DateTimeField(default=datetime.now)
-    name=CharField()
-    address1=CharField()
-    address2=CharField()
-    town=CharField()
-    state=CharField()
+    city=CharField()
+    country=CharField(null=True)
+    line1=CharField()
+    line2=CharField(null=True)
+    postal_code=CharField(null=True)
+    state=CharField(null=True)
+
     email=CharField()
+    name=CharField()
     phone=CharField()
 
 class Order(TreeModel):
@@ -73,6 +76,7 @@ def teardown_request():
         database.close()
 
 def create_order(lookup_code, comment, numtrees, extra):
+    logger.debug(f"create_order: {lookup_code}, {comment}, {numtrees}, {extra}")
     try:
         # Retrieve the Lookup instance by the provided code
         lookup, created = Lookup.get_or_create(code=lookup_code)
@@ -92,7 +96,8 @@ def create_order(lookup_code, comment, numtrees, extra):
         print(f"Error creating order: {e}")
         return None
 
-def create_address(lookup_code, name, address1, address2, town, state, email, phone):
+
+def create_address(lookup_code, city, country, line1, line2, postal_code, state, email, name, phone):
     try:
         # Retrieve the Lookup instance by the provided code
         lookup, created = Lookup.get_or_create(code=lookup_code)
@@ -100,12 +105,14 @@ def create_address(lookup_code, name, address1, address2, town, state, email, ph
         # Create a new Address and link it to the Lookup instance
         new_address = Address.create(
             lookup=lookup,
-            name=name,
-            address1=address1,
-            address2=address2,
-            town=town,
+            city=city,
+            country=country,
+            line1=line1,
+            line2=line2,
+            postal_code=postal_code,
             state=state,
             email=email,
+            name=name,
             phone=phone
         )
 
