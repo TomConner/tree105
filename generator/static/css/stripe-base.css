@@ -137,3 +137,10 @@ fieldset, input, select {
   border-top: none;
 }
 
+
+
+
+/* TC added */
+.hidden {
+  display: none;
+}

@@ -79,8 +79,8 @@ window.addEventListener("load", (event) => {
         const response = await fetch(`/api/v1/orders/${lookup_code}`);
         console.debug(response);
         if (response.ok) {
-          console.log("retrieved order");
           const order = await response.text();
+          console.log(`retrieved order ${order}`);
           setLocalItem("order", order);
         }
         loadOrderForm();
@@ -175,18 +175,18 @@ window.addEventListener("load", (event) => {
   // on Continue button: POST order, then hand off to stripeFrame
   orderForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const order = {
+    const order = JSON.stringify({
       numtrees: rnumtrees.value,
       extra: rextra.value,
       comment: rcomment.value
-    }
+    })
     setLocalItem("order", order);
     fetch(`/api/v1/orders/${lookup_code}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(order)
+      body: order
     }).then((response) => {
       if (response.ok) {
         console.log(response);

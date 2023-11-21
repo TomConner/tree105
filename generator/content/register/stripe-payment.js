@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log(`email ${email}`);
       console.log(event);
       emailAddress = email;
-      //TODO better email storage
+      setLocalItem("email", email);
     }
   })
 
@@ -107,7 +107,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // on address input, save address in localStorage
   addressElement.on('change', (event) => {
     if (event.complete){
-      enableButtonsWhenReady();
       // Extract potentially complete address
       const address = event.value.address;
       console.log(`addressElement event.value.address ${address}`);
