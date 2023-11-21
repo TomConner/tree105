@@ -119,7 +119,9 @@ fieldset, input, select {
 </style>
 
 <section id="register">
-  <form id="order-form">
+  <p class="spinner" id="spinner-register">Loading...</p>
+
+  <form id="order-form" hidden="true">
       <label class="tree" for="rcomment">Comment</label>
       <input type="textarea" id="rcomment" name="rcomment" placeholder="Anything we need to know"></input>
 
@@ -162,7 +164,7 @@ fieldset, input, select {
 
 <!-- Stripe: Address and Payment-->
 
-<section id="stripe">
+<section id="stripe-section">
   <style>
     #stripe-frame {
       width: 100%;
@@ -170,7 +172,9 @@ fieldset, input, select {
       border: none;
     }
   </style>
-  <iframe id="stripe-frame" src="/register"></iframe>
+  <iframe id="stripe-frame">
+    <!-- deferred load of src="/register" -->
+  </iframe>
 </section>
 
 <script>

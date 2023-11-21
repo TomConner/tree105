@@ -1,4 +1,3 @@
-const originalLocalStorage = window.localStorage;
   // function urlencodeFormData(fd){
   //   var s = '';
   //   function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
@@ -57,45 +56,67 @@ const originalLocalStorage = window.localStorage;
   //   }
   // }
 
-  function onChangeNumTrees() {
-    value = document.getElementById("rnumtrees").value;
-    count = value == "" ? 0 : parseInt(value);
-    value = document.getElementById("rextra").value
-    extra = value == "" ? 0 : parseInt(value);
-    console.log(`${count} trees, ${extra} extra`);
-    amount = (count * 15) + extra;
-    document.getElementById("amount").innerText = amount;
-    lookup_code = localStorage.getItem("lookup");
-  }
+  const rnumtrees = document.getElementById("rnumtrees");
+  const rextra = document.getElementById("rextra");
+  const rcomment = document.getElementById("rcomment");
+  const ramount = document.getElementById("amount");
 
-  function blah() {
-    fetch(`/api/v1/pickups/${lookup_code}`, {
-      method: "PUT",
+  const orderForm = document.getElementById("order-form");
+
+
+  const stripeSection = document.getElementById("stripe-section");
+  const stripeFrame = document.querySelector("iframe#stripe-frame");
+
+
+  orderForm.addEventListener("focusout", (event) => {
+    const order = {
+      numtrees: rnumtrees.value,
+      extra: rextra.value,
+      comment: rcomment.value
+    }
+    setLocalItem("order", order);
+    fetch(`/api/v1/orders/${lookup_code}`, {
+      method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        numtrees: count,
-        extra: extra,
-      }),
-    })
-    .then((response) => response.json())
-    .then((pickup) => {
-        console.log(pickup);
-    });
-  }
+      body: JSON.stringify(order)
+    }).then((response) => {
+      if (response.ok) {
+        console.log(response);
 
+        // Add the event listener to the iframe's window
+        stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
+        stripeFrame.src = '/register';
+        stripeFrame.hidden = false;
+      } else {
+        console.error(response);
+      }
+    });
+  });
+
+  function onChangeOrderForm() {
+    const scount = rnumtrees.value;
+    const count = scount == "" ? 0 : parseInt(scount);
+    const sextra = rextra.value
+    const extra = sextra == "" ? 0 : parseInt(sextra);
+    console.log(`${count} trees, ${extra} extra`);
+    const amount = (count * 15) + extra;
+    ramount.value = amount;
+  }
 
   function loadOrderForm() {
     console.debug("loadOrderForm");
-    const rnumtrees = document.getElementById("rnumtrees");
-    const rextra = document.getElementById("rextra");
-    const rcomment = document.getElementById("rcomment");
-    const pickup = getLocalItem("pickup")
-    if (pickup != null) {
-      rnumtrees.value = pickup.numtrees;
-      rextra.value = pickup.extra;
-      rcomment.value = pickup.comment;
+    let order = null;
+    try {
+      order = JSON.parse(getLocalItem("order"));
+    } catch (error) {
+      console.error(error);
+    }
+    if (order != null) {
+      rnumtrees.value = order.numtrees;
+      rextra.value = order.extra;
+      rcomment.value = order.comment;
     } else {
       // document.getElementById("registerform").addEventListener("submit", formSubmit);
 
@@ -104,11 +125,11 @@ const originalLocalStorage = window.localStorage;
       rextra.value = 0;
       rcomment.value = "";
     }
-    onChangeNumTrees();
-    rnumtrees.addEventListener("input", onChangeNumTrees);
-    rextra.addEventListener("input", onChangeNumTrees);
+    onChangeOrderForm();
+    rnumtrees.addEventListener("input", onChangeOrderForm);
+    rextra.addEventListener("input", onChangeOrderForm);
 
-    const lookup_code = getLocalItem("lookup")
+    lookup_code = getLocalItem("lookup");
     document.getElementById("lookup-code").innerText = `Lookup code: ${lookup_code}`;
 
     // document.getElementById("registerform").addEventListener("input", (event) => {
@@ -119,7 +140,7 @@ const originalLocalStorage = window.localStorage;
     //   document.getElementById("paypal-button-container").innerHTML = "";
     //   if (document.getElementById("cashcheck").checked) {
     //     button.value = "Register";
-    //     message1.innerText = isvalid ? "Press button to register your tree(s) for pickup." : MSG_INVALID;
+    //     message1.innerText = isvalid ? "Press button to register your tree(s) for lookup." : MSG_INVALID;
     //   } else if (document.getElementById("venmo").checked) {
     //     button.value = "Continue to Venmo payment";
     //     message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
@@ -131,6 +152,9 @@ const originalLocalStorage = window.localStorage;
     //   }
     // });
     // console.log('ready');
+
+    document.getElementById("spinner-register").hidden = true;
+    orderForm.hidden = false;
   }
 
   // This function will be called when a message is received
@@ -155,16 +179,14 @@ const originalLocalStorage = window.localStorage;
 
 
 
-  async function newPickup() {
-    console.debug("POSTing to pickups");
-    // post to /api/v1/pickups
-    await fetch('/api/v1/pickups', {method: "POST"})
-      .then((response) => response.json())
-      .then((data) => {
-        console.debug(data);
-        lookup_code = data.lookup;
+  async function newLookup() {
+    console.debug("POSTing to lookups");
+    // post to /api/v1/lookups
+    await fetch('/api/v1/lookups', {method: "POST"})
+      .then((response) => response.text())
+      .then((lookup_code) => {
         console.log(`new lookup code is ${lookup_code}`);
-        localStorage.setItem("lookup", lookup_code);
+        setLocalItem("lookup", lookup_code);
         loadOrderForm();
     });
   }
@@ -172,47 +194,43 @@ const originalLocalStorage = window.localStorage;
   function getLocalItem(key) {
     try {
       const item = window.localStorage.getItem(key);
-      if (item === undefined) {
-        return null;
-      }
-      if (!item) {
-        return null;
-      }
-      return item;
+      return item ? item : null;
     } catch (error) {
       console.error(error);
       return null;
     }
   }
 
+  function setLocalItem(key, value) {
+    window.localStorage.setItem(key, value);
+  }
+
+  function removeLocalItem(key) {
+    window.localStorage.removeItem(key);
+  }
+
   async function pageStart() {
     console.debug("pageStart");
     const lookup_code = getLocalItem("lookup");
     if (lookup_code) {
-      console.debug(`lookup code from localStorage is ${lookup_code}; fetching pickup`);
+      console.debug(`lookup code from localStorage is ${lookup_code}; fetching order`);
       try {
-        await fetch(`/api/v1/pickups/${lookup_code}`)
-        .then((response) => {
-          console.debug(response)
-          if (response.ok) {
-            pickup = response.json();
-            localStorage.setItem("pickup", pickup);
-            loadOrderForm();
-
-          } else {
-            console.log(`lookup code ${lookup_code} not found`);
-            localStorage.removeItem("lookup");
-            newPickup();
-          }
-        });
+        const response = await fetch(`/api/v1/orders/${lookup_code}`);
+        console.debug(response);
+        if (response.ok) {
+          console.log("retrieved order");
+          const order = await response.text();
+          setLocalItem("order", order);
+        }
+        loadOrderForm();
       } catch (error) {
         console.error(error);
-        localStorage.removeItem("lookup");
-        newPickup();
+        removeLocalItem("lookup");
+        newLookup();
       }
     } else {
       console.debug("no lookup code in localStorage");
-      newPickup();
+      newLookup();
     }
   }
 
@@ -220,9 +238,5 @@ const originalLocalStorage = window.localStorage;
 
   window.addEventListener("load", (event) => {
     pageStart();
-
-    // Add the event listener to the iframe's window
-    const stripeFrame = document.querySelector("iframe#stripe-frame");
-    stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
   });
 
