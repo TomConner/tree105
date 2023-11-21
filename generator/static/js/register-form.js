@@ -59,12 +59,14 @@
 
 
 window.addEventListener("load", (event) => {
+
+  const orderForm = document.getElementById("order-form");
   const rnumtrees = document.getElementById("rnumtrees");
   const rextra = document.getElementById("rextra");
   const rcomment = document.getElementById("rcomment");
   const ramount = document.getElementById("amount");
-  const orderForm = document.getElementById("order-form");
-  const stripeSection = document.getElementById("stripe-section");
+
+  const buttonContinue = document.getElementById("button-continue");
   const stripeFrame = document.getElementById("stripe-frame");
 
   // establish lookup code, retrieve any order from server, and load orderForm
@@ -170,8 +172,9 @@ window.addEventListener("load", (event) => {
     ramount.value = amount;
   }
 
-  // on orderForm focusout, POST order, then hand off to stripeFrame
-  orderForm.addEventListener("focusout", (event) => {
+  // on Continue button: POST order, then hand off to stripeFrame
+  orderForm.addEventListener("submit", (event) => {
+    event.preventDefault();
     const order = {
       numtrees: rnumtrees.value,
       extra: rextra.value,
@@ -195,10 +198,11 @@ window.addEventListener("load", (event) => {
     });
   });
 
+  // load stripeFrame and hand off to it
   function loadStripeFrame() {
-    // Add the event listener to the iframe's window
     console.log("Load stripe frame");
-    stripeFrame.src = '/register';
+    const lookup_code = getLocalItem("lookup");
+    stripeFrame.src = `/register?q=${lookup_code}`;
     stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
     stripeFrame.hidden = false;
   }
@@ -224,7 +228,6 @@ window.addEventListener("load", (event) => {
   }
 
   // localStorage helpers
-
   function getLocalItem(key) {
     try {
       const item = window.localStorage.getItem(key);

@@ -1,9 +1,5 @@
 // ------- UI helpers -------
 
-function say(message) {
-  console.log(`stripe payment: ${message}`)
-}
-
 function showMessage(messageText) {
   const messageContainer = document.querySelector("#payment-message");
 
@@ -20,62 +16,57 @@ publishMessage = (message) => {
   window.parent.postMessage(message, window.location.origin);
 }
 
-
 // Show a spinner on payment submission
 function setLoading(isLoading) {
   if (isLoading) {
     // Disable the button and show a spinner
-    document.querySelector("#button-pay-now").disabled = true;
     document.querySelector("#spinner").classList.remove("hidden");
     document.querySelector("#button-text").classList.add("hidden");
   } else {
-    document.querySelector("#button-pay-now").disabled = false;
     document.querySelector("#spinner").classList.add("hidden");
     document.querySelector("#button-text").classList.remove("hidden");
   }
 }
 
+// ------- Page load - async -------
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // Load the publishable key from the server. The publishable key
-  // is set in your .env file.
+  //------------- Address --------------
+
+  // fetch publishable key
   const {publishableKey} = await fetch(`/api/v1/config`).then((r) => r.json());
   if (!publishableKey) {
-    say('no publishableKey');
+    console.error('no publishableKey');
   }
-
   const stripe = Stripe(publishableKey, {
     apiVersion: '2020-08-27',
   });
 
-  // On page load, create a PaymentIntent on the server so that we have its clientSecret to
-  // initialize the instance of Elements below. The PaymentIntent settings configure which payment
-  // method types to display in the PaymentElement.
-  //
+  // get lookup code from URL
+  const params = new URLSearchParams(window.location.search);
+  const lookup_code = params.get('q');
+  console.log(`lookup_code ${lookup_code}`)
+
+  // create PaymentIntent on server and fetch clientSecret
   const {
     error: backendError,
     clientSecret
-  } = await fetch("/api/v1/create-payment-intent", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({trees: 1, extra: 5})
+  } = await fetch(`/api/v1/create-payment-intent/${lookup_code}`, {
+    method: "POST"
   }).then(r => r.json());
   if (backendError) {
-    say(backendError.message);
+    console.log(backendError.message);
   }
-  say(`client secret returned`);
+  console.log(`client secret returned`);
 
-  // Initialize Stripe Elements with the PaymentIntent's clientSecret
-  //
+  // initialize Stripe Elements with the PaymentIntent's clientSecret
   const loader = 'auto';
   const elements = stripe.elements({ clientSecret }); //, loader });
 
-  // Create and mount the linkAuthentication Element to enable
-  // autofilling customer payment details
-  //
+  // create and mount the linkAuthentication Element
   const linkAuthenticationElement = elements.create("linkAuthentication");
   linkAuthenticationElement.mount("#link-authentication-element");
-  say(`link mounted`);
+  console.log(`link mounted`);
 
   // TODO default email
   // If the customer's email is known when the page is loaded, you can
@@ -87,8 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   //   }
   // })
 
-  // Obtain the email entered
-  //
+  // obtain the email entered
   let emailAddress = '';
   linkAuthenticationElement.on('change', (event) => {
     if (event.complete) {
@@ -96,19 +86,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log(`email ${email}`);
       console.log(event);
       emailAddress = email;
+      //TODO better email storage
     }
   })
 
-  // Get a reference to the payment form and its sections
-  //
-  const addressForm = document.getElementById('address-form');
-  const paymentForm = document.getElementById('payment-form');
-  const buttonRegister = document.getElementById('button-register');
-  const buttonPay = document.getElementById('button-pay');
-  const sectionPayStripe = document.getElementById('section-pay-stripe');
-
-  // Create and mount the address element
-  //
+  // create and mount the address element
   const options = {
     mode: 'billing',
     //mode: 'shipping',
@@ -121,65 +103,134 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   const addressElement = elements.create('address', options);
   addressElement.mount('#address-element');
-  say(`address mounted`);
 
-  enableButtonsWhenReady = () => {
-    // TODO conditional on both email and address
-    buttonPayLater.disabled = false;
-    buttonPayNow.disabled = false;
-  }
-
-  // Buffer address
+  // on address input, save address in localStorage
   addressElement.on('change', (event) => {
     if (event.complete){
       enableButtonsWhenReady();
       // Extract potentially complete address
       const address = event.value.address;
-      say(`address ${address}`);
-
+      console.log(`addressElement event.value.address ${address}`);
+      setLocalItem("address", JSON.stringify(address));
     }
-  })
+  });
 
-  // Show Stripe payment fields if user so chooses
-  //
-
-  const paymentElementOptions = {
-    layout: "tabs", // TODO change payment option choice?
-  };
-  // const paymentElement = elements.create('payment', paymentElementOptions);
-  // paymentElement.mount('#payment-element');
-
-  // When the form is submitted...
-  let submitted = false;
-  paymentForm.addEventListener('submit', async (e) => {
+  // on register button, post address and then hand off to payment choices
+  const buttonRegister = document.getElementById('button-register');
+  buttonRegister.addEventListener('click', async (e) => {
     e.preventDefault();
+    const addressJSON = getLocalItem("address");
+    console.debug(`posting address ${addressJSON}`);
+    fetch(`/api/v1/addresses/${lookup_code}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    }).then((response) => {
+      if (response.ok) {
+        console.log(response);
 
-    // Disable double submission of the form
-    if(submitted) { return; }
-    submitted = true;
-    buttonPayNow.disabled = true;
-
-    const nameInput = document.querySelector('#name');
-
-    // Confirm the payment given the clientSecret
-    // from the payment intent that was just created on
-    // the server.
-    const {error: stripeError} = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/confirm`,
-        receipt_email: emailAddress,
+        loadPaymentChoices();
+      } else {
+        console.error(response);
       }
     });
-
-    if (stripeError) {
-      showMessage(stripeError.message);
-
-      // reenable the form.
-      submitted = false;
-      buttonPayNow.disabled = false;
-      return;
-    }
-
   });
+
+  // show payment choices tabset
+  function loadPaymentChoices() {
+    //const sectionAddress = document.getElementById('section-address');
+    const sectionPaymentChoices = document.getElementById('tabs-payment-method');
+    //sectionAddress.classList.add('hidden');
+    sectionPaymentChoices.classList.remove('hidden');
+
+    // for all payment option tabs: on tab click, show tabcontent
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].addEventListener("click", (event) => {
+        const paymentMethod = event.currentTarget.id;
+        var i, tabcontent, tablinks;
+
+        // hide all tabcontent
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // deactivate all tablinks
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // activate clicked tablink and show its tabcontent
+        document.getElementById(paymentMethod).style.display = "block";
+        event.currentTarget.className += " active";
+      });
+    }
+  }
+
+  // on stripe button, hand off to stripe payment
+  const buttonLoadStripe = document.getElementById('button-load-stripe');
+  buttonLoadStripe.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    // show stripe payment section
+    const stripePayment = document.getElementById('stripe-payment');
+    stripePayment.classList.remove('hidden');
+
+
+    // create and mount payment element
+    const paymentElementOptions = {
+      layout: "tabs", // TODO change payment option choice?
+    };
+    const paymentElement = elements.create('payment', paymentElementOptions);
+    paymentElement.mount('#payment-element');
+
+    // submit payment
+    let submitted = false;
+    const paymentForm = document.getElementById('payment-form');
+    paymentForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Disable double submission of the form
+      if(submitted) { return; }
+      submitted = true;
+      const buttonPay = document.getElementById('button-pay');
+      buttonPay.disabled = true;
+
+      // confirm payment as needed
+      const {error: stripeError} = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/confirm`,
+          receipt_email: emailAddress,
+        }
+      });
+
+      if (stripeError) {
+        showMessage(stripeError.message);
+
+        // reenable the form.
+        submitted = false;
+        buttonPay.disabled = false;
+        return;
+      }
+    });
+  });
+
+  // localStorage helpers
+  function getLocalItem(key) {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? item : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+  function setLocalItem(key, value) {
+    window.localStorage.setItem(key, value);
+  }
+  function removeLocalItem(key) {
+    window.localStorage.removeItem(key);
+  }
 });

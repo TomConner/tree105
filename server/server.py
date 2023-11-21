@@ -43,6 +43,16 @@ def db_before_request():
 def db_teardown_request(exc):
     treedb.teardown_request()
 
+def to_int(s:str):
+    if s is None:
+        return 0
+    if s == "":
+        return 0
+    return int(s)
+
+def order_amount(order):
+    app.logger.info(f"order_amount: {order}")
+    return (to_int(order['numtrees']) * 15 + to_int(order['extra'])) * 100
 
 #########
 #
@@ -53,21 +63,23 @@ def get_config():
     app.logger.info('config')
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
 
-@app.route('/api/v1/create-payment-intent', methods=['POST'])
-def create_payment():
+@app.route('/api/v1/create-payment-intent/<lookup>', methods=['POST'])
+def create_payment(lookup):
     # Create a PaymentIntent with the amount, currency, and a payment method type.
     #
     # See the documentation [0] for the full list of supported parameters.
     #
     # [0] https://stripe.com/docs/api/payment_intents/create
     try:
-        data = json.loads(request.data)
+        # data = json.loads(request.data)
+        amount = order_amount(treedb.get_last_order(lookup))
+        app.logger.info(f"amount: {amount}")
         intent = stripe.PaymentIntent.create(
-            amount=amount_from_request(data),
+            amount=amount,
             currency='usd',
             # TODO force payment methods?
             automatic_payment_methods={
-                'enabled': True,
+                'enabled': False,
             },
         )
         app.logger.info("payment-intent")
@@ -118,10 +130,11 @@ def webhook_received():
 #
 #  Address and Order APIs
 
-@app.route('/api/v1/addresses', methods=['POST'])
-def post_address():
+@app.route('/api/v1/addresses/<lookup_code>', methods=['POST'])
+def post_address(lookup_code):
     data = request.json
-    result = create_address(**data)
+    app.logger.info(data)
+    result = create_address(lookup_code, **data)
     return jsonify(result), 201 if isinstance(result, dict) else 400
 
 @app.route('/api/v1/orders/<lookup_code>', methods=['POST'])

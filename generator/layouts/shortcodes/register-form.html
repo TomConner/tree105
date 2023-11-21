@@ -117,6 +117,7 @@ fieldset, input, select {
 }
 
 </style>
+<script src="js/register-form.js"></script>
 
 <section id="register">
   <p class="spinner" id="spinner-register">Loading...</p>
@@ -130,7 +131,7 @@ fieldset, input, select {
 
       <p id="tree-messages">If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
       <label class="tree" for="rextra">Additional Donation Amount</label>
-      <input type="number" min=0  name="rextra" id="rextra" required></input>
+      <input type="number" min=0  name="rextra" id="rextra"></input>
       <p></p>
       <label for="amount">Amount to pay: $</label>
       <input type="text" id="amount" disabled>
@@ -158,21 +159,23 @@ fieldset, input, select {
       <p id="messageVenmo" hidden="true">
         <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
       </p>
+
+      <button type="submit">Continue</button>
+
   </form>
 </section>
-<script src="js/register-form.js"></script>
 
 <!-- Stripe: Address and Payment-->
-
 <section id="stripe-section">
   <style>
     #stripe-frame {
       width: 100%;
-      height: 5000px; /* You can adjust this as needed */
+      height: 5000px; /* TODO: adjust on frame resize messages */
       border: none;
     }
   </style>
-  <iframe id="stripe-frame">
+
+  <iframe id="stripe-frame" hidden="true">
     <!-- deferred load of src="/register" -->
   </iframe>
 </section>

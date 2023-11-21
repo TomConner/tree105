@@ -78,7 +78,12 @@ def create_order(lookup_code, comment, numtrees, extra):
         lookup, created = Lookup.get_or_create(code=lookup_code)
 
         # Create a new Order and link it to the Lookup instance
-        new_order = Order.create(lookup=lookup, comment=comment, numtrees=numtrees, extra=extra)
+        new_order = Order.create(
+            lookup=lookup,
+            comment=comment,
+            numtrees=numtrees,
+            extra=extra
+        )
         logger.debug(f"Lookup: {lookup.id} (Created: {created}) ; Order: {new_order.id}")
         return model_to_dict(new_order)
 
@@ -92,10 +97,6 @@ def create_address(lookup_code, name, address1, address2, town, state, email, ph
         # Retrieve the Lookup instance by the provided code
         lookup, created = Lookup.get_or_create(code=lookup_code)
 
-        # Optionally, handle the case where a new Lookup was created
-        if created:
-            print(f"New Lookup created with code: {lookup_code}")
-
         # Create a new Address and link it to the Lookup instance
         new_address = Address.create(
             lookup=lookup,
@@ -107,6 +108,8 @@ def create_address(lookup_code, name, address1, address2, town, state, email, ph
             email=email,
             phone=phone
         )
+
+        logger.debug(f"Lookup: {lookup.id} (Created: {created}) ; Address: {new_address.id}")
 
         return model_to_dict(new_address)
     except Exception as e:

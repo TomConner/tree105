@@ -13,62 +13,73 @@
   <body>
     <main>
 
-      <section id="stripe-address">
-        <!-- <p>Pay for Tree Pickup using Stripe</p> -->
-        <form id="address-form">
+      <!--- <form> --->
+      <form id="payment-form">
+
+        <!------------ Address ------------------->
+        <h2>Address</h2>
+        <section id="stripe-address">
           <div id="link-authentication-element">
             <!-- Elements will create authentication element here -->
           </div>
           <div id="address-element">
             <!-- Elements will create address element here -->
           </div>
+        </section>
+        <button id="button-register">Register</button>
 
-          <section id="section-pay-stripe">
-            <div id="payment-element">
-              <!-- Elements will create form elements here -->
-            </div>
+        <!---------- Payment Options --------------->
+        <section id="tabs-payment-method" class="hidden">
+          <h2>Payment Options</h2>
+          <div class="tab" id="tabset">
+            <button class="tablinks">Card or Wallet</button>
+            <button class="tablinks">Venmo</button>
+            <button class="tablinks">Money on Tree</button>
+          </div>
+
+          <!---------------- Payment Method: Stripe --------------->
+          <section class="tabcontent" id="tab-pay-stripe">
+            <p>
+              <strong>Pay by credit or debit card, Apple Pay, or Google Pay.</strong>
+            </p>
+            <button id="button-load-stripe">Continue to Card or Wallet payment</button>
           </section>
 
-          <button id="button-pay-now" hidden="true">
+          <!---------------- Payment Method: Venmo --------------->
+          <section class="tabcontent tabnonstripe" id="tab-pay-venmo">
+            <p>
+              <strong>Pay by Venmo</strong>
+            </p>
+            <p>
+              <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
+            </p>
+          </section>
+
+          <!---------------- Payment Method: On Tree --------------->
+          <section class="tabcontent tabnonstripe" id="tab-pay-on-tree">
+            <p>
+              <strong>Attach cash or check to tree on pickup day.</strong>
+            </p>
+            <button id="button-pay-on-tree"></button>
+          </section>
+
+          <button id="choose-payment">Choose Payment Method</button>
+
+        </section>
+
+        <!---------- Stripe Payment Element --------------->
+        <section id="stripe-payment" class="hidden">
+          <div id="payment-element">
+            <!-- Elements will create form elements here -->
+          </div>
+          <button id="button-pay" hidden="true">
             <div class="spinner hidden" id="spinner"></div>
             <span id="button-text">Pay</span>
           </button>
-
           <div id="payment-message" class="hidden"></div>
+        </section>
 
-          <button id="button-register">Register</button>
-
-          <section id="post-register" hidden="true">
-            <p><strong id="message2"></strong></p>
-            <p id="lookup-code"></p>
-          </section>
-
-        </form>
-      </section>
-
-      <section id="stripe-payment" hidden="true">
-        <!-- <p>Pay for Tree Pickup using Stripe</p> -->
-        <form id="payment-form">
-          <div id="link2-authentication-element">
-            <!-- Elements will create authentication element here -->
-          </div>
-          <div id="address2-element">
-            <!-- Elements will create address element here -->
-          </div>
-
-          <section id="section-pay-stripe2">
-            <div id="payment2-element">
-              <!-- Elements will create form elements here -->
-            </div>
-          </section>
-
-
-          <div id="payment-message" class="hidden"></div>
-        </form>
-      </section>
-
-
-
+      </form>
     </main>
   </body>
 </html>
