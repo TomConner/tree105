@@ -56,56 +56,57 @@
   //   }
   // }
 
+
+
+window.addEventListener("load", (event) => {
   const rnumtrees = document.getElementById("rnumtrees");
   const rextra = document.getElementById("rextra");
   const rcomment = document.getElementById("rcomment");
   const ramount = document.getElementById("amount");
-
   const orderForm = document.getElementById("order-form");
-
-
   const stripeSection = document.getElementById("stripe-section");
   const stripeFrame = document.getElementById("stripe-frame");
 
-
-  orderForm.addEventListener("focusout", (event) => {
-    const order = {
-      numtrees: rnumtrees.value,
-      extra: rextra.value,
-      comment: rcomment.value
-    }
-    setLocalItem("order", order);
-    fetch(`/api/v1/orders/${lookup_code}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(order)
-    }).then((response) => {
-      if (response.ok) {
-        console.log(response);
-
-        // Add the event listener to the iframe's window
-        console.log("Load stripe frame");
-        stripeFrame.src = '/register';
-        stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
-        stripeFrame.hidden = false;
-      } else {
-        console.error(response);
+  // establish lookup code, retrieve any order from server, and load orderForm
+  async function pageStart() {
+    console.debug("pageStart");
+    const lookup_code = getLocalItem("lookup");
+    if (lookup_code) {
+      console.debug(`lookup code from localStorage is ${lookup_code}; fetching order`);
+      try {
+        const response = await fetch(`/api/v1/orders/${lookup_code}`);
+        console.debug(response);
+        if (response.ok) {
+          console.log("retrieved order");
+          const order = await response.text();
+          setLocalItem("order", order);
+        }
+        loadOrderForm();
+      } catch (error) {
+        console.error(error);
+        removeLocalItem("lookup");
+        newLookup();
       }
-    });
-  });
-
-  function onChangeOrderForm() {
-    const scount = rnumtrees.value;
-    const count = scount == "" ? 0 : parseInt(scount);
-    const sextra = rextra.value
-    const extra = sextra == "" ? 0 : parseInt(sextra);
-    console.log(`${count} trees, ${extra} extra`);
-    const amount = (count * 15) + extra;
-    ramount.value = amount;
+    } else {
+      console.debug("no lookup code in localStorage");
+      newLookup();
+    }
   }
 
+  // get new unique lookup code from server and load orderForm with defaults
+  async function newLookup() {
+    console.debug("POSTing to lookups");
+    // post to /api/v1/lookups
+    await fetch('/api/v1/lookups', {method: "POST"})
+      .then((response) => response.text())
+      .then((lookup_code) => {
+        console.log(`new lookup code is ${lookup_code}`);
+        setLocalItem("lookup", lookup_code);
+        loadOrderForm();
+    });
+  }
+
+  // restore orderForm from localStorage, wire up events, and display
   function loadOrderForm() {
     console.debug("loadOrderForm");
     let order = null;
@@ -158,7 +159,51 @@
     orderForm.hidden = false;
   }
 
-  // This function will be called when a message is received
+  // on orderForm input, update amount
+  function onChangeOrderForm() {
+    const scount = rnumtrees.value;
+    const count = scount == "" ? 0 : parseInt(scount);
+    const sextra = rextra.value
+    const extra = sextra == "" ? 0 : parseInt(sextra);
+    console.log(`${count} trees, ${extra} extra`);
+    const amount = (count * 15) + extra;
+    ramount.value = amount;
+  }
+
+  // on orderForm focusout, POST order, then hand off to stripeFrame
+  orderForm.addEventListener("focusout", (event) => {
+    const order = {
+      numtrees: rnumtrees.value,
+      extra: rextra.value,
+      comment: rcomment.value
+    }
+    setLocalItem("order", order);
+    fetch(`/api/v1/orders/${lookup_code}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(order)
+    }).then((response) => {
+      if (response.ok) {
+        console.log(response);
+
+        loadStripeFrame();
+      } else {
+        console.error(response);
+      }
+    });
+  });
+
+  function loadStripeFrame() {
+    // Add the event listener to the iframe's window
+    console.log("Load stripe frame");
+    stripeFrame.src = '/register';
+    stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
+    stripeFrame.hidden = false;
+  }
+
+  // dispatch messages from stripeFrame
   function onStripeFrameMessage(event) {
     // only trust messages from my own iframe
     const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
@@ -178,19 +223,7 @@
     // For example: dispatchEvent(new CustomEvent('messageReceived', { detail: event.data }));
   }
 
-
-
-  async function newLookup() {
-    console.debug("POSTing to lookups");
-    // post to /api/v1/lookups
-    await fetch('/api/v1/lookups', {method: "POST"})
-      .then((response) => response.text())
-      .then((lookup_code) => {
-        console.log(`new lookup code is ${lookup_code}`);
-        setLocalItem("lookup", lookup_code);
-        loadOrderForm();
-    });
-  }
+  // localStorage helpers
 
   function getLocalItem(key) {
     try {
@@ -201,43 +234,12 @@
       return null;
     }
   }
-
   function setLocalItem(key, value) {
     window.localStorage.setItem(key, value);
   }
-
   function removeLocalItem(key) {
     window.localStorage.removeItem(key);
   }
 
-  async function pageStart() {
-    console.debug("pageStart");
-    const lookup_code = getLocalItem("lookup");
-    if (lookup_code) {
-      console.debug(`lookup code from localStorage is ${lookup_code}; fetching order`);
-      try {
-        const response = await fetch(`/api/v1/orders/${lookup_code}`);
-        console.debug(response);
-        if (response.ok) {
-          console.log("retrieved order");
-          const order = await response.text();
-          setLocalItem("order", order);
-        }
-        loadOrderForm();
-      } catch (error) {
-        console.error(error);
-        removeLocalItem("lookup");
-        newLookup();
-      }
-    } else {
-      console.debug("no lookup code in localStorage");
-      newLookup();
-    }
-  }
-
-
-
-  window.addEventListener("load", (event) => {
-    pageStart();
-  });
-
+  pageStart();
+});
