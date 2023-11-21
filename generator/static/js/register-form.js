@@ -65,7 +65,7 @@
 
 
   const stripeSection = document.getElementById("stripe-section");
-  const stripeFrame = document.querySelector("iframe#stripe-frame");
+  const stripeFrame = document.getElementById("stripe-frame");
 
 
   orderForm.addEventListener("focusout", (event) => {
@@ -86,8 +86,9 @@
         console.log(response);
 
         // Add the event listener to the iframe's window
-        stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
+        console.log("Load stripe frame");
         stripeFrame.src = '/register';
+        stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
         stripeFrame.hidden = false;
       } else {
         console.error(response);
