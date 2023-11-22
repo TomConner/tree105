@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const frame = document.getElementById("stripe-return-frame");
     const params = new URLSearchParams(window.location.search);
-    frame.src = `/register?q=${params.toString()}`;
+    frame.src = `/confirm?q=${params.toString()}`;
 });
 </script>
 
