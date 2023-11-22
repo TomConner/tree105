@@ -1,4 +1,11 @@
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const frame = document.getElementById("stripe-return-frame");
+    const params = new URLSearchParams(window.location.search);
+    frame.src = `/register?q=${params.toString()}`;
+});
+</script>
 
 <iframe id="stripe-return-frame" src="/confirm">
 </iframe>
