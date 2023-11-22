@@ -213,6 +213,7 @@ window.addEventListener("load", (event) => {
     stripeFrame.src = `/register?q=${lookup_code}`;
     stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
     stripeFrame.hidden = false;
+    stripeFrame.scrollIntoView();
   }
 
   // dispatch messages from stripeFrame
@@ -229,7 +230,6 @@ window.addEventListener("load", (event) => {
     }
 
     // Handle the message here
-    console.debug('Stripe message:', event.data);
 
     switch (event.data.m) {
       case 'frame_scrollIntoView':
@@ -239,7 +239,8 @@ window.addEventListener("load", (event) => {
       //TODO height of frame
 
       default:
-        console.error('unhandled message:', event.data);
+        console.debug(`message from ${event.origin}:`);
+        console.debug(event.data);
         break;
     }
   }
