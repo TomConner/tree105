@@ -166,6 +166,7 @@ window.addEventListener("load", (event) => {
 
     document.getElementById("spinner-register").hidden = true;
     orderForm.hidden = false;
+    orderForm.scrollIntoView();
   }
 
   // on orderForm input, update amount
