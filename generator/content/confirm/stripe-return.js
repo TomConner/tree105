@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Load the publishable key from the server. The publishable key
   // is set in your .env file.
-  const {publishableKey} = await fetch('/config').then((r) => r.json());
+  const {publishableKey} = await fetch('/api/v1/config').then((r) => r.json());
   if (!publishableKey) {
     addMessage(
       'No publishable key returned from the server. Please check `.env` and try again'
