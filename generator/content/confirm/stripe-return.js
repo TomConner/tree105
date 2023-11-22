@@ -3,10 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // is set in your .env file.
   const {publishableKey} = await fetch('/api/v1/config').then((r) => r.json());
   if (!publishableKey) {
-    addMessage(
-      'No publishable key returned from the server. Please check `.env` and try again'
-    );
-    alert('Please set your Stripe publishable API key in the .env file');
+    addMessage("no publishableKey");
   }
 
   const stripe = Stripe(publishableKey, {
@@ -23,8 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     addMessage(error.message);
   }
   addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
-
-
 
   var height = document.body.scrollHeight;
   window.parent.postMessage({
