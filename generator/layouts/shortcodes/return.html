@@ -4,9 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const frame = document.getElementById("stripe-return-frame");
     const params = new URLSearchParams(window.location.search);
     frame.src = `/confirm?q=${params.toString()}`;
+    window.addEventListener('message', function(event) {
+        if (event.data.frameHeight) {
+            var iframe = document.getElementById('stripe-return-frame'); // Replace with your iframe's ID
+            iframe.style.height = event.data.frameHeight + 'px';
+        }
+    }, false);
 });
-</script>
 
+</script>
 <style>
 #stripe-return-frame {
     width: 100%;

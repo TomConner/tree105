@@ -23,4 +23,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     addMessage(error.message);
   }
   addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
+
+
+
+  var height = document.body.scrollHeight;
+  window.parent.postMessage({
+      'frameHeight': height
+  }, 'https://dev.troop105treedrive.com');
 });
