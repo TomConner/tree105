@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       phone: 'always',
     },
     validation: {
-      phone: {required: 'auto'},
+      phone: {required: 'always'},
     }
   };
   const addressElement = elements.create('address', options);
