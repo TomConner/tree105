@@ -122,14 +122,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // on address input, save address in localStorage
   addressElement.on('change', (event) => {
-    console.debug(event);//TODO REMOVE
     if (event.error) {
       validateAddress(event);
     } else if (event.complete) {
       // Extract potentially complete address
       const address = event.value;
-      console.debug("address complete");
-      console.debug(address);
       setLocalItem("address", JSON.stringify(address));
       validateAddress(null);
     }
@@ -142,8 +139,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (!(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
       showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
       return false;
+    } else {
+      clearAddressMessage();
+      return true;
     }
-    return true;
   }
 
   // on register button, post address and then hand off to payment choices
