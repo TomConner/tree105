@@ -101,6 +101,7 @@ window.addEventListener("load", (event) => {
     await fetch('/api/v1/lookups', {method: "POST"})
       .then((response) => response.text())
       .then((lookup_code) => {
+        lookup_code = lookup_code.trim();
         console.log(`new lookup code is ${lookup_code}`);
         setLocalItem("lookup", lookup_code);
         loadOrderForm();
