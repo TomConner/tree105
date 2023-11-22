@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function loadPaymentChoices() {
     const tabsPaymentMethod = document.getElementById("tabs-payment-method");
     tabsPaymentMethod.classList.remove("hidden");
+    tabsPaymentMethod.scrollIntoView();
 
     const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
     const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
@@ -204,7 +205,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // show stripe payment section
     const stripePayment = document.getElementById('stripe-payment');
-    stripePayment.classList.remove('hidden');
+    stripePayment.classList.remove("hidden");
+    stripePayment.scrollIntoView();
 
 
     // create and mount payment element
