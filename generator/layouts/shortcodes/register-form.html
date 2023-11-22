@@ -108,17 +108,19 @@ fieldset, input, select {
   font-size:0.7em;
 }
 
-.lookup-code {
+#lookup-code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
   color: gray;
   font-size: 80%;
   margin: 0;
   text-align: right;
 }
-#local-session {
-  text-align: right;
+.local-session {
+    display: flex;
+    justify-content: flex-end; /* Aligns children (the button) to the right */
+    align-items: center; /* Aligns children vertically in the middle, if needed */
 }
-#local-session buttton {
+.local-session buttton {
   text-align: center;
   background: gray;
   border-radius: var(--radius);
@@ -169,8 +171,8 @@ fieldset, input, select {
 
       <p><strong id="message2"></strong></p>
       -->
-      <section id="local-session">
-        <p id="lookup-code" class="lookup-code"></p>
+      <section class="local-session">
+        <p id="lookup-code"></p>
         <button>start over</button>
       </section>
 
