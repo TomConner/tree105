@@ -117,10 +117,10 @@ fieldset, input, select {
 }
 .local-session {
     display: flex;
-    justify-content: flex-end; /* Aligns children (the button) to the right */
-    align-items: center; /* Aligns children vertically in the middle, if needed */
+    justify-content: space-between; /* Positions one item on the far left, the other on the far right */
+    align-items: center; /* Aligns items vertically in the center, if needed */
 }
-.local-session buttton {
+.start-over {
   text-align: center;
   background: gray;
   border-radius: var(--radius);
@@ -178,7 +178,7 @@ fieldset, input, select {
       <p id="lookup-code"></p>
       <section class="local-session">
 
-        <button type="submit">Continue</button>  <button>start over</button>
+        <button type="submit">Continue</button>  <button class="start-over">start over</button>
       </section>
 
 
