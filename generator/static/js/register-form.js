@@ -133,7 +133,6 @@ window.addEventListener("load", (event) => {
     rextra.addEventListener("input", onChangeOrderForm);
 
     lookup_code = getLocalItem("lookup");
-    document.getElementById("lookup-code").innerText = `Lookup code: ${lookup_code}`;
 
     // document.getElementById("registerform").addEventListener("input", (event) => {
     //   message1 = document.getElementById("message1")
