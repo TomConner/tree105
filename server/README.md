@@ -72,7 +72,7 @@ python3 -m flask run --port=4242
 
 ## Docker
 
-### 
+###
 
 ### Build server image
 
@@ -85,3 +85,10 @@ docker buildx build . -t tomconner/tree105:latest --push
 ```sh
 docker run --name tree105 --rm -p 4242:4242 -it tomconner/tree105:latest
 ```
+
+
+
+
+### TODO
+
+scroll down on loading

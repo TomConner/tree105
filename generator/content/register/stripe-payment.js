@@ -150,27 +150,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     sectionPaymentChoices.classList.remove('hidden');
 
     // for all payment option tabs: on tab click, show tabcontent
-    const tablinks = document.getElementsByClassName("tablinks");
+
+    //remove const tab_refs = [ "tab-pay-stripe", "tab-pay-venmo", "tab-pay-on-tree" ];
+    const tablinks = document.getElementsByClassName("tablink");
+    const tabcontents = document.getElementsByClassName("tabcontent");
+
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].addEventListener("click", (event) => {
-        const paymentMethod = event.currentTarget.id;
-        var i, tabcontent, tablinks;
+        event.preventDefault();
 
-        // hide all tabcontent
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
+        const this_i = i;
+        //const paymentMethod = document.getElementById(tablink_refs[i]);
+        var j;
+        for (j = 0; j < tablinks.length; j++) {
+          if ( this_i == j ) {
+            tablinks[j].classList.add("active");
+            tabcontents[j].style.display = "block";
+          } else {
+            tablinks[j].classList.remove("active");
+            tabcontents[j].style.display = "none";
+          }
         }
-
-        // deactivate all tablinks
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-
-        // activate clicked tablink and show its tabcontent
-        document.getElementById(paymentMethod).style.display = "block";
-        event.currentTarget.className += " active";
       });
     }
   }
