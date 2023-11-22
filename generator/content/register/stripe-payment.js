@@ -144,41 +144,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // show payment choices tabset
   function loadPaymentChoices() {
-    //const sectionAddress = document.getElementById('section-address');
-    const sectionPaymentChoices = document.getElementById('tabs-payment-method');
-    //sectionAddress.classList.add('hidden');
-    sectionPaymentChoices.classList.remove('hidden');
+    const tablink_pay_stripe = document.getElementById("tab-pay-stripe");
+    const tablink_pay_venmo = document.getElementById("tab-pay-venmo");
+    const tablink_pay_on_tree = document.getElementById("tab-pay-on-tree");
 
-    // for all payment option tabs: on tab click, show tabcontent
+    const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe-content");
+    const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo-content");
+    const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree-content");
 
-    //remove const tab_refs = [ "tab-pay-stripe", "tab-pay-venmo", "tab-pay-on-tree" ];
-    const tablinks = document.getElementsByClassName("tablink");
-    const tabcontents = document.getElementsByClassName("tabcontent");
 
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].addEventListener("click", (event) => {
-        event.preventDefault();
+    tablink_pay_stripe.addEventListener("click", (event) => {
+      event.preventDefault();
+      tablink_pay_stripe.classList.add("active");
+      tablink_pay_venmo.classList.remove("active");
+      tablink_pay_on_tree.classList.remove("active");
 
-        const this_i = i;
-        //const paymentMethod = document.getElementById(tablink_refs[i]);
-        var j;
-        for (j = 0; j < tablinks.length; j++) {
-          if ( this_i == j ) {
-            tablinks[j].classList.add("active");
-            tabcontents[j].style.display = "block";
-          } else {
-            tablinks[j].classList.remove("active");
-            tabcontents[j].style.display = "none";
-          }
-        }
-      });
+      tabcontent_pay_venmo.classList.add("hidden");
+      tabcontent_pay_on_tree.classList.add("hidden");
+      loadStripe();
+    });
+
+    tablink_pay_venmo.addEventListener("click", (event) => {
+      event.preventDefault();
+      tablink_pay_stripe.classList.remove("active");
+      tablink_pay_venmo.classList.add("active");
+      tablink_pay_on_tree.classList.remove("active");
+
+      tabcontent_pay_stripe.classList.add("hidden");
+      tabcontent_pay_venmo.classList.remove("hidden");
+      tabcontent_pay_on_tree.classList.add("hidden");
+    });
+
+    tablink_pay_on_tree.addEventListener("click", (event) => {
+      event.preventDefault();
+      tablink_pay_stripe.classList.remove("active");
+      tablink_pay_venmo.classList.remove("active");
+      tablink_pay_on_tree.classList.add("active");
+
+      tabcontent_pay_stripe.classList.add("hidden");
+      tabcontent_pay_venmo.classList.add("hidden");
+      tabcontent_pay_on_tree.classList.remove("hidden");
     }
   }
 
   // on stripe button, hand off to stripe payment
-  const buttonLoadStripe = document.getElementById('button-load-stripe');
-  buttonLoadStripe.addEventListener('click', async (e) => {
-    e.preventDefault();
+  async function loadStripe() {
 
     // show stripe payment section
     const stripePayment = document.getElementById('stripe-payment');
