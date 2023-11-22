@@ -144,6 +144,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // show payment choices tabset
   function loadPaymentChoices() {
+    const tabsPaymentMethod = document.getElementById("tabs-payment-method");
+    tabsPaymentMethod.classList.remove("hidden");
+
     const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
     const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
     const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
@@ -185,6 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       tabcontent_pay_venmo.classList.add("hidden");
       tabcontent_pay_on_tree.classList.remove("hidden");
     });
+
+    tablink_pay_stripe.click();
   }
 
   // on stripe button, hand off to stripe payment
