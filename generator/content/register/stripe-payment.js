@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
     });
-  });
+  }
 
   // localStorage helpers
   function getLocalItem(key) {
