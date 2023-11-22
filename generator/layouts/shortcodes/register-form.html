@@ -115,24 +115,6 @@ fieldset, input, select {
   margin: 0;
   text-align: right;
 }
-.local-session {
-    display: flex;
-    justify-content: space-between; /* Positions one item on the far left, the other on the far right */
-    align-items: center; /* Aligns items vertically in the center, if needed */
-}
-.start-over {
-  text-align: center;
-  background: gray;
-  border-radius: var(--radius);
-  color: white;
-  border: 0;
-  padding: 6px 8px;
-  margin-top: 8px;
-  font-weight: 300;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: block;
-}
 </style>
 <script src="js/register-form.js"></script>
 
@@ -174,6 +156,10 @@ fieldset, input, select {
       <p id="messageVenmo" hidden="true">
         <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
       </p>
+
+      <section class="local-session">
+        <button type="submit">Continue</button>
+      </section>
 
   </form>
 </section>
