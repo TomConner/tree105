@@ -93,8 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // create and mount the address element
   const options = {
-    mode: 'billing',
-    //mode: 'shipping',
+    mode: 'shipping',
     fields: {
       phone: 'always',
     },
