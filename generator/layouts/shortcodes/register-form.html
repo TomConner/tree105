@@ -52,7 +52,19 @@ button:disabled {
   opacity: 0.5;
   cursor: none;
 }
-
+#start-over buttton {
+  text-align: center;
+  background: gray;
+  border-radius: var(--radius);
+  color: white;
+  border: 0;
+  padding: 6px 8px;
+  margin-top: 8px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
 input, select {
   display: block;
   font-size: 1.1em;
@@ -155,7 +167,7 @@ fieldset, input, select {
       <p><strong id="message2"></strong></p>
       -->
       <p id="lookup-code" class="lookup-code"></p>
-      <p id="start-over" class="lookup-code">start over</p>
+      <p id="start-over" class="lookup-code"><button>start over</button></p>
 
       <p id="messageVenmo" hidden="true">
         <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
