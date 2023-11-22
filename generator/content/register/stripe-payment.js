@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       tabcontent_pay_stripe.classList.add("hidden");
       tabcontent_pay_venmo.classList.add("hidden");
       tabcontent_pay_on_tree.classList.remove("hidden");
-    }
+    });
   }
 
   // on stripe button, hand off to stripe payment
