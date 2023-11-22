@@ -144,13 +144,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // show payment choices tabset
   function loadPaymentChoices() {
-    const tablink_pay_stripe = document.getElementById("tab-pay-stripe");
-    const tablink_pay_venmo = document.getElementById("tab-pay-venmo");
-    const tablink_pay_on_tree = document.getElementById("tab-pay-on-tree");
+    const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
+    const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
+    const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
 
-    const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe-content");
-    const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo-content");
-    const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree-content");
+    const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe");
+    const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo");
+    const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
 
 
     tablink_pay_stripe.addEventListener("click", (event) => {
