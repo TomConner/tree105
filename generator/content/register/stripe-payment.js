@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabsPaymentMethod = document.getElementById("tabs-payment-method");
     tabsPaymentMethod.classList.remove("hidden");
     tabsPaymentMethod.scrollIntoView();
+    publishMessage({m:'frame_scrollIntoView'})
 
     const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
     const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
@@ -198,7 +199,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // on stripe button, hand off to stripe payment
-  // on stripe button, hand off to stripe payment
   const buttonLoadStripe = document.getElementById('button-load-stripe');
   buttonLoadStripe.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -207,7 +207,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const stripePayment = document.getElementById('stripe-payment');
     stripePayment.classList.remove("hidden");
     stripePayment.scrollIntoView();
-
 
     // create and mount payment element
     const paymentElementOptions = {

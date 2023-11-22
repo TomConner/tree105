@@ -229,10 +229,19 @@ window.addEventListener("load", (event) => {
     }
 
     // Handle the message here
-    //console.debug('Stripe message:', event.data);
+    console.debug('Stripe message:', event.data);
 
-    // TODO dispatch the message data to other parts of your application as needed
-    // For example: dispatchEvent(new CustomEvent('messageReceived', { detail: event.data }));
+    switch (event.data.m) {
+      case 'frame_scrollIntoView':
+        stripeFrame.scrollIntoView();
+        break;
+
+      //TODO height of frame
+
+      default:
+        console.error('unhandled message:', event.data);
+        break;
+    }
   }
 
   // localStorage helpers
