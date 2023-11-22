@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo");
     const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
 
+    const buttonLoadStripe = document.getElementById("button-load-stripe");
 
     tablink_pay_stripe.addEventListener("click", (event) => {
       event.preventDefault();
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       tabcontent_pay_venmo.classList.add("hidden");
       tabcontent_pay_on_tree.classList.add("hidden");
-      loadStripe();
+      tabcontent_pay_stripe.classList.add("hidden");
     });
 
     tablink_pay_venmo.addEventListener("click", (event) => {
@@ -193,7 +194,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // on stripe button, hand off to stripe payment
-  async function loadStripe() {
+  // on stripe button, hand off to stripe payment
+  const buttonLoadStripe = document.getElementById('button-load-stripe');
+  buttonLoadStripe.addEventListener('click', async (e) => {
+    e.preventDefault();
 
     // show stripe payment section
     const stripePayment = document.getElementById('stripe-payment');
