@@ -159,23 +159,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     tablink_pay_stripe.addEventListener("click", (event) => {
       event.preventDefault();
-      tablink_pay_stripe.classList.add("active");
+      tablink_pay_stripe.classList.add("active"); // activate
       tablink_pay_venmo.classList.remove("active");
       tablink_pay_on_tree.classList.remove("active");
 
+      tabcontent_pay_stripe.classList.remove("hidden"); // show
       tabcontent_pay_venmo.classList.add("hidden");
       tabcontent_pay_on_tree.classList.add("hidden");
-      tabcontent_pay_stripe.classList.add("hidden");
     });
 
     tablink_pay_venmo.addEventListener("click", (event) => {
       event.preventDefault();
       tablink_pay_stripe.classList.remove("active");
-      tablink_pay_venmo.classList.add("active");
+      tablink_pay_venmo.classList.add("active"); // activate
       tablink_pay_on_tree.classList.remove("active");
 
       tabcontent_pay_stripe.classList.add("hidden");
-      tabcontent_pay_venmo.classList.remove("hidden");
+      tabcontent_pay_venmo.classList.remove("hidden"); // show
       tabcontent_pay_on_tree.classList.add("hidden");
     });
 
@@ -183,11 +183,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.preventDefault();
       tablink_pay_stripe.classList.remove("active");
       tablink_pay_venmo.classList.remove("active");
-      tablink_pay_on_tree.classList.add("active");
+      tablink_pay_on_tree.classList.add("active"); // activate
 
       tabcontent_pay_stripe.classList.add("hidden");
       tabcontent_pay_venmo.classList.add("hidden");
-      tabcontent_pay_on_tree.classList.remove("hidden");
+      tabcontent_pay_on_tree.classList.remove("hidden"); // show
     });
 
     tablink_pay_stripe.click();

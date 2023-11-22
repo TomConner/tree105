@@ -125,10 +125,11 @@ fieldset, input, select {
   background-color: #558f12;
 }
 
-
 /* Style the tab content */
 .tabcontent {
-  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
 }
 
 .tabnonstripe {
@@ -137,10 +138,7 @@ fieldset, input, select {
   border-top: none;
 }
 
-
-
-
-/* TC added */
+/* hide content */
 .hidden {
   display: none;
 }
