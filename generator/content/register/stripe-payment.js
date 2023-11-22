@@ -175,6 +175,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       tablink_pay_on_tree.classList.remove("active");
 
       tabcontent_pay_stripe.classList.add("hidden");
+      const stripePayment = document.getElementById('stripe-payment');
+      stripePayment.classList.add('hidden');
       tabcontent_pay_venmo.classList.remove("hidden"); // show
       tabcontent_pay_on_tree.classList.add("hidden");
     });
@@ -186,6 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       tablink_pay_on_tree.classList.add("active"); // activate
 
       tabcontent_pay_stripe.classList.add("hidden");
+      const stripePayment = document.getElementById('stripe-payment');
+      stripePayment.classList.add('hidden');
       tabcontent_pay_venmo.classList.add("hidden");
       tabcontent_pay_on_tree.classList.remove("hidden"); // show
     });
