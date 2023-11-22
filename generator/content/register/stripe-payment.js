@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const {error: stripeError} = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/confirm`,
+          return_url: `${window.location.origin}/return?lookup=${lookup_code}`,
           receipt_email: emailAddress,
         }
       });
