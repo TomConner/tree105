@@ -124,9 +124,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // on address input, save address in localStorage
   addressElement.on('change', (event) => {
+    console.debug(event);//TODO REMOVE
     if (event.complete){
       // Extract potentially complete address
       const address = event.value;
+      console.debug("address complete");
+      console.debug(address);
+      setLocalItem("address", JSON.stringify(address));
       setLocalItem("address", JSON.stringify(address));
     }
     if (event.error) {
@@ -136,10 +140,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  function validateAddress() {
+    const address = JSON.parse(getLocalItem("address"));
+    if (address.address.city != "Pembroke".toLowerCase()) {
+      showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
+      return false;
+    }
+    return true;
+  }
+
   // on register button, post address and then hand off to payment choices
   const buttonRegister = document.getElementById('button-register');
   buttonRegister.addEventListener('click', async (e) => {
     e.preventDefault();
+    if (!validateAddress()) {
+      return;
+    }
     const address = JSON.parse(getLocalItem("address"));
     const flat_address = address.address;
     flat_address.name = address.name;
