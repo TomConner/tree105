@@ -67,6 +67,13 @@ window.addEventListener("load", (event) => {
   const ramount = document.getElementById("amount");
 
   const buttonContinue = document.getElementById("button-continue");
+  const buttonStartOver = document.getElementById("button-start-over");
+  buttonStartOver.addEventListener("click", (event) => {
+    event.preventDefault();
+    removeLocalItem("lookup");
+    removeLocalItem("order");
+    window.location.reload();
+  });
   const stripeFrame = document.getElementById("stripe-frame");
 
   // establish lookup code, retrieve any order from server, and load orderForm
