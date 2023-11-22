@@ -1,6 +1,21 @@
 // ------- UI helpers -------
 
-function showMessage(messageText) {
+function showAddressMessage(messageText) {
+  const messageContainer = document.querySelector("#address-message");
+
+  messageContainer.classList.remove("hidden");
+  messageContainer.textContent = messageText;
+
+  setTimeout(clearAddressMessage, 4000);
+}
+
+function clearAddressMessage() {
+  const messageContainer = document.querySelector("#address-message");
+  messageContainer.classList.add("hidden");
+  messageContainer.textContent = "";
+}
+
+function showPaymentMessage(messageText) {
   const messageContainer = document.querySelector("#payment-message");
 
   messageContainer.classList.remove("hidden");
@@ -94,11 +109,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // create and mount the address element
   const options = {
     mode: 'shipping',
+    autocomplete: {
+      mode: 'automatic',
+    },
     fields: {
       phone: 'always',
     },
     validation: {
-      phone: {required: 'always'},
+      phone: {required: 'auto'},
     }
   };
   const addressElement = elements.create('address', options);
@@ -110,6 +128,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Extract potentially complete address
       const address = event.value;
       setLocalItem("address", JSON.stringify(address));
+    }
+    if (event.error) {
+      showAddressMessage(event.error.message);
+    } else {
+      clearAddressMessage();
     }
   });
 
@@ -237,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       if (stripeError) {
-        showMessage(stripeError.message);
+        showPaymentMessage(stripeError.message);
 
         // reenable the form.
         submitted = false;
