@@ -96,8 +96,8 @@ fieldset, input, select {
 }
 
 .validation-message {
-  color: rgb(53, 6, 20);
-  font-size:0.7em;
+  color: rgb(170 20 20);
+  font-size:0.8em;
   font-weight: bold;
 }
 /**** TABS ****/

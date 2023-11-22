@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function validateAddress() {
     const address = JSON.parse(getLocalItem("address"));
-    if (address.address.city != "Pembroke".toLowerCase()) {
+    if (!(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
       showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
       return false;
     }
