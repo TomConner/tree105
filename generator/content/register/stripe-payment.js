@@ -5,8 +5,6 @@ function showAddressMessage(messageText) {
 
   messageContainer.classList.remove("hidden");
   messageContainer.textContent = messageText;
-
-  setTimeout(clearAddressMessage, 4000);
 }
 
 function clearAddressMessage() {
@@ -131,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.debug("address complete");
       console.debug(address);
       setLocalItem("address", JSON.stringify(address));
-      setLocalItem("address", JSON.stringify(address));
+      validateAddress();
     }
     if (event.error) {
       showAddressMessage(event.error.message);
