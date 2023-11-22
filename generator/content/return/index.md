@@ -11,4 +11,4 @@ confirmation will be sent to you within 3 days.
 
 ## Payment Information
 
-<<- return ->>
+{{< return >}}
