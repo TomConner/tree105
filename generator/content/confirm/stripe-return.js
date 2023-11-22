@@ -30,28 +30,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.parent.postMessage({
       'frameHeight': height
   }, 'https://dev.troop105treedrive.com');
-  function showMessage(messageText) {
-    const messageContainer = document.querySelector("#payment-message");
 
-    messageContainer.classList.remove("hidden");
-    messageContainer.textContent = messageText;
+  // Helper for displaying status messages.
+  const addMessage = (message) => {
+    const messagesDiv = document.querySelector('#messages');
+    messagesDiv.style.display = 'block';
+    const messageWithLinks = addDashboardLinks(message);
+    messagesDiv.innerHTML += `> ${messageWithLinks}<br>`;
+    console.log(`Debug: ${message}`);
+  };
 
-    setTimeout(function () {
-      messageContainer.classList.add("hidden");
-      messageContainer.textContent = "";
-    }, 4000);
-  }
-
-  // Show a spinner on payment submission
-  function setLoading(isLoading) {
-    if (isLoading) {
-      // Disable the button and show a spinner
-      document.querySelector("#submit").disabled = true;
-      document.querySelector("#spinner").classList.remove("hidden");
-      document.querySelector("#button-text").classList.add("hidden");
-    } else {
-      document.querySelector("#submit").disabled = false;
-      document.querySelector("#spinner").classList.add("hidden");
-      document.querySelector("#button-text").classList.remove("hidden");
-    }
-  }});
+});
