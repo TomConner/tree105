@@ -3,6 +3,8 @@ title: "Registration Received and Venmo Instructions"
 date: 2019-03-29
 ---
 
+{{< logo >}}
+
 ## Registration Received
 
 We've received your registration to have your tree picked up on January 6, 2023.

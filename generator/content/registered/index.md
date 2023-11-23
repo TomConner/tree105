@@ -3,6 +3,8 @@ title: "Registration Received"
 date: 2019-03-29
 ---
 
+{{< logo >}}
+
 ## Registration Received
 
 You're all set.
