@@ -58,8 +58,14 @@ function loadPaymentChoices() {
 
   const buttonLoadStripe = document.getElementById("button-load-stripe");
 
-  buttonPayVenmo = document.getElementById("button-pay-venmo");
-  buttonPayOnTree = document.getElementById("button-pay-on-tree");
+  document.getElementById("button-pay-venmo").onclick = (event) => {
+    event.preventDefault();
+    window.location = "/venmoinstructions";
+  }
+  document.getElementById("button-pay-on-tree").onclick = (event) => {
+    event.preventDefault();
+    window.location = "/registered";
+  }
 
   tablink_pay_stripe.addEventListener("click", (event) => {
     event.preventDefault();
