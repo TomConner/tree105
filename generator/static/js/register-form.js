@@ -101,7 +101,7 @@ window.addEventListener("load", (event) => {
     await fetch('/api/v1/lookups', {method: "POST"})
       .then((response) => response.text())
       .then((lookup_code) => {
-        lookup_code = lookup_code.trim
+        lookup_code = lookup_code.trim();
         console.log(`new lookup code is ${lookup_code}`);
         setLocalItem("lookup", lookup_code);
         loadOrderForm();
@@ -231,7 +231,8 @@ window.addEventListener("load", (event) => {
 
       //TODO height of frame
 
-      case
+      case 'navigate':
+        window.location.assign(event.data.location);
 
       default:
         console.debug(`message from ${event.origin}:`);
