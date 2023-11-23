@@ -67,6 +67,8 @@ function loadPaymentChoices() {
     publishMessage({"m":"navigate", "location":"/registered"}, window.location.origin);
   }
 
+  // Note: Stripe payments redirect to "/return"
+
   tablink_pay_stripe.addEventListener("click", (event) => {
     event.preventDefault();
     tablink_pay_stripe.classList.add("active"); // activate

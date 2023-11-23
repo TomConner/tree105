@@ -13,9 +13,11 @@ We've received your registration to have your tree picked up on January 6, 2023.
 An email confirmation will be sent to you within 3 days.
 
 Additionally, you will receive an email by Friday, January 5th as a reminder
-with last minute details about leaving your tree out for us.
+with last minute details about leaving your tree out for us with payment
+attached.
 
-If you haven't yet paid, please plan to leave payment on your tree on pickup day,
-or pay by [Venmo](../venmoinstructions).
+Another payment option is [Venmo](../venmoinstructions).
+
+## Thank You
 
 Thank you for your support.
