@@ -1,0 +1,62 @@
+version: "3.9"
+services:
+
+  caddy:
+    image: caddy:2.7.5
+      # build:
+      #   context: ./caddy
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    # expose:
+    #   - 5678
+    working_dir: /tree105/caddy
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./public:/public
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - outside
+      - default
+
+  server:
+    build:
+      context: ./server
+    working_dir: /tree105/server
+    command: python server.py
+    #command: python -m debugpy --listen 0.0.0.0:5678 server.py
+    ports:
+      - "4242:4242"
+      # - "5678:5678"
+    volumes:
+      - .:/tree105
+    networks:
+      - default
+
+  generator:
+    build:
+      context: ./generator
+    working_dir: /tree105/generator
+    #command: hugo server -v -s /tree105/generator --liveReloadPort 443 -d /tree105/public --bind "0.0.0.0" --port 1313
+    command: hugo server -v -s /tree105/generator --disableLiveReload -d /tree105/public --bind "0.0.0.0" --port 1313
+    ports:
+      - "1313:1313"
+    volumes:
+      - .:/tree105
+    networks:
+      - default
+
+volumes:
+  tree105:
+  caddy_data:
+    external: true
+  caddy_config:
+
+networks:
+  outside:
+    external: true

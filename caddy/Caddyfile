@@ -1,0 +1,30 @@
+# {
+#     order l4 before http
+# }
+
+# l4 :5678 {
+#     route {
+#         forward_to tree105-server-1:5678
+#     }
+# }
+
+www.troop105treedrive.com {
+	redir https://troop105treedrive.com{uri}
+}
+
+troop105treedrive.com {
+    handle /api/* {
+        reverse_proxy tree105-server-1:4242
+    }
+    file_server /.well-known/* browse {
+        root ./public
+    }
+    handle {
+        reverse_proxy tree105-generator-1:1313
+    }
+}
+
+# dev.troop105treedrive.com:5678 {
+#     reverse_proxy tree105-server-1:5678
+# }
+

@@ -1,0 +1,183 @@
+<style>
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+
+:root {
+  --light-grey: #F6F9FC;
+  --dark-terminal-color: #0A2540;
+  --accent-color: #635BFF;
+  --radius: 3px;
+}
+#register {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  color: var(--dark-terminal-color);
+}
+
+#tree-messages {
+  font-size:0.8em;
+}
+
+main {
+  width: 480px;
+}
+form > * {
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+button {
+  background-color: var(--accent-color);
+}
+
+button {
+  background: var(--accent-color);
+  border-radius: var(--radius);
+  color: white;
+  border: 0;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+button:hover {
+  filter: contrast(115%);
+}
+button:active {
+  transform: translateY(0px) scale(0.98);
+  filter: brightness(0.9);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: none;
+}
+
+input, select {
+  display: block;
+  font-size: 1.1em;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 12px;
+}
+
+input::placeholder {
+  font-weight: lighter;
+  opacity: 0.3;
+}
+
+label {
+  display: block;
+}
+
+#order-form label {
+  display: block;
+  color:darkslategray;
+}
+
+#order-form {
+  border: #F6F9FC solid 1px;
+  border-radius: var(--radius);
+  font-size: 80%;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+}
+
+a {
+  color: var(--accent-color);
+  font-weight: 900;
+}
+
+small {
+  font-size: .6em;
+}
+
+fieldset, input, select {
+  border: 1px solid #efefef;
+}
+
+#messages {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
+  display: none; /* hide initially, then show once the first message arrives */
+  background-color: #0A253C;
+  color: #00D924;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: var(--radius);
+  font-size:0.7em;
+}
+
+#lookup-code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
+  color: gray;
+  font-size: 80%;
+  margin: 0;
+  text-align: right;
+}
+</style>
+<script src="js/register-form.js"></script>
+
+<section id="register">
+  <p class="spinner" id="spinner-register">Loading...</p>
+
+  <form id="order-form" hidden="true">
+      <label class="tree" for="rcomment">Comment</label>
+      <input type="textarea" id="rcomment" name="rcomment" placeholder="Anything we need to know"></input>
+
+      <label class="tree" for="rnumtrees">Number of Trees</label>
+      <input type="number" min=0 name="rnumtrees" id="rnumtrees" required></input>
+
+      <p id="tree-messages">If you have an artificial tree, or no tree, but would like to support Pembroke Troop 105's Scouting program, indicate 0 trees and an additional donation amount.</p>
+      <label class="tree" for="rextra">Additional Donation Amount</label>
+      <input type="number" min=0  name="rextra" id="rextra"></input>
+      <p></p>
+      <label for="amount">Amount to pay: $</label>
+      <input type="text" id="amount" disabled>
+
+      <p></p>
+      <!--
+      <label for="rpmethod">Payment Method</label>
+      <br/>
+      <input type="radio" id="cashcheck" name="rpmethod" value="cashcheck">
+      <label for="cashcheck">Pay on pickup day by cash or check payable to Troop 105 (attach to tree).</label><br>
+      <input type="radio" id="venmo" name="rpmethod" value="venmo">
+      <label for="css">Pay now by Venmo.</label><br>
+      <input type="radio" id="card" name="rpmethod" value="card">
+      <label for="css">Pay now by credit/debit card or PayPal.</label><br>
+
+      <p></p>
+      <p><strong id="message1"></strong></p>
+
+      <input type="submit" id="submit" value="Register" />
+
+      <p><strong id="message2"></strong></p>
+      -->
+      <p id="messageVenmo" hidden="true">
+        <img src="qr-troop-venmo.png" style="max-width: 25%"></img>
+      </p>
+
+      <section class="local-session">
+        <button type="submit">Continue</button>
+      </section>
+
+  </form>
+</section>
+
+<!-- Stripe: Address and Payment-->
+<section id="stripe-section">
+  <style>
+    #stripe-frame {
+      width: 100%;
+      height: 5000px; /* TODO: adjust on frame resize messages */
+      border: none;
+    }
+  </style>
+
+  <iframe id="stripe-frame" hidden="true">
+    <!-- deferred load of src="/register" -->
+  </iframe>
+</section>
+
+<script>
+</script>

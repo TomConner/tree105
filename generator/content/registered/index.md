@@ -3,6 +3,8 @@ title: "Registration Received"
 date: 2019-03-29
 ---
 
+{{< logo >}}
+
 ## Registration Received
 
 You're all set.
@@ -12,5 +14,8 @@ An email confirmation will be sent to you within 3 days.
 
 Additionally, you will receive an email by Friday, January 5th as a reminder
 with last minute details about leaving your tree out for us.
+
+If you haven't yet paid, please plan to leave payment on your tree on pickup day,
+or pay by [Venmo](../venmoinstructions).
 
 Thank you for your support.

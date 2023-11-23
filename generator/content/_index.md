@@ -2,10 +2,11 @@
 title: Christmas Tree Pickup & Recycling
 ---
 
-# Christmas Tree Pickup & Recycling
+{{< logo >}}
 
-* For residents of Pembroke, MA
-* [Register for pickup]({{< ref "#register" >}})
+### Christmas Tree Pickup & Recycling
+
+* For residents of Pembroke, MA.
 * Donate $15 per tree.
 * Pickup day: {{< pickup-day >}}
 * Place your tree curbside by 9:00 am.
@@ -14,9 +15,5 @@ title: Christmas Tree Pickup & Recycling
 * **Thank You** to Top Notch Tree for chipping hundreds of trees
 * **Thank You** Pembroke residents who support our effort each year!
 
-## Register
-
-Registration for 2024 will open soon.
-
-<!-- {{< register-form >}}
- -->
+### Register for Tree Pickup
+{{< register-form >}}
