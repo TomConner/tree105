@@ -51,9 +51,25 @@
             <p>
               <strong>Pay by Venmo</strong>
             </p>
-            <p>
+            <p>Please pay: <span id="acct" style="font-size: 1.1em; font-weight: bold;">@Pembroke-Troop105</span><br/>
+            What's this for? <span id="memo" style="font-size: 1.1em; font-weight: bold;"></span> (or your email or name/address)</p>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const lookup = window.localStorage.getItem("lookup");
+                    var address = window.localStorage.getItem("address");
+                    if (address && lookup) {
+                        address = JSON.parse(address);
+                        name = address.name;
+                        if (name) {
+                            name = name.trim();
+                            document.getElementById("memo").innerText = `${name} ${lookup}`;
+                        }
+                    }
+                });
+            </script>            <p>
               <img src="../qr-troop-venmo.png"></img>
             </p>
+            <button id="button-pay-venmo" type="input">Finish Registration</button>
           </section>
 
           <!---------------- Payment Method: On Tree --------------->
@@ -61,7 +77,7 @@
             <p>
               <strong>Attach cash or check to tree on pickup day.</strong>
             </p>
-            <!-- <button id="button-pay-on-tree">I intend to pay on the tree.</button> -->
+            <button id="button-pay-on-tree" type="input">Finish Registration</button>
           </section>
 
         </section>

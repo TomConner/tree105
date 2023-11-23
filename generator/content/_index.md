@@ -2,7 +2,7 @@
 title: Christmas Tree Pickup & Recycling
 ---
 
-![Tree Drive](treedrive24signart.png)
+{{< logo >}}
 
 ### Christmas Tree Pickup & Recycling
 

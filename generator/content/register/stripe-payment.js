@@ -41,6 +41,67 @@ function setLoading(isLoading) {
   }
 }
 
+// show payment choices tabset
+function loadPaymentChoices() {
+  const tabsPaymentMethod = document.getElementById("tabs-payment-method");
+  tabsPaymentMethod.classList.remove("hidden");
+  tabsPaymentMethod.scrollIntoView();
+  publishMessage({m:'frame_scrollIntoView'})
+
+  const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
+  const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
+  const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
+
+  const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe");
+  const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo");
+  const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
+
+  const buttonLoadStripe = document.getElementById("button-load-stripe");
+
+  buttonPayVenmo = document.getElementById("button-pay-venmo");
+  buttonPayOnTree = document.getElementById("button-pay-on-tree");
+
+  tablink_pay_stripe.addEventListener("click", (event) => {
+    event.preventDefault();
+    tablink_pay_stripe.classList.add("active"); // activate
+    tablink_pay_venmo.classList.remove("active");
+    tablink_pay_on_tree.classList.remove("active");
+
+    tabcontent_pay_stripe.classList.remove("hidden"); // show
+    tabcontent_pay_venmo.classList.add("hidden");
+    tabcontent_pay_on_tree.classList.add("hidden");
+  });
+
+  tablink_pay_venmo.addEventListener("click", (event) => {
+    event.preventDefault();
+    tablink_pay_stripe.classList.remove("active");
+    tablink_pay_venmo.classList.add("active"); // activate
+    tablink_pay_on_tree.classList.remove("active");
+
+    tabcontent_pay_stripe.classList.add("hidden");
+    const stripePayment = document.getElementById('stripe-payment');
+    stripePayment.classList.add('hidden');
+    tabcontent_pay_venmo.classList.remove("hidden"); // show
+    tabcontent_pay_on_tree.classList.add("hidden");
+  });
+
+  tablink_pay_on_tree.addEventListener("click", (event) => {
+    event.preventDefault();
+    tablink_pay_stripe.classList.remove("active");
+    tablink_pay_venmo.classList.remove("active");
+    tablink_pay_on_tree.classList.add("active"); // activate
+
+    tabcontent_pay_stripe.classList.add("hidden");
+    const stripePayment = document.getElementById('stripe-payment');
+    stripePayment.classList.add('hidden');
+    tabcontent_pay_venmo.classList.add("hidden");
+    tabcontent_pay_on_tree.classList.remove("hidden"); // show
+  });
+
+  tablink_pay_stripe.click();
+}
+
+
 // ------- Page load - async -------
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -175,63 +236,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   });
-
-  // show payment choices tabset
-  function loadPaymentChoices() {
-    const tabsPaymentMethod = document.getElementById("tabs-payment-method");
-    tabsPaymentMethod.classList.remove("hidden");
-    tabsPaymentMethod.scrollIntoView();
-    publishMessage({m:'frame_scrollIntoView'})
-
-    const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
-    const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
-    const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
-
-    const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe");
-    const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo");
-    const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
-
-    const buttonLoadStripe = document.getElementById("button-load-stripe");
-
-    tablink_pay_stripe.addEventListener("click", (event) => {
-      event.preventDefault();
-      tablink_pay_stripe.classList.add("active"); // activate
-      tablink_pay_venmo.classList.remove("active");
-      tablink_pay_on_tree.classList.remove("active");
-
-      tabcontent_pay_stripe.classList.remove("hidden"); // show
-      tabcontent_pay_venmo.classList.add("hidden");
-      tabcontent_pay_on_tree.classList.add("hidden");
-    });
-
-    tablink_pay_venmo.addEventListener("click", (event) => {
-      event.preventDefault();
-      tablink_pay_stripe.classList.remove("active");
-      tablink_pay_venmo.classList.add("active"); // activate
-      tablink_pay_on_tree.classList.remove("active");
-
-      tabcontent_pay_stripe.classList.add("hidden");
-      const stripePayment = document.getElementById('stripe-payment');
-      stripePayment.classList.add('hidden');
-      tabcontent_pay_venmo.classList.remove("hidden"); // show
-      tabcontent_pay_on_tree.classList.add("hidden");
-    });
-
-    tablink_pay_on_tree.addEventListener("click", (event) => {
-      event.preventDefault();
-      tablink_pay_stripe.classList.remove("active");
-      tablink_pay_venmo.classList.remove("active");
-      tablink_pay_on_tree.classList.add("active"); // activate
-
-      tabcontent_pay_stripe.classList.add("hidden");
-      const stripePayment = document.getElementById('stripe-payment');
-      stripePayment.classList.add('hidden');
-      tabcontent_pay_venmo.classList.add("hidden");
-      tabcontent_pay_on_tree.classList.remove("hidden"); // show
-    });
-
-    tablink_pay_stripe.click();
-  }
 
   // on stripe button, hand off to stripe payment
   const buttonLoadStripe = document.getElementById('button-load-stripe');

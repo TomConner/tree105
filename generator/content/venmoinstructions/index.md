@@ -14,8 +14,10 @@ with last minute details about leaving your tree out for us.
 
 Thank you for your support.
 
-### Venmo Payment Instructions
+## Venmo Payment Instructions
 
-Please use the Venmo app to pay @Pembroke-Troop105.
+Please use the Venmo app to pay @Pembroke-Troop105. Please identify yourself with email or name/address or the code shown below. This makes it easier for us to credit your payment.
+
+{{< memo >}}
 
 ![Venmo @Pembroke-Troop105](../qr-troop-venmo.png)
