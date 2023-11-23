@@ -203,13 +203,12 @@ window.addEventListener("load", (event) => {
     console.log("Load stripe frame");
     const lookup_code = getLocalItem("lookup");
     stripeFrame.src = `/register?q=${lookup_code}`;
-    stripeFrame.contentWindow.addEventListener('message', onStripeFrameMessage, false);
     stripeFrame.hidden = false;
     stripeFrame.scrollIntoView();
   }
 
   // dispatch messages from stripeFrame
-  function onStripeFrameMessage(event) {
+  window.addEventListener('message', (event) => {
     // only trust messages from my own iframe
     const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
     console.debug(event);
@@ -239,7 +238,7 @@ window.addEventListener("load", (event) => {
         console.debug(event.data);
         break;
     }
-  }
+  });
 
   // localStorage helpers
   function getLocalItem(key) {
