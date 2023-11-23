@@ -212,14 +212,14 @@ window.addEventListener("load", (event) => {
   function onStripeFrameMessage(event) {
     // only trust messages from my own iframe
     const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
-
+    console.debug(event);
     // Check if the origin of the message is the expected one
     if (!(expectedOrigins.includes(event.origin))) {
         console.error('Invalid origin:', event.origin);
         return; // Ignore the message
     } else {
         console.debug('Valid origin:', event.origin);
-        console.debug(event);
+
     }
 
     // Handle the message here
