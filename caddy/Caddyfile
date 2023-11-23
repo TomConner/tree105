@@ -8,7 +8,11 @@
 #     }
 # }
 
-dev.troop105treedrive.com {
+www.troop105treedrive.com {
+	redir https://troop105treedrive.com{uri}
+}
+
+troop105treedrive.com {
     handle /api/* {
         reverse_proxy tree105-server-1:4242
     }
