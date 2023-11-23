@@ -101,7 +101,7 @@ window.addEventListener("load", (event) => {
     await fetch('/api/v1/lookups', {method: "POST"})
       .then((response) => response.text())
       .then((lookup_code) => {
-        lookup_code = lookup_code.trim();
+        lookup_code = lookup_code.trim
         console.log(`new lookup code is ${lookup_code}`);
         setLocalItem("lookup", lookup_code);
         loadOrderForm();
@@ -219,6 +219,7 @@ window.addEventListener("load", (event) => {
         return; // Ignore the message
     } else {
         console.debug('Valid origin:', event.origin);
+        console.debug(event);
     }
 
     // Handle the message here
@@ -229,6 +230,8 @@ window.addEventListener("load", (event) => {
         break;
 
       //TODO height of frame
+
+      case
 
       default:
         console.debug(`message from ${event.origin}:`);

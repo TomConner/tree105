@@ -60,11 +60,11 @@ function loadPaymentChoices() {
 
   document.getElementById("button-pay-venmo").onclick = (event) => {
     event.preventDefault();
-    publishMessage({"action":"navigate", "location":"/venmoinstructions"}, window.location.origin);
+    publishMessage({"m":"navigate", "location":"/venmoinstructions"}, window.location.origin);
   }
   document.getElementById("button-pay-on-tree").onclick = (event) => {
     event.preventDefault();
-    publishMessage({"action":"navigate", "location":"/registered"}, window.location.origin);
+    publishMessage({"m":"navigate", "location":"/registered"}, window.location.origin);
   }
 
   tablink_pay_stripe.addEventListener("click", (event) => {
