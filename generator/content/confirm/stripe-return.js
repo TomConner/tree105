@@ -16,11 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const {error, paymentIntent} = await stripe.retrievePaymentIntent(
     clientSecret
   );
-  if (error) {
-    addMessage(error.message);
-  }
-  addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
-
   var height = document.body.scrollHeight;
   window.parent.postMessage({
       'frameHeight': height
@@ -34,5 +29,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     messagesDiv.innerHTML += `> ${messageWithLinks}<br>`;
     console.log(`Debug: ${message}`);
   };
+
+  if (error) {
+    addMessage(error.message);
+  }
+  addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
 
 });

@@ -4,19 +4,24 @@
     bottom: 0;             /* Align to the bottom of the viewport */
     left: 0;               /* Align to the left of the viewport */
     width: 100%;           /* Take full width of the viewport */
-    background-color: #333; /* Example background color */
+    background-color: #49757a; /* Example background color */
     color: white;          /* Example text color */
     text-align: center;    /* Center the text (optional) */
     padding: 10px 0;       /* Some padding (optional) */
     margin: 0;
 }
+
+.fixed-footer a {
+    color: white;
+}
 </style>
 
 <footer>
   <div class="fixed-footer">
-      Web: <a href="https://www.pembroket105.org" target="_blank">Troop 105</a> |
+      Mobile: <a href="tel:+1{{ .Site.Params.mobile }}">{{ .Site.Params.mobile }}</a> |
       Email: <a href="mailto:tree@pembroket105.org" target="_blank">tree@pembroket105.org</a> |
       Look up <a href="/lookup">registration</a> |
+      Web: <a href="https://www.pembroket105.org" target="_blank">Troop 105</a> |
       &copy; {{ $.Site.Params.Copyright }} {{ now.Format "2006"}}
       {{ with $.Site.Params.License -}}
       &middot; <a href="{{ $.Site.Params.licenseURL }}" target="_blank">{{ . | safeHTML }}</a>
