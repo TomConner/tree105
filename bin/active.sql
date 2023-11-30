@@ -1,3 +1,5 @@
+.mode box
+
 begin transaction;
 
 create temp table active_address as
@@ -28,10 +30,14 @@ CREATE TABLE if not exists "active" (
     FOREIGN KEY ("lookup_id") REFERENCES "lookup" ("id")
 );
 
+create temp table prev_rows as select count(*) from active;
+
 insert into active
     select aa.lookup_id, address_id, order_id, 1 as is_active
     from active_address aa, active_order ao 
     where aa.lookup_id=ao.lookup_id order by aa.lookup_id;
+
+select count(*)-(select * from prev_rows) as "rows_added" from active;
 
 drop table active_address;
 drop table active_order;
