@@ -3,7 +3,7 @@
 name="tree105"
 db_dir="$HOME/tree105/db"
 db_file="$HOME/tree105/db/$name.sqlite"
-backup_dir="$HOME"
+backup_dir="$HOME/work"
 
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
 
@@ -12,11 +12,11 @@ sqlite3 "$db_file" ".backup $db_backup_file"
 echo "$db_backup_file"
 
 compose_full_backup_file="$backup_dir/$stamp-$name-compose-full.log"
-docker compose logs > "$compose_full_backup_file"
+docker compose -f /home/tom/tree105/docker-compose.yaml logs > "$compose_full_backup_file"
 echo "$compose_full_backup_file"
 
 compose_backup_file="$backup_dir/$stamp-$name-compose.log"
-docker compose logs --since 48h > "$compose_backup_file"
+docker compose -f /home/tom/tree105/docker-compose.yaml logs --since 48h > "$compose_backup_file"
 echo "$compose_backup_file"
 
 docker_backup_file="$backup_dir/$stamp-$name-docker.log"
