@@ -3,7 +3,7 @@
 name="tree105"
 db_dir="$HOME/tree105/db"
 db_file="$HOME/tree105/db/$name.sqlite"
-backup_dir="$HOME/work"
+backup_dir="$HOME/tree105/work"
 
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
 
