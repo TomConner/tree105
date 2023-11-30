@@ -24,3 +24,8 @@ echo ""
 
 ls -lt "$local_path" | head -10
 
+echo "Enter when ready:"
+read foo
+
+cd "$HOME/tree105/bin"
+./extract.sh | less
