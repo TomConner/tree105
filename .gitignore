@@ -6,4 +6,6 @@ server/.env
 __pycache__
 .hugo_build.lock
 venv
-db/tree105.sqlite
+caddy/Caddyfile
+db
+work
