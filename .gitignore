@@ -9,3 +9,4 @@ venv
 caddy/Caddyfile
 db
 work
+.env
