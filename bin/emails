@@ -86,10 +86,11 @@ def sendem(batch: str, dry_run: bool = False):
         }
 
         if dry_run:
-            pprint(sendgrid_payload)
             print(f"dry_run: sending {order}")
+            pprint(sendgrid_payload)
         else:
             print(f"sending {order}")
+            pprint(sendgrid_payload)
             response = requests.post(
                 "https://api.sendgrid.com/v3/mail/send",
                 headers={"Authorization": f"Bearer {os.environ.get('SENDGRID_API_KEY')}"},
@@ -97,6 +98,8 @@ def sendem(batch: str, dry_run: bool = False):
             )
             if (response.status_code >= 200 and response.status_code <= 299 ):
                 email_log.event(order['email'], batch, sendgrid_payload)
+            else:
+                print(f"{response.status_code} {response.text}")
 
 
 if __name__ == '__main__':
