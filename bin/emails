@@ -5,6 +5,11 @@ import requests
 import json
 import click
 from pprint import pprint
+from datetime import datetime
+from pathlib import Path
+
+
+STAMP: datetime = datetime.utcnow()
 
 @click.group()
 def cli():
@@ -18,12 +23,36 @@ def to_int(s:str):
     return int(s)
 
 def order_amount(order):
-    print(f"order_amount: {order}")
     return (to_int(order['numtrees']) * 15 + to_int(order['extra']))
 
-def email_log(email, batch):
-    print(f"Logging {order['email']} sent on batch {batch}")
+class EmailLog:
+    def __init__(self, email_log: Path):
+        self.email_log = email_log
+        if self.email_log.exists():
+            with open(self.email_log) as f:
+                self.events = json.load(f)
+        else:
+            self.events = []
 
+    def event(self, email, batch, sendgrid_payload):
+        #print(f"Logging {email} sent on batch {batch}")
+        self.events.append({
+            "stamp": str(STAMP),
+            "email": email,
+            "batch": batch,
+            "payload": sendgrid_payload
+        })
+        self.flush()
+
+    def has_event(self, email, batch):
+        return any([
+            event['email'] == email and event['batch'] == batch
+            for event in self.events
+        ])
+
+    def flush(self):
+        with open(self.email_log, 'w') as f:
+            json.dump(self.events, f)
 
 @click.command()
 @click.argument('batch', type=click.Choice(['registered', 'paid', 'payment-reminder', 'pickup-reminder', 'pickup']))
@@ -32,18 +61,18 @@ def sendem(batch: str, dry_run: bool = False):
     with open(f"/home/tom/tree105/work/regs.json") as f:
         emails = json.load(f)
 
+    email_log = EmailLog(Path("/home/tom/tree105/work/email-log.json"))
     for email in emails:
         order = email
         order['amount'] = f"{order_amount(order)}"
 
-        if batch == 'registered':
-            pass
-        else:
+        if email_log.has_event(order['email'], batch):
+            if dry_run:
+                print(f"dry_run: skipping because sent previously on {batch}: {order}")
             continue
 
-        email_log(order['email'], batch)
-
         sendgrid_payload = {
+            "from": {"email": "troop@troop105.net", "name": "BSA Troop 105 Pembroke"},
             "personalizations":[{
                 "to": [
                     {"email": order['email'], "name": order['name']}
@@ -53,25 +82,21 @@ def sendem(batch: str, dry_run: bool = False):
                 ],
                 "dynamic_template_data": order,
             }],
-            "from": {"email": "troop@troop105.net", "name": "BSA Troop 105 Pembroke"},
             "template_id" : "d-692bae398b0f4902b168f9266f8dcddc"
         }
 
         if dry_run:
             pprint(sendgrid_payload)
-
-        print(f"Sending email to {order['email']}...")
-
-        if not dry_run:
+            print(f"dry_run: sending {order}")
+        else:
+            print(f"sending {order}")
             response = requests.post(
                 "https://api.sendgrid.com/v3/mail/send",
                 headers={"Authorization": f"Bearer {os.environ.get('SENDGRID_API_KEY')}"},
                 json=sendgrid_payload
             )
-
-            pprint(response.status_code)
-            pprint(response.headers)
-            pprint(response.text)
+            if (response.status_code >= 200 and response.status_code <= 299 ):
+                email_log.event(order['email'], batch, sendgrid_payload)
 
 
 if __name__ == '__main__':
