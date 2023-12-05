@@ -14,7 +14,7 @@ sleep 2
 
 echo "backup..."
 for file in $(ssh "$ssh_remote" /home/tom/tree105/bin/backup.sh); do
-    sleep 2
+    sleep 4
 
     echo "$file"
     get_file "$file"
