@@ -1,28 +1,14 @@
 #!/bin/zsh
 
-ssh_remote=tom@troop105treedrive.com
-local_path="$HOME/tree105/work"
+ssh_remote="tom@troop105treedrive.com"
+remote_tree="${ssh_remote}:tree105"
+local_tree="$HOME/tree105"
 
-get_file() {
-    file="$1"
-    remote_path="${ssh_remote}:${file}"
-    scp "$remote_path" "$local_path"
-}
+ssh "$ssh_remote" "tree105/bin/daily-server.sh"
+scp "$remote_tree/work/tree105-backup.zip" "$local_tree/work"
+unzip "$local_tree/work/tree105-backup.zip" -d "$local_tree/work"
 
-ssh "$ssh_remote" /home/tom/tree105/bin/daily-server.sh
-sleep 2
-
-echo "backup..."
-for file in $(ssh "$ssh_remote" /home/tom/tree105/bin/backup.sh); do
-    sleep 4
-
-    echo "$file"
-    get_file "$file"
-done
-
-echo ""
-
-ls -lt "$local_path" | head -10
+ls -lt "$local_tree/work" | head -10
 
 echo "Extract is next. Continue → Enter"
 read foo
