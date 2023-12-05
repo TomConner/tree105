@@ -28,3 +28,13 @@ docker events \
     -f type=network \
     --since 48h --until 0s > "$docker_backup_file"
 echo "$docker_backup_file"
+
+backup_zip_file="$stamp-$name-backup.zip"
+zip "$backup_zip_file" \
+        "$db_backup_file" \
+        "$compose_full_backup_file" \
+        "$compose_backup_file" \
+        "$docker_backup_file"
+cp -p "$backup_zip_file" "$name-backup.zip" 
+echo "$backup_zip_file"
+echo "$name-backup.zip"
