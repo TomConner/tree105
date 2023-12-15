@@ -1,6 +1,5 @@
 .mode box
 .read dupes.sql
-.read regs-detail.sql
 .read regs-summary.sql
 
 .mode csv
