@@ -1,0 +1,8 @@
+#!/bin/sh
+
+export local_tree="$HOME/tree105"
+export local_work="$local_tree/work"
+
+new_orders=$(./new-order-count)
+printf "There are %d new orders.\n" "$new_orders"
+tail -$new_orders "$local_tree/work/regs.csv"

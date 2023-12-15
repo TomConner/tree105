@@ -1,0 +1,4 @@
+#!/bin/sh
+
+treedb=$(ls -t ../work/*.sqlite | head -1)
+sqlite3 "$treedb" '.read new-order-summary.sql'
