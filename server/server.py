@@ -8,7 +8,7 @@ from dotenv import load_dotenv, find_dotenv
 from playhouse.shortcuts import model_to_dict
 
 
-from treedb import create_address, get_last_address, create_order, get_last_order, Address, Order, Lookup
+from treedb import create_address, get_last_address, create_order, create_intent, get_last_order, Address, Order, Lookup
 from playhouse.shortcuts import model_to_dict
 import treedb
 
@@ -142,6 +142,13 @@ def post_order(lookup_code):
     data = request.json
     app.logger.info(data)
     result = create_order(lookup_code, **data)
+    return jsonify(result), 201 if isinstance(result, dict) else 400
+
+@app.route('/api/v1/intents/<lookup_code>', methods=['POST'])
+def post_intent(lookup_code):
+    data = request.json
+    app.logger.info(data)
+    result = create_intent(lookup_code, **data)
     return jsonify(result), 201 if isinstance(result, dict) else 400
 
 @app.route('/api/v1/addresses/<lookup_code>', methods=['GET'])
