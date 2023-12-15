@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     defaultValues: {
       address: {
         city: 'Pembroke',
+        state: 'MA',
         postal_code: '02359',
         country: 'US',
       }
