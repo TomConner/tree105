@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ 
-          "method": method 
+        body: JSON.stringify({
+          "method": method
         })
       }).then((response) => {
         if (response.ok) {
@@ -213,16 +213,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     },
     validation: {
       phone: {required: 'always'},
-    }
+    },
+    defaultValues: {
+      address: {
+        city: 'Pembroke',
+        postal_code: '02359',
+      }
+    },
   };
   const addressElement = elements.create('address', options);
   addressElement.mount('#address-element');
 
   // on address input, save address in localStorage
   addressElement.on('change', (event) => {
-    if (event.error) {
+    if (event && event.error) {
       validateAddress(event);
-    } else if (event.complete) {
+    } else if (event && event.complete) {
       // Extract potentially complete address
       const address = event.value;
       setLocalItem("address", JSON.stringify(address));
@@ -234,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const address = JSON.parse(getLocalItem("address"));
     if (event && event.error) {
       showAddressMessage(event.error.message);
-    } else if (!(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
+    } else if (address && !(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
       showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
       return false;
     } else {
