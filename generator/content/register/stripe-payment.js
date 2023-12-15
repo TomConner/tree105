@@ -218,6 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       address: {
         city: 'Pembroke',
         postal_code: '02359',
+        country: 'US',
       }
     },
   };
