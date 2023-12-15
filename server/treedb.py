@@ -40,6 +40,11 @@ class Order(TreeModel):
     numtrees=IntegerField()
     extra=IntegerField()
 
+class Intent(TreeModel):
+    lookup=ForeignKeyField(Lookup, backref='orders')
+    created=DateTimeField(default=datetime.now)
+    method=CharField()
+
 def random_code():
     alphabet='ABCDEFGHJKMNPQRTUVWXYZ'
     return ''.join([alphabet[random.randint(0,len(alphabet)-1)] for i in range(4)])
@@ -64,6 +69,7 @@ def init_or_connect():
     else:
         print('connecting to database')
         database.connect()
+        database.create_tables([Intent], safe=True)
         database.close()
     print("db init_or_connect done")
 
@@ -74,6 +80,26 @@ def before_request():
 def teardown_request():
     if not database.is_closed():
         database.close()
+
+def create_intent(lookup_code, method):
+    logger.debug(f"create_intent: {lookup_code}, {method}")
+    try:
+        # Retrieve the Lookup instance by the provided code
+        lookup, created = Lookup.get_or_create(code=lookup_code)
+
+        # Create a new Intent and link it to the Lookup instance
+        new_intent = Intent.create(
+            lookup=lookup,
+            method=method
+        )
+        logger.debug(f"Lookup: {lookup.id} (Created: {created}) ; Intent: {new_intent.id}")
+        return model_to_dict(new_intent)
+
+    except Exception as e:
+        # Handle other potential exceptions
+        print(f"Error creating intent: {e}")
+        return None
+
 
 def create_order(lookup_code, comment, numtrees, extra):
     logger.debug(f"create_order: {lookup_code}, {comment}, {numtrees}, {extra}")
