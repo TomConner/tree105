@@ -3,6 +3,7 @@ themes/**
 .python-version
 .vscode
 server/.env
+*.py.swp
 __pycache__
 .hugo_build.lock
 venv
