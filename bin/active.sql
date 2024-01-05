@@ -31,8 +31,12 @@ CREATE TABLE if not exists "active" (
 );
 
 drop table if exists prev_rows;
-select count(*) active_rows, max(lookup_id) max_lookup_id, max(address_id) max_address_id, max(order_id) max_order_id from active;
-from active;
+create table prev_rows as
+    select count(*) active_rows, 
+    max(lookup_id) max_lookup_id, 
+    max(address_id) max_address_id, 
+    max(order_id) max_order_id 
+    from active;
 
 insert into active
     select aa.lookup_id, address_id, order_id, 1 as is_active

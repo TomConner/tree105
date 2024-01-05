@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export treedb=$(ls -t ../work/*.sqlite | head -1)
+echo "➡️ $treedb"
+sqlite3 $treedb $@
