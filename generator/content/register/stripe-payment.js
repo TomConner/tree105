@@ -200,22 +200,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // on address input, save address in localStorage
   addressElement.on('change', (event) => {
     if (event && event.error) {
-      validateAddress(event);
+      showAddressMessage(event.error.message);
     } else if (event && event.complete) {
-      // Extract potentially complete address
-      const address = event.value;
-      setLocalItem("address", JSON.stringify(address));
-      validateAddress(null);
+      clearAddressMessage();
     }
   });
 
+  // TODO remove validateAddress
   function validateAddress(event) {
-    const address = JSON.parse(getLocalItem("address"));
     if (event && event.error) {
-      showAddressMessage(event.error.message);
-    } else if (address && !(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
-      showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
       return false;
+    //} else if (address && !(address.address.city.toLowerCase() === "Pembroke".toLowerCase())) {
+      //showAddressMessage("Sorry, we can only pick up trees from Pembroke.");
+      //return false;
     } else {
       clearAddressMessage();
       return true;
@@ -226,16 +223,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const buttonRegister = document.getElementById('button-register');
   buttonRegister.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (!validateAddress(null)) {
-      return;
+    const elementValue = await addressElement.getValue();
+    const { complete, value } = elementValue;
+    if (!complete) {
+        console.error("register button with incomplete address")
+        return
     }
-    const address = JSON.parse(getLocalItem("address"));
-    const flat_address = address.address;
-    flat_address.name = address.name;
-    flat_address.phone = address.phone;
+
+    var flat_address = {}
+
+    // value contains .name and .address.line1, .address.etc
+    flat_address = value.address;
+    flat_address.name = value.name;
+    flat_address.phone = value.phone;
     flat_address.email = getLocalItem("email");
-    console.debug("posting address");
-    console.debug(flat_address);
+    console.info("posting address");
+    console.info(flat_address);
     const lookup_code = getLocalItem("lookup");
     if (lookup_code) {
 
@@ -253,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
         });
     } else {
-        console.debug("no local lookup");
+        console.error("no local lookup");
     }
   });
 
