@@ -1,49 +1,18 @@
-# {
-#     order l4 before http
-# }
-
-# l4 :5678 {
-#     route {
-#         forward_to tree105-server-1:5678
-#     }
-# }
-
 http:// {
-    redir https://{host}{uri}
-<<<<<<<< HEAD:caddy/Caddyfile.template
-}
-
-www.troop105treedrive.com {
-	redir https://troop105treedrive.com{uri}
-========
->>>>>>>> issue5:caddy/Caddyfile.dev
+	redir https://{host}{uri}
 }
 
 dev.troop105treedrive.com {
-    handle /api/* {
-        reverse_proxy tree105-server-1:4242
-    }
-    file_server /.well-known/* browse {
-        root ./public
-    }
-    handle {
-        reverse_proxy tree105-generator-1:1313
-    }
+	handle /api/* {
+		reverse_proxy tree105-server-1:4242
+	}
+	file_server /.well-known/* browse {
+		root /home/tom/tree105/public
+	}
+	file_server /foo/* browse {
+		root /home/tom/tree105/public
+	}
+	handle {
+		reverse_proxy tree105-generator-1:1313
+	}
 }
-
-dev.troop105.net {
-    handle /api/* {
-        reverse_proxy tree105-server-1:4242
-    }
-    file_server /.well-known/* browse {
-        root ./public
-    }
-    handle {
-        reverse_proxy tree105-generator-1:1313
-    }
-}
-
-# dev.troop105treedrive.com:5678 {
-#     reverse_proxy tree105-server-1:5678
-# }
-
