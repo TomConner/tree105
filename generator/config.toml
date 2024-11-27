@@ -1,6 +1,6 @@
 baseurl = "https://troop105treedrive.com"
 languageCode = "en"
-title = "2025 Christmas Tree Drive"
+title = "2025 Christmas Tree Pickup"
 theme = "soho"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
@@ -10,7 +10,7 @@ paginate = 5
 ignoreErrors = ["error-remote-getjson"]
 
 [params]
-title = "2025 Christmas Tree Drive"
+title = "2025 Christmas Tree Pickup"
 description = "Pembroke Troop 105"
 # gravatar = "soho@example.com"
 images = ["profile-tree.png"]

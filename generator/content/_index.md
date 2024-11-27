@@ -12,3 +12,6 @@ title: Christmas Tree Pickup & Recycling
 * No artificial trees, tree stands, wire, or other metal.
 * **Thank You** to Top Notch Tree for chipping hundreds of trees
 * **Thank You** Pembroke residents who support our effort each year!
+
+### Register for Tree Pickup
+{{< register-form >}}

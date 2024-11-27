@@ -1,3 +1,6 @@
+---
+type: iframe
+---
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,7 +13,7 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="stripe-payment.js" defer></script>
   </head>
-  <body>
+  <body class="payment-page">
     <main>
 
       <!--- <form> --->
@@ -34,7 +37,6 @@
           <h2>Payment Options</h2>
           <div class="tab" id="tabset">
             <button class="tablink" id="tablink-pay-stripe">Card or Wallet</button>
-            <button class="tablink" id="tablink-pay-venmo">Venmo</button>
             <button class="tablink" id="tablink-pay-on-tree">Money on Tree</button>
           </div>
 
@@ -44,36 +46,6 @@
               <strong>Pay by credit or debit card, Apple Pay, or Google Pay.</strong>
             </p>
             <button id="button-load-stripe">Continue to payment</button>
-          </section>
-
-          <!---------------- Payment Method: Venmo --------------->
-          <section class="tabcontent" id="tab-pay-venmo">
-            <p>
-              <strong>Pay by Venmo</strong>
-            </p>
-
-            <p>Please pay:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="acct" style="font-weight: bold;">@Pembroke-Troop105</span></p>
-
-            <p>What's this for?<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="venmo-memo" style="font-weight: bold;">Tree (name &amp; address)</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or email/name/address, etc.)</p>
-
-
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const lookup = window.localStorage.getItem("lookup");
-                    var address = window.localStorage.getItem("address");
-                    if (address && lookup) {
-                        address = JSON.parse(address);
-                        name = address.name;
-                        if (name) {
-                            name = name.trim();
-                            document.getElementById("venmo-memo").innerText = `Tree ${name} ${lookup}`;
-                        }
-                    }
-                });
-            </script>            <p>
-              <img src="../qr-troop-venmo.png"></img>
-            </p>
-            <button id="button-pay-venmo" type="input">Finish Registration</button>
           </section>
 
           <!---------------- Payment Method: On Tree --------------->

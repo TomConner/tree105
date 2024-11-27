@@ -41,7 +41,6 @@ function setLoading(isLoading) {
   }
 }
 
-
 // ------- Page load - async -------
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -59,10 +58,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   // get lookup code from URL
   const params = new URLSearchParams(window.location.search);
   const lookup_code = params.get('q');
-  console.log(`in frame, lookup_code ${lookup_code}`)
-  setLocalItem("lookup", lookup_code)
+  if (lookup_code && lookup_code != null && lookup_code != "null") {
+    console.log(`in frame, lookup_code from q ${lookup_code}`)
+    setLocalItem("lookup", lookup_code)
+  } else {
+    console.info("no q lookup parameter")
+  }
 
   function postIntent(method) {
+      console.info("posting intent ${lookup_code}");
       fetch(`/api/v1/intents/${lookup_code}`, {
         method: "POST",
         headers: {
@@ -88,20 +92,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       publishMessage({m:'frame_scrollIntoView'})
 
       const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
-      const tablink_pay_venmo = document.getElementById("tablink-pay-venmo");
       const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
 
       const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe");
-      const tabcontent_pay_venmo = document.getElementById("tab-pay-venmo");
       const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
 
       const buttonLoadStripe = document.getElementById("button-load-stripe");
 
-      document.getElementById("button-pay-venmo").onclick = (event) => {
-        event.preventDefault();
-        postIntent("venmo");
-        publishMessage({"m":"navigate", "location":"/venmoinstructions"}, window.location.origin);
-      }
       document.getElementById("button-pay-on-tree").onclick = (event) => {
         event.preventDefault();
         postIntent("cashcheck");
@@ -113,46 +110,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       tablink_pay_stripe.addEventListener("click", (event) => {
         event.preventDefault();
         tablink_pay_stripe.classList.add("active"); // activate
-        tablink_pay_venmo.classList.remove("active");
         tablink_pay_on_tree.classList.remove("active");
 
         tabcontent_pay_stripe.classList.remove("hidden"); // show
-        tabcontent_pay_venmo.classList.add("hidden");
         tabcontent_pay_on_tree.classList.add("hidden");
-      });
-
-      tablink_pay_venmo.addEventListener("click", (event) => {
-        event.preventDefault();
-        tablink_pay_stripe.classList.remove("active");
-        tablink_pay_venmo.classList.add("active"); // activate
-        tablink_pay_on_tree.classList.remove("active");
-
-        tabcontent_pay_stripe.classList.add("hidden");
-        const stripePayment = document.getElementById('stripe-payment');
-        stripePayment.classList.add('hidden');
-        tabcontent_pay_venmo.classList.remove("hidden"); // show
-        tabcontent_pay_on_tree.classList.add("hidden");
-        var address = window.localStorage.getItem("address");
-        if (address && lookup_code) {
-            address = JSON.parse(address);
-            name = address.name;
-            if (name) {
-                name = name.trim();
-                document.getElementById("venmo-memo").innerText = `Tree ${name} ${lookup_code}`;
-            }
-        }
       });
 
       tablink_pay_on_tree.addEventListener("click", (event) => {
         event.preventDefault();
         tablink_pay_stripe.classList.remove("active");
-        tablink_pay_venmo.classList.remove("active");
         tablink_pay_on_tree.classList.add("active"); // activate
 
         tabcontent_pay_stripe.classList.add("hidden");
         const stripePayment = document.getElementById('stripe-payment');
         stripePayment.classList.add('hidden');
-        tabcontent_pay_venmo.classList.add("hidden");
         tabcontent_pay_on_tree.classList.remove("hidden"); // show
       });
 
@@ -266,20 +237,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.debug("posting address");
     console.debug(flat_address);
     const lookup_code = getLocalItem("lookup");
+    if (lookup_code) {
 
-    fetch(`/api/v1/addresses/${lookup_code}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(flat_address),
-    }).then((response) => {
-      if (response.ok) {
-        console.log(response);
+        fetch(`/api/v1/addresses/${lookup_code}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(flat_address),
+        }).then((response) => {
+          if (response.ok) {
+            console.log(response);
 
-        loadPaymentChoices();
-      } else {
-        console.error(response);
-      }
-    });
+            loadPaymentChoices();
+          } else {
+            console.error(response);
+          }
+        });
+    } else {
+        console.debug("no local lookup");
+    }
   });
 
   // on stripe button, hand off to stripe payment
@@ -337,6 +312,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function getLocalItem(key) {
     try {
       const item = window.localStorage.getItem(key);
+      if (item == 'null') {
+        window.localStorage.removeItem(key);
+        return null;
+      }
       return item ? item : null;
     } catch (error) {
       console.error(error);

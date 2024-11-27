@@ -73,10 +73,9 @@ window.addEventListener("load", (event) => {
     console.debug("pageStart");
     const lookup_code = getLocalItem("lookup");
     if (lookup_code) {
-      console.debug(`lookup code from localStorage is ${lookup_code}; fetching order`);
+      console.info(`lookup code from localStorage is ${lookup_code}; fetching order`);
       try {
         const response = await fetch(`/api/v1/orders/${lookup_code}`);
-        console.debug(response);
         if (response.ok) {
           const order = await response.text();
           console.log(`retrieved order ${order}`);
@@ -135,27 +134,6 @@ window.addEventListener("load", (event) => {
 
     lookup_code = getLocalItem("lookup");
 
-    // document.getElementById("registerform").addEventListener("input", (event) => {
-    //   message1 = document.getElementById("message1")
-    //   isvalid = document.getElementById("registerform").checkValidity();
-    //   MSG_INVALID = "Please complete the form.";
-    //   button = document.getElementById("submit");
-    //   document.getElementById("paypal-button-container").innerHTML = "";
-    //   if (document.getElementById("cashcheck").checked) {
-    //     button.value = "Register";
-    //     message1.innerText = isvalid ? "Press button to register your tree(s) for lookup." : MSG_INVALID;
-    //   } else if (document.getElementById("venmo").checked) {
-    //     button.value = "Continue to Venmo payment";
-    //     message1.innerText = isvalid ? "Press button to register and pay by Venmo." : MSG_INVALID;
-    //   } else if (document.getElementById("card").checked) {
-    //     button.value = "Continue to card payment";
-    //     message1.innerText = isvalid ? "Press button to register and pay by credit/debit card." : MSG_INVALID;
-    //   } else {
-    //     button.value = "Submit";
-    //   }
-    // });
-    // console.log('ready');
-
     document.getElementById("spinner-register").hidden = true;
     orderForm.hidden = false;
     //orderForm.scrollIntoView();
@@ -211,14 +189,14 @@ window.addEventListener("load", (event) => {
   // dispatch messages from stripeFrame
   window.addEventListener('message', (event) => {
     // only trust messages from my own iframe
-    const expectedOrigins = [window.location.origin, 'https://js.stripe.com'];
-    console.debug(event);
+    const expectedOrigins = ['null', window.location.origin, 'https://js.stripe.com'];
+    console.info(event);
     // Check if the origin of the message is the expected one
-    if (!(expectedOrigins.includes(event.origin))) {
+    if (event.origin &&  !(expectedOrigins.includes(event.origin))) {
         console.error('Invalid origin:', event.origin);
         return; // Ignore the message
     } else {
-        console.debug('Valid origin:', event.origin);
+        console.info('Valid origin:', event.origin);
 
     }
 
@@ -245,6 +223,10 @@ window.addEventListener("load", (event) => {
   function getLocalItem(key) {
     try {
       const item = window.localStorage.getItem(key);
+      if (item == 'null') {
+          window.localStorage.setItem(key, null);
+          return null;
+      }
       return item ? item : null;
     } catch (error) {
       console.error(error);
