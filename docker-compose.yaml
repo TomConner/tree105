@@ -1,4 +1,3 @@
-version: "3.9"
 services:
 
   caddy:
@@ -54,9 +53,9 @@ services:
 volumes:
   tree105:
   caddy_data:
-    external: true
   caddy_config:
 
 networks:
   outside:
     external: true
+
