@@ -1,6 +1,6 @@
 baseurl = "https://troop105treedrive.com"
 languageCode = "en"
-title = "2024 Christmas Tree Drive"
+title = "2025 Christmas Tree Drive"
 theme = "soho"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
@@ -10,7 +10,7 @@ paginate = 5
 ignoreErrors = ["error-remote-getjson"]
 
 [params]
-title = "2024 Christmas Tree Drive"
+title = "2025 Christmas Tree Drive"
 description = "Pembroke Troop 105"
 # gravatar = "soho@example.com"
 images = ["profile-tree.png"]
@@ -20,7 +20,8 @@ license = "CC BY-SA 4.0"
 licenseURL = "https://creativecommons.org/licenses/by-sa/4.0"
 builtWith = true
 mainSections = ["post"]
-mobile= "781-202-5522"
+facebook_url = "https://www.facebook.com/share/19RkuMqnuC/?mibextid=LQQJ4d"
+facebook_title = "Troop 105 Annual Tree Pickup"
 
 ## Set custom theme color.
 # themeColor = "#fc2803"

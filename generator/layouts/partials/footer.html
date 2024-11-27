@@ -4,7 +4,7 @@
     bottom: 0;             /* Align to the bottom of the viewport */
     left: 0;               /* Align to the left of the viewport */
     width: 100%;           /* Take full width of the viewport */
-    background-color: #49757a; /* Example background color */
+    background-color: #50642D; /* Example background color */
     color: white;          /* Example text color */
     text-align: center;    /* Center the text (optional) */
     padding: 10px 0;       /* Some padding (optional) */
@@ -18,7 +18,8 @@
 
 <footer>
   <div class="fixed-footer">
-      Mobile: <a href="tel:+1{{ .Site.Params.mobile }}">{{ .Site.Params.mobile }}</a> |
+      <!-- Mobile: <a href="tel:+1{{ .Site.Params.mobile }}">{{ .Site.Params.mobile }}</a> | -->
+      Facebook: <a href="{{ .Site.Params.facebook_url }}">{{ .Site.Params.facebook_title }}</a> |
       Email: <a href="mailto:tree@pembroket105.org" target="_blank">tree@pembroket105.org</a> |
       Look up <a href="/lookup">registration</a> |
       Web: <a href="https://www.pembroket105.org" target="_blank">Troop 105</a> |
