@@ -23,6 +23,32 @@ load_dotenv(find_dotenv())
 stripe.api_version = '2020-08-27'
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
+import logging
+import json
+from datetime import datetime
+
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        log_data = {
+            'timestamp': datetime.utcnow().isoformat(),
+            'level': record.levelname,
+            'message': record.getMessage(),
+            'logger': record.name
+        }
+
+        if hasattr(record, 'sg_data'):
+            log_data['sg_data'] = record.sg_data
+
+        return json.dumps(log_data)
+
+# Changed from request_logger to sg_logger
+sg_logger = logging.getLogger('sg_logger')
+sg_logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler()
+handler.setFormatter(JsonFormatter())
+sg_logger.addHandler(handler)
+
 app = Flask(__name__)
 app.logger.setLevel("DEBUG")
 def amount_from_request(data):
@@ -202,6 +228,20 @@ def get_orders_for_lookup(lookup_code):
 def post_lookup():
     app.logger.info(f"POST lookup")
     return treedb.new_lookup()
+
+@app.route('/api/v1/emailevents', methods=['POST'])
+def post_emailevents():
+    # Check if the request is gzipped
+    if request.headers.get('Content-Encoding') == 'gzip':
+        # Decompress the data
+        compressed_data = BytesIO(request.data)
+        decompressed_data = gzip.GzipFile(fileobj=compressed_data).read()
+        # Parse the JSON after decompressing
+        json_data = json.loads(decompressed_data)
+    else:
+        json_data = request.get_json()
+    sg_logger.info(f"emailevents", extra={"sg_data": json_data})
+    return 'OK\n', 200
 
 
 if __name__ == '__main__':

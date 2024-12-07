@@ -7,7 +7,7 @@ date: 2019-03-29
 
 ## Registration Received
 
-We've received your registration to have your tree picked up on January 6, 2023.
+We've received your registration to have your tree picked up on {{< pickup-day >}}.
 
 If your payment was processed successfully, you will receive an email receipt 
 from our payment processor, Stripe with subject "Your BSA Troop 105 receipt #[1234-5678]".
