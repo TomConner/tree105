@@ -246,4 +246,5 @@ def post_emailevents():
 
 if __name__ == '__main__':
     treedb.init_or_connect()
-    app.run(host='0.0.0.0', port=4242, debug=True)
+    port = int(os.environ.get('PORT', 4242))
+    app.run(host='0.0.0.0', port=port, debug=True)
