@@ -7,6 +7,7 @@ backup_dir="$HOME/tree105/work"
 
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
 
+mkdir -p "$backup_dir"
 pushd "$backup_dir"
 pwd
 
