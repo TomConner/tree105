@@ -2,11 +2,13 @@
 import stripe
 import json
 import os
+import gzip
+import logging
+from io import BytesIO
 
 from flask import Flask, jsonify, request, abort
 from dotenv import load_dotenv, find_dotenv
 from playhouse.shortcuts import model_to_dict
-
 
 from treedb import create_address, get_last_address, create_order, create_intent, get_last_order, Address, Order, Lookup
 from playhouse.shortcuts import model_to_dict
@@ -26,6 +28,7 @@ stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 import logging
 import json
 from datetime import datetime
+
 
 class JsonFormatter(logging.Formatter):
     def format(self, record):
@@ -69,6 +72,7 @@ def db_before_request():
 def db_teardown_request(exc):
     treedb.teardown_request()
 
+
 def to_int(s:str):
     if s is None:
         return 0
@@ -88,6 +92,7 @@ def order_amount(order):
 def get_config():
     app.logger.info('config')
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
+
 
 @app.route('/api/v1/create-payment-intent/<lookup>', methods=['POST'])
 def create_payment(lookup):
@@ -212,12 +217,6 @@ def get_orders_for_lookup(lookup_code):
         return jsonify(orders)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
-
-
-
-
-
 
 # @app.route('/api/v1/lookups', methods=['GET'])
 # def get_lookups():
