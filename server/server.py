@@ -10,7 +10,9 @@ from flask import Flask, jsonify, request, abort
 from dotenv import load_dotenv, find_dotenv
 from playhouse.shortcuts import model_to_dict
 
-from treedb import create_address, get_last_address, create_order, create_intent, get_last_order, Address, Order, Lookup
+from treedb import (create_address, get_last_address, create_order, 
+                    create_intent, get_last_order, get_pickups,
+                    Address, Order, Lookup, Intent)
 from playhouse.shortcuts import model_to_dict
 import treedb
 
@@ -242,8 +244,19 @@ def post_emailevents():
     sg_logger.info(f"emailevents", extra={"sg_data": json_data})
     return 'OK\n', 200
 
+@app.route('/api/v1/pickups', methods=['GET'])
+def get_all_pickups():
+    app.logger.info(f"GET pickups")
+    # pickups = [model_to_dict(o) for o in Lookup.select()]
+    # addresses = [model_to_dict(o) for o in Address.select()]
+    # orders = [model_to_dict(o) for o in Order.select()] 
+    # intents = [model_to_dict(o) for o in Intent.select()]
+
+    return jsonify(get_pickups())
 
 if __name__ == '__main__':
     treedb.init_or_connect()
     port = int(os.environ.get('PORT', 4242))
     app.run(host='0.0.0.0', port=port, debug=True)
+
+    print( json.dumps(get_pickups()))

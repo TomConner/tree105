@@ -5,11 +5,13 @@ from datetime import datetime
 import logging
 import random
 from playhouse.shortcuts import model_to_dict
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-DB_FILE = Path('/tree105/db/tree105.sqlite')
+DB_FILE = Path(os.environ.get('DB_FILE', '/tree105/db/tree105.sqlite'))
+print(f"Connecting to {DB_FILE}")
 database = SqliteDatabase(DB_FILE)
 
 class TreeModel(Model):
@@ -148,13 +150,26 @@ def create_address(lookup_code, city, country, line1, line2, postal_code, state,
     except Exception as e:
         # Handle other potential exceptions
         return f"Error creating address: {e}"
+
 def get_last_address(lookup_code):
     try:
         last_address = (Address
-                        .select()
-                        .join(Lookup)
-                        .where(Lookup.code == lookup_code)
-                        .order_by(Address.created.desc())
+                        .select(
+                            Lookup.code,
+                            fn.MAX(Address.created),
+
+                            Address.name,
+                            Address.line1,
+                            Address.line2,
+                            Address.city,
+                            Address.state,
+                            Address.postal_code,
+                            Address.country,
+                            Address.email,
+                            Address.phone
+                        )
+                        .join(Lookup, on=(Lookup.code == Address.lookup))
+                        .group_by(Address.lookup)
                         .get())
         return model_to_dict(last_address)
     except Address.DoesNotExist:
@@ -164,10 +179,107 @@ def get_last_order(lookup_code):
     try:
         last_order = (Order
                       .select()
-                      .join(Lookup)
+                      .join(Lookup, on=(Order.lookup_id == Lookup.id ))
                       .where(Lookup.code == lookup_code)
-                      .order_by(Order.created.desc())
+                      .max(Order.created)
                       .get())
         return model_to_dict(last_order)
     except Order.DoesNotExist:
+        return None
+
+def get_last_intent(lookup_code):
+    try:
+        last = (Intent
+                      .select()
+                      .join(Intent)
+                      .where(Lookup.code == lookup_code)
+                      .order_by(Intent.created.desc())
+                      .get())
+        return model_to_dict(last)
+    except Order.DoesNotExist:
+        return None
+    
+def get_pickups():
+    try:
+        latest_addresses = (Address
+            .select(
+                Address.lookup,
+                fn.MAX(Address.created).alias('max_address_date')
+            )
+            .group_by(Address.lookup)
+            .alias('latest_addresses'))
+
+        latest_orders = (Order
+            .select(
+                Order.lookup,
+                fn.MAX(Order.created).alias('max_order_date')
+            )
+            .group_by(Order.lookup)
+            .alias('latest_orders'))
+
+        latest_intents = (Intent
+            .select(
+                Intent.lookup,
+                fn.MAX(Intent.created).alias('max_intent_date')
+            )
+            .group_by(Intent.lookup)
+            .alias('latest_intents'))
+
+        query = (Address
+            .select(
+                Lookup.code,
+                Address.name,
+                Address.email,
+                Address.phone,
+                Address.line1,
+                Address.line2,
+                Address.city,
+                Address.state,
+                Address.postal_code,
+                Address.created.alias('address_created'),
+                Order.created.alias('order_created'),
+                Order.numtrees,
+                Order.extra,
+                Order.comment,
+                Intent.created.alias('intent_created'),
+                Intent.method
+            )
+            .join(Lookup)  # Join to get the lookup code
+            .join(
+                latest_addresses,
+                on=(
+                    (Address.lookup == latest_addresses.c.lookup_id) & 
+                    (Address.created == latest_addresses.c.max_address_date)
+                )
+            )
+            .join(
+                Order,
+                JOIN.LEFT_OUTER,
+                on=(Address.lookup == Order.lookup)
+            )
+            .join(
+                latest_orders,
+                JOIN.LEFT_OUTER,
+                on=(
+                    (Order.lookup == latest_orders.c.lookup_id) & 
+                    (Order.created == latest_orders.c.max_order_date)
+                )
+            )
+            .join(
+                Intent,
+                JOIN.LEFT_OUTER,
+                on=(Address.lookup == Intent.lookup)
+            )
+            .join(
+                latest_intents,
+                JOIN.LEFT_OUTER,
+                on=(
+                    (Intent.lookup == latest_intents.c.lookup_id) & 
+                    (Intent.created == latest_intents.c.max_intent_date)
+                )
+            )
+            .get())
+        return model_to_dict(query)
+    except Exception:
+        logging.exception("get_pickups")
         return None
