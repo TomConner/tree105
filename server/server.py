@@ -1,22 +1,28 @@
-#! /usr/bin/env python3.8
 import stripe
 import json
 import os
 import gzip
 import logging
-from io import BytesIO
+from io import BytesIO, StringIO
+from csv import DictWriter
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
+from flask.logging import default_handler
 from dotenv import load_dotenv, find_dotenv
 from playhouse.shortcuts import model_to_dict
 
 from treedb import (create_address, get_last_address, create_order, 
                     create_intent, get_last_order, get_pickups,
+                    treedb_init,
                     Address, Order, Lookup, Intent)
 from playhouse.shortcuts import model_to_dict
 import treedb
+from pathlib import Path
 
-load_dotenv(find_dotenv())
+
+dotenv_path = Path(find_dotenv())
+load_dotenv(dotenv_path)
+
 
 # For sample support and debugging, not required for production:
 # stripe.set_app_info(
@@ -46,6 +52,7 @@ class JsonFormatter(logging.Formatter):
 
         return json.dumps(log_data)
 
+
 # Changed from request_logger to sg_logger
 sg_logger = logging.getLogger('sg_logger')
 sg_logger.setLevel(logging.INFO)
@@ -56,6 +63,10 @@ sg_logger.addHandler(handler)
 
 app = Flask(__name__)
 app.logger.setLevel("DEBUG")
+app.logger.info(f"Environment: {dotenv_path}")
+app.logger.info(f"TREE_HOME: {os.getenv('TREE_HOME')}")
+treedb_init(default_handler)
+
 def amount_from_request(data):
     app.logger.info("amount_from_request")
     app.logger.info(data)
@@ -252,11 +263,30 @@ def get_all_pickups():
     # orders = [model_to_dict(o) for o in Order.select()] 
     # intents = [model_to_dict(o) for o in Intent.select()]
 
-    return jsonify(get_pickups())
+    return jsonify([pickup for pickup in get_pickups()])
+
+@app.route('/api/v1/pickups_csv')
+def get_all_pickups_csv():
+    # Get pickups list from treedb
+    data = [pickup for pickup in get_pickups()]
+
+    # Create a CSV file in memory
+    si = StringIO()
+    writer = DictWriter(si, fieldnames=data[0].keys())
+    writer.writeheader()
+    writer.writerows(data)
+
+    # Create a Flask responseget_csv
+    response = make_response(si.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+    response.headers['Content-type'] = 'text/csv'
+
+    return response
 
 if __name__ == '__main__':
-    treedb.init_or_connect()
-    port = int(os.environ.get('PORT', 4242))
-    app.run(host='0.0.0.0', port=port, debug=True)
-
-    print( json.dumps(get_pickups()))
+    port = int(os.environ.get('TS_PORT', 4242))
+    host = os.getenv("TS_HOST", "0.0.0.0")
+    app.logger.info("Tree server on %s:%s", host, port)
+    os.chdir(Path(os.getenv("TREE_HOME"))/"server")
+    app.logger.info("CWD %s", Path.cwd())
+    app.run(host=host, port=port, debug=False, load_dotenv=False)

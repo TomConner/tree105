@@ -11,3 +11,4 @@ caddy/Caddyfile
 db
 work
 .env
+*.log

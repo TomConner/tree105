@@ -1,7 +1,0 @@
-#!/bin/sh
-
-clear
-export DB_DIR="$HOME/tree105/work"
-export DB_FILE="$DB_DIR/$(ls -t $DB_DIR | grep 'db\.sqlite' | head -1)"
-printf "DB file is %s\n" "$DB_FILE"
-python server.py

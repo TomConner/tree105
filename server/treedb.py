@@ -10,8 +10,7 @@ import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-DB_FILE = Path(os.environ.get('DB_FILE', '/tree105/db/tree105.sqlite'))
-print(f"Connecting to {DB_FILE}")
+DB_FILE = Path(os.getenv('DB_FILE'))
 database = SqliteDatabase(DB_FILE)
 
 class TreeModel(Model):
@@ -60,20 +59,19 @@ def new_lookup():
     Lookup.create(code=code)
     return code
 
-def init_or_connect():
-    print("db init_or_connect")
+def treedb_init(handler):
+    logger.addHandler(handler)
     if not DB_FILE.exists():
-        print('initializing database')
+        logger.info(f'initializing database {DB_FILE}')
         DB_FILE.parent.mkdir(parents=True, exist_ok=True)
         database.connect()
         database.create_tables([Lookup, Order, Address])
         database.close()
     else:
-        print('connecting to database')
+        logger.info(f'connecting to database {DB_FILE}')
         database.connect()
         database.create_tables([Intent], safe=True)
         database.close()
-    print("db init_or_connect done")
 
 def before_request():
     logger.debug('db_before_request')
@@ -99,7 +97,7 @@ def create_intent(lookup_code, method):
 
     except Exception as e:
         # Handle other potential exceptions
-        print(f"Error creating intent: {e}")
+        logger.exception("Exception creating intent")
         return None
 
 
@@ -121,7 +119,7 @@ def create_order(lookup_code, comment, numtrees, extra):
 
     except Exception as e:
         # Handle other potential exceptions
-        print(f"Error creating order: {e}")
+        logger.exception("Exception creating order")
         return None
 
 
@@ -198,88 +196,84 @@ def get_last_intent(lookup_code):
         return model_to_dict(last)
     except Order.DoesNotExist:
         return None
-    
+
 def get_pickups():
-    try:
-        latest_addresses = (Address
-            .select(
-                Address.lookup,
-                fn.MAX(Address.created).alias('max_address_date')
-            )
-            .group_by(Address.lookup)
-            .alias('latest_addresses'))
+    latest_addresses = (Address
+        .select(
+            Address.lookup_id,
+            fn.MAX(Address.created).alias('max_address_date')
+        )
+        .group_by(Address.lookup_id)
+        .alias('latest_addresses'))
 
-        latest_orders = (Order
-            .select(
-                Order.lookup,
-                fn.MAX(Order.created).alias('max_order_date')
-            )
-            .group_by(Order.lookup)
-            .alias('latest_orders'))
+    latest_orders = (Order
+        .select(
+            Order.lookup_id,
+            fn.MAX(Order.created).alias('max_order_date')
+        )
+        .group_by(Order.lookup_id)
+        .alias('latest_orders'))
 
-        latest_intents = (Intent
-            .select(
-                Intent.lookup,
-                fn.MAX(Intent.created).alias('max_intent_date')
-            )
-            .group_by(Intent.lookup)
-            .alias('latest_intents'))
+    latest_intents = (Intent
+        .select(
+            Intent.lookup_id,
+            fn.MAX(Intent.created).alias('max_intent_date')
+        )
+        .group_by(Intent.lookup_id)
+        .alias('latest_intents'))
 
-        query = (Address
-            .select(
-                Lookup.code,
-                Address.name,
-                Address.email,
-                Address.phone,
-                Address.line1,
-                Address.line2,
-                Address.city,
-                Address.state,
-                Address.postal_code,
-                Address.created.alias('address_created'),
-                Order.created.alias('order_created'),
-                Order.numtrees,
-                Order.extra,
-                Order.comment,
-                Intent.created.alias('intent_created'),
-                Intent.method
+    query = (Address
+        .select(
+            Lookup.code,
+            Address.name,
+            Address.email,
+            Address.phone,
+            Address.line1,
+            Address.line2,
+            Address.city,
+            Address.state,
+            Address.postal_code,
+            Address.country,
+            Address.created.alias('address_created'),
+            Order.numtrees,
+            Order.extra,
+            Order.comment,
+            Order.created.alias('order_created'),
+            Intent.method,
+            Intent.created.alias('intent_created')
+        )
+        .join(Lookup)  # Join to get the lookup code
+        .join(
+            latest_addresses,
+            on=(
+                (Address.lookup_id == latest_addresses.c.lookup_id) & 
+                (Address.created == latest_addresses.c.max_address_date)
             )
-            .join(Lookup)  # Join to get the lookup code
-            .join(
-                latest_addresses,
-                on=(
-                    (Address.lookup == latest_addresses.c.lookup_id) & 
-                    (Address.created == latest_addresses.c.max_address_date)
-                )
+        )
+        .join(
+            Order,
+            JOIN.LEFT_OUTER,
+            on=(Address.lookup_id == Order.lookup_id)
+        )
+        .join(
+            latest_orders,
+            JOIN.LEFT_OUTER,
+            on=(
+                (Order.lookup_id == latest_orders.c.lookup_id) & 
+                (Order.created == latest_orders.c.max_order_date)
             )
-            .join(
-                Order,
-                JOIN.LEFT_OUTER,
-                on=(Address.lookup == Order.lookup)
+        )
+        .join(
+            Intent,
+            JOIN.LEFT_OUTER,
+            on=(Address.lookup_id == Intent.lookup_id)
+        )
+        .join(
+            latest_intents,
+            JOIN.LEFT_OUTER,
+            on=(
+                (Intent.lookup_id == latest_intents.c.lookup_id) & 
+                (Intent.created == latest_intents.c.max_intent_date)
             )
-            .join(
-                latest_orders,
-                JOIN.LEFT_OUTER,
-                on=(
-                    (Order.lookup == latest_orders.c.lookup_id) & 
-                    (Order.created == latest_orders.c.max_order_date)
-                )
-            )
-            .join(
-                Intent,
-                JOIN.LEFT_OUTER,
-                on=(Address.lookup == Intent.lookup)
-            )
-            .join(
-                latest_intents,
-                JOIN.LEFT_OUTER,
-                on=(
-                    (Intent.lookup == latest_intents.c.lookup_id) & 
-                    (Intent.created == latest_intents.c.max_intent_date)
-                )
-            )
-            .get())
-        return model_to_dict(query)
-    except Exception:
-        logging.exception("get_pickups")
-        return None
+        ))
+    return query.dicts()
