@@ -1,0 +1,3 @@
+#!/bin/sh
+DB_FILE=${DB_DIR}/$(ls -t ${DB_DIR} | grep '\.sqlite' | head -1)
+python server.py

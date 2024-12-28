@@ -6,11 +6,11 @@ import { defineConfig } from "vite"
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',  // Listen on all network interfaces
-    port: 3000,
+    host: '0.0.0.0', //process.env.VITE_HOST,
+    port: 3000, //parseInt(process.env.VITE_PORT || '3000'),
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.VITE_TARGET,
         changeOrigin: true
       }
     }
