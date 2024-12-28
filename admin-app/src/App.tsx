@@ -36,6 +36,26 @@ interface Order {
   };
 }
 
+interface Pickup {
+  code: string;
+  name: string;
+  email: string;
+  phone: string;
+  line1: string;
+  line2: string | null;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  address_created: string;
+  numtrees: number;
+  extra: number;
+  comment: string;
+  order_created: string;
+  method: string;
+  intent_created: string;
+}
+
 interface SortConfig {
   key: keyof Order | 'lookup.code';
   direction: 'asc' | 'desc';
@@ -65,6 +85,7 @@ const formatPhone = (phone: string) => {
 function App() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [pickups, setPickups] = useState<Pickup[]>([]);
   const [filterText, setFilterText] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'created', direction: 'desc' });
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -75,14 +96,21 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [ordersRes, addressesRes] = await Promise.all([
+      const [
+        ordersRes, 
+        addressesRes,
+        pickupsRes
+      ] = await Promise.all([
         fetch('/api/v1/orders'),
-        fetch('/api/v1/addresses')
+        fetch('/api/v1/addresses'),
+        fetch('/api/v1/pickups')
       ]);
       const ordersData = await ordersRes.json();
       const addressesData = await addressesRes.json();
+      const pickupsData = await pickupsRes.json();
       setOrders(ordersData);
       setAddresses(addressesData);
+      setPickups(pickupsData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
