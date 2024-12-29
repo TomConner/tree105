@@ -42,7 +42,7 @@ class Order(TreeModel):
     extra=IntegerField()
 
 class Intent(TreeModel):
-    lookup=ForeignKeyField(Lookup, backref='orders')
+    lookup=ForeignKeyField(Lookup, backref='intents')
     created=DateTimeField(default=datetime.now)
     method=CharField()
 
