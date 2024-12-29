@@ -1,4 +1,0 @@
-#!/bin/sh
-. ../.env
-printf "DB_DIR %s\n" "${DB_DIR}"
-DB_FILE="${DB_DIR}/$(ls -t ${DB_DIR} | grep '\.sqlite' | head -1)" python server.py

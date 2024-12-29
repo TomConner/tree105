@@ -278,7 +278,7 @@ def get_all_pickups_csv():
 
     # Create a Flask responseget_csv
     response = make_response(si.getvalue())
-    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+    response.headers['Content-Disposition'] = 'attachment; filename=pickups.csv'
     response.headers['Content-type'] = 'text/csv'
 
     return response
