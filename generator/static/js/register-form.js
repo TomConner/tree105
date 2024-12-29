@@ -159,6 +159,22 @@ window.addEventListener("load", (event) => {
       extra: rextra.value,
       comment: rcomment.value
     })
+    if (!localStorage.getItem("lookup")) {
+      console.log("new lookup before posting order")
+      fetch('/api/v1/lookups', {method: "POST"})
+      .then((response) => response.text())
+      .then((response_lookup_code) => {
+        const trimmed_code = response_lookup_code.trim();
+        console.log(`new lookup code is ${trimmed_code}`);
+        localStorage.setItem("lookup", trimmed_code);
+      });
+    }
+    const lookup_code = localStorage.getItem("lookup");
+    if (!lookup_code) {
+      console.error("no lookup code before order post")
+    } else {
+      console.log(`lookup from local storage before posting order is ${lookup_code}`)
+    }
     setLocalItem("order", order);
     fetch(`/api/v1/orders/${lookup_code}`, {
       method: "POST",
