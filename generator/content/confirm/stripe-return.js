@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   var height = document.body.scrollHeight;
   window.parent.postMessage({
       'frameHeight': height
-  }, 'https://dev.troop105treedrive.com');
+  }, 'https://troop105treedrive.com');
 
   // Helper for displaying status messages.
   const addMessage = (message) => {
