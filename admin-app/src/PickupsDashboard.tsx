@@ -12,15 +12,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const formatDate = (dateString: string) => {
-  const date = new Date(dateString.replace(' ', 'T')); // Convert to ISO format
-  return date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  try {
+    const date = new Date(dateString.replace(' ', 'T')); // Convert to ISO format
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (error) {
+    console.error('Error parsing date:', dateString);
+    return dateString;
+  }
 };
 
 interface PickupsDashboardProps {
@@ -30,7 +35,7 @@ interface PickupsDashboardProps {
 const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
   const [filterText, setFilterText] = useState('');
   const [sortConfig, setSortConfig] = useState<{key: keyof Pickup, direction: 'asc' | 'desc'}>({ 
-    key: 'order_created', 
+    key: 'ocreated', 
     direction: 'desc' 
   });
 
@@ -43,10 +48,10 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
   };
 
   const sortedPickups = [...pickups].sort((a, b) => {
-    if (sortConfig.key === 'order_created') {
+    if (sortConfig.key === 'ocreated') {
       return sortConfig.direction === 'asc'
-        ? new Date(a.order_created).getTime() - new Date(b.order_created).getTime()
-        : new Date(b.order_created).getTime() - new Date(a.order_created).getTime();
+        ? new Date(a.ocreated).getTime() - new Date(b.ocreated).getTime()
+        : new Date(b.ocreated).getTime() - new Date(a.ocreated).getTime();
     }
     return sortConfig.direction === 'asc'
       ? String(a[sortConfig.key]).localeCompare(String(b[sortConfig.key]))
@@ -111,8 +116,8 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="cursor-pointer" onClick={() => handleSort('order_created')}>
-                  Created {sortConfig.key === 'order_created' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                <TableHead className="cursor-pointer" onClick={() => handleSort('ocreated')}>
+                  Created {sortConfig.key === 'ocreated' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead className="cursor-pointer" onClick={() => handleSort('code')}>
@@ -126,8 +131,8 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
             </TableHeader>
             <TableBody>
               {filteredPickups.map((pickup) => (
-                <TableRow key={`${pickup.code}-${pickup.order_created}`}>
-                  <TableCell>{formatDate(pickup.order_created)}</TableCell>
+                <TableRow key={`${pickup.code}-${pickup.ocreated}`}>
+                  <TableCell>{formatDate(pickup.ocreated)}</TableCell>
                   <TableCell>
                     <div>{pickup.name}</div>
                     <div className="text-sm text-muted-foreground">{pickup.line1}</div>
