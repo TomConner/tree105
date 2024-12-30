@@ -265,7 +265,7 @@ SQL_QUERY_PICKUPS = '''
 with latest_orders as (
     select
         lookup_id o_lid,
-        max(created) ocreated,
+        max(created) order_created,
         numtrees,
         extra,
         comment
@@ -276,7 +276,7 @@ with latest_orders as (
 latest_intents as (
     select
         lookup_id i_lid,
-        max(created) icreated, 
+        max(created) intent_created, 
         method
     from 'intent' 
     group by lookup_id
@@ -285,7 +285,7 @@ latest_intents as (
 latest_addresses as (
     select
         lookup_id a_lid,
-        max(created) acreated,
+        max(created) address_created,
         name,
         email,
         phone,
@@ -301,16 +301,21 @@ latest_addresses as (
 )
 select 
     code,
-    latest_orders.ocreated, 
-    latest_intents.icreated,
-    latest_addresses.acreated,
-    phone,
+    latest_orders.order_created, 
+    latest_intents.intent_created,
+    latest_addresses.address_created,
     name,
+    email,
+    phone,
     line1,
     line2,
     city,
     state,
+    postal_code,
+    country,
     numtrees,
+    extra,
+    comment,
     method 
 from 'lookup', latest_addresses, latest_orders, latest_intents
 where lookup.id = a_lid
