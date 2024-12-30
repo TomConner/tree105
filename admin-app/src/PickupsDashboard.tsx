@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 import { Pickup } from './types';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  const date = new Date(dateString.replace(' ', 'T')); // Convert to ISO format
+  return date.toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
@@ -10,16 +21,6 @@ const formatDate = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit'
   });
-};
-
-const formatPhone = (phone: string) => {
-  if (!phone) return '';
-  const cleaned = phone.replace(/\D/g, '');
-  const match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-  if (match) {
-    return '(' + match[2] + ') ' + match[3] + '-' + match[4];
-  }
-  return phone;
 };
 
 interface PickupsDashboardProps {
@@ -67,85 +68,84 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
   const totalExtra = pickups.reduce((sum, pickup) => sum + (pickup.extra || 0), 0);
   const totalPickups = pickups.length;
 
-  if (!pickups) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="p-4">
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl">Tree Pickups Dashboard</h2>
-        <input
-          type="text"
-          placeholder="Search pickups..."
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
-          className="p-2 border rounded"
-        />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="py-4">
+            <h2 className="text-sm font-semibold text-gray-500">Total Pickups</h2>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalPickups}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="py-4">
+            <h2 className="text-sm font-semibold text-gray-500">Total Trees</h2>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalTrees}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="py-4">
+            <h2 className="text-sm font-semibold text-gray-500">Total Extra Amount</h2>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">${totalExtra}</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="mb-4 grid grid-cols-3 gap-4">
-        <div className="p-4 border rounded">
-          <div className="text-gray-600">Total Pickups</div>
-          <div className="text-2xl">{totalPickups}</div>
-        </div>
-        <div className="p-4 border rounded">
-          <div className="text-gray-600">Total Trees</div>
-          <div className="text-2xl">{totalTrees}</div>
-        </div>
-        <div className="p-4 border rounded">
-          <div className="text-gray-600">Total Extra Amount</div>
-          <div className="text-2xl">${totalExtra}</div>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-50">
-              <th 
-                className="border p-2 text-left cursor-pointer"
-                onClick={() => handleSort('order_created')}
-              >
-                Created {sortConfig.key === 'order_created' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-              </th>
-              <th className="border p-2 text-left">Customer</th>
-              <th 
-                className="border p-2 text-left cursor-pointer"
-                onClick={() => handleSort('code')}
-              >
-                Code {sortConfig.key === 'code' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-              </th>
-              <th className="border p-2 text-left">Method</th>
-              <th className="border p-2 text-left">Trees</th>
-              <th className="border p-2 text-left">Extra</th>
-              <th className="border p-2 text-left">Comment</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPickups.map((pickup) => (
-              <tr 
-                key={`${pickup.code}-${pickup.order_created}`}
-                className="hover:bg-gray-50"
-              >
-                <td className="border p-2">{formatDate(pickup.order_created)}</td>
-                <td className="border p-2">
-                  <div>{pickup.name}</div>
-                  <div className="text-sm text-gray-500">{pickup.line1}</div>
-                  {pickup.city !== 'Pembroke' && (
-                    <div className="text-sm text-gray-500">{pickup.city}</div>
-                  )}
-                </td>
-                <td className="border p-2 font-mono">{pickup.code}</td>
-                <td className="border p-2">{pickup.method || 'Pending'}</td>
-                <td className="border p-2">{pickup.numtrees}</td>
-                <td className="border p-2">${pickup.extra}</td>
-                <td className="border p-2">{pickup.comment}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <h2 className="text-lg font-semibold">Tree Pickups</h2>
+          <Input
+            placeholder="Search pickups..."
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            className="max-w-xs"
+          />
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('order_created')}>
+                  Created {sortConfig.key === 'order_created' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('code')}>
+                  Code {sortConfig.key === 'code' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead>Method</TableHead>
+                <TableHead>Trees</TableHead>
+                <TableHead>Extra</TableHead>
+                <TableHead>Comment</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPickups.map((pickup) => (
+                <TableRow key={`${pickup.code}-${pickup.order_created}`}>
+                  <TableCell>{formatDate(pickup.order_created)}</TableCell>
+                  <TableCell>
+                    <div>{pickup.name}</div>
+                    <div className="text-sm text-muted-foreground">{pickup.line1}</div>
+                    {pickup.city !== 'Pembroke' && (
+                      <div className="text-sm text-muted-foreground">{pickup.city}</div>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-mono">{pickup.code}</TableCell>
+                  <TableCell>{pickup.method || 'Pending'}</TableCell>
+                  <TableCell>{pickup.numtrees}</TableCell>
+                  <TableCell>${pickup.extra}</TableCell>
+                  <TableCell>{pickup.comment}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };
