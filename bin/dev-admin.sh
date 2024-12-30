@@ -20,7 +20,7 @@ pull_backup() {
 }
 
 dev_front() {
-    cd "${TREE_HOME}/admin-ui"
+    cd "${TREE_HOME}/admin-app"
     npm run dev
 }
 
