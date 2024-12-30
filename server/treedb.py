@@ -197,7 +197,7 @@ def get_last_intent(lookup_code):
     except Order.DoesNotExist:
         return None
 
-def get_pickups():
+def get_pickups_peewee():
     latest_addresses = (Address
         .select(
             Address.lookup_id,
@@ -222,9 +222,10 @@ def get_pickups():
         .group_by(Intent.lookup_id)
         .alias('latest_intents'))
 
-    query = (Address
+    query = (Lookup
         .select(
             Lookup.code,
+
             Address.name,
             Address.email,
             Address.phone,
@@ -235,45 +236,105 @@ def get_pickups():
             Address.postal_code,
             Address.country,
             Address.created.alias('address_created'),
+            
             Order.numtrees,
             Order.extra,
             Order.comment,
             Order.created.alias('order_created'),
+
             Intent.method,
             Intent.created.alias('intent_created')
         )
-        .join(Lookup)  # Join to get the lookup code
         .join(
             latest_addresses,
-            on=(
-                (Address.lookup_id == latest_addresses.c.lookup_id) & 
-                (Address.created == latest_addresses.c.max_address_date)
-            )
-        )
-        .join(
-            Order,
-            JOIN.LEFT_OUTER,
-            on=(Address.lookup_id == Order.lookup_id)
+            on=(Address.lookup_id == latest_addresses.c.lookup_id)
         )
         .join(
             latest_orders,
-            JOIN.LEFT_OUTER,
-            on=(
-                (Order.lookup_id == latest_orders.c.lookup_id) & 
-                (Order.created == latest_orders.c.max_order_date)
-            )
-        )
-        .join(
-            Intent,
-            JOIN.LEFT_OUTER,
-            on=(Address.lookup_id == Intent.lookup_id)
+            on=(latest_addresses.c.lookup_id == latest_orders.c.lookup_id)
         )
         .join(
             latest_intents,
-            JOIN.LEFT_OUTER,
-            on=(
-                (Intent.lookup_id == latest_intents.c.lookup_id) & 
-                (Intent.created == latest_intents.c.max_intent_date)
-            )
-        ))
+            on=(latest_orders.c.lookup_id == latest_intents.c.lookup_id)
+        )
+    )
+
     return query.dicts()
+
+SQL_QUERY_PICKUPS = '''
+with latest_orders as (
+    select
+        lookup_id o_lid,
+        max(created) ocreated,
+        numtrees,
+        extra,
+        comment
+    from 'order' 
+    group by lookup_id
+    order by lookup_id
+),
+latest_intents as (
+    select
+        lookup_id i_lid,
+        max(created) icreated, 
+        method
+    from 'intent' 
+    group by lookup_id
+    order by lookup_id
+),
+latest_addresses as (
+    select
+        lookup_id a_lid,
+        max(created) acreated,
+        name,
+        email,
+        phone,
+        line1,
+        line2,
+        city,
+        state,
+        postal_code,
+        country
+    from 'address' 
+    group by lookup_id
+    order by lookup_id
+)
+select 
+    code,
+    latest_orders.ocreated, 
+    latest_intents.icreated,
+    latest_addresses.acreated,
+    phone,
+    name,
+    line1,
+    line2,
+    city,
+    state,
+    numtrees,
+    method 
+from 'lookup', latest_addresses, latest_orders, latest_intents
+where lookup.id = a_lid
+and lookup.id = o_lid
+and lookup.id = i_lid
+;
+--join latest_orders on lookup.id = o_lid
+--join latest_intents on lookup.id = i_lid
+--join latest_addresses on lookup.id = a_lid;
+'''
+
+def get_pickups():
+    cursor = database.execute_sql(SQL_QUERY_PICKUPS)
+
+    dicts = []
+    for row in cursor.fetchall():
+        record = {}
+
+        for column, value in zip(cursor.description, row):
+            column_name = column[0]
+            #print(column_name, '=', value)
+            record[column_name] = value
+
+        dicts.append(record)
+
+    return dicts
+
