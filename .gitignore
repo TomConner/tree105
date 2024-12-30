@@ -12,3 +12,4 @@ db
 work
 .env
 *.log
+server/pickups.csv
