@@ -35,7 +35,7 @@ interface PickupsDashboardProps {
 const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
   const [filterText, setFilterText] = useState('');
   const [sortConfig, setSortConfig] = useState<{key: keyof Pickup, direction: 'asc' | 'desc'}>({ 
-    key: 'ocreated', 
+    key: 'order_created', 
     direction: 'desc' 
   });
 
@@ -134,11 +134,10 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
                 <TableRow key={`${pickup.code}-${pickup.ocreated}`}>
                   <TableCell>{formatDate(pickup.ocreated)}</TableCell>
                   <TableCell>
-                    <div>{pickup.name}</div>
-                    <div className="text-sm text-muted-foreground">{pickup.line1}</div>
-                    {pickup.city !== 'Pembroke' && (
-                      <div className="text-sm text-muted-foreground">{pickup.city}</div>
-                    )}
+                    {pickup.city === 'Pembroke' 
+                      ? `${pickup.name}, ${pickup.line1}`
+                      : `${pickup.name}, ${pickup.line1}, ${pickup.city}`
+                    }
                   </TableCell>
                   <TableCell className="font-mono">{pickup.code}</TableCell>
                   <TableCell>{pickup.method || 'Pending'}</TableCell>
