@@ -152,14 +152,33 @@ window.addEventListener("load", (event) => {
   }
 
   // on Continue button: POST order, then hand off to stripeFrame
-  orderForm.addEventListener("submit", (event) => {
+  orderForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const order = JSON.stringify({
       numtrees: rnumtrees.value,
       extra: rextra.value,
       comment: rcomment.value
     })
+    if (!localStorage.getItem("lookup")) {
+      console.log("new lookup before posting order")
+      await fetch('/api/v1/lookups', {method: "POST"})
+        .then((response) => {
+            return response.text();
+        })
+        .then((response_lookup_code) => {
+            const trimmed_code = response_lookup_code.trim();
+            console.log(`new lookup code is ${trimmed_code}`);  // And here
+            localStorage.setItem("lookup", trimmed_code);
+        });
+    }
+    const lookup_code = localStorage.getItem("lookup");
+    if (!lookup_code) {
+      console.error("no lookup code before order post")
+    } else {
+      console.log(`lookup from local storage before posting order is ${lookup_code}`)
+    }
     setLocalItem("order", order);
+    console.log(`fetch orders ${lookup_code}`)
     fetch(`/api/v1/orders/${lookup_code}`, {
       method: "POST",
       headers: {
