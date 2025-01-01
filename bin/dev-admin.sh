@@ -17,6 +17,7 @@ pull_backup() {
     ssh "$ssh_remote" "tree105/bin/daily-server.sh"
     scp "$remote_tree/work/tree105-backup.zip" "$local_work"
     unzip "$local_work/tree105-backup.zip" -d "$local_work"
+    dev_admin
 }
 
 dev_front() {
