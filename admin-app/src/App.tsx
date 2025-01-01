@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PickupsDashboard from './PickupsDashboard';
 import { Pickup } from './types';
 

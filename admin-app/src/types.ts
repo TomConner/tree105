@@ -13,7 +13,7 @@ export interface Pickup {
   numtrees: number;
   extra: number;
   comment: string;
-  ocreated: string;
+  order_created: string;
   method: string;
   intent_created: string;
 }
