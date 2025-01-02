@@ -1,3 +1,8 @@
+from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
+dotenv_path = Path(find_dotenv())
+load_dotenv(dotenv_path)
+
 import stripe
 import json
 import os
@@ -8,7 +13,6 @@ from csv import DictWriter
 
 from flask import Flask, jsonify, request, abort, make_response
 from flask.logging import default_handler
-from dotenv import load_dotenv, find_dotenv
 from playhouse.shortcuts import model_to_dict
 
 from treedb import (create_address, get_last_address, create_order, 
@@ -17,12 +21,8 @@ from treedb import (create_address, get_last_address, create_order,
                     Address, Order, Lookup, Intent)
 from playhouse.shortcuts import model_to_dict
 import treedb
-from pathlib import Path
-
-
-dotenv_path = Path(find_dotenv())
-load_dotenv(dotenv_path)
-
+from functools import wraps
+from flask import request, Response
 
 # For sample support and debugging, not required for production:
 # stripe.set_app_info(
@@ -290,3 +290,41 @@ if __name__ == '__main__':
     os.chdir(Path(os.getenv("TREE_HOME"))/"server")
     app.logger.info("CWD %s", Path.cwd())
     app.run(host=host, port=port, debug=False, load_dotenv=False)
+
+
+
+
+
+# Hardcoded users - you can move this to a config file
+
+USERS = json.read('.users.json')
+
+def check_auth(username, password):
+    return username in USERS and USERS[username] == password
+
+def authenticate():
+    return Response(
+        'Could not verify your credentials', 
+        401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+# Public endpoint
+@app.route('/api/public')
+def public():
+    return {"message": "This is public"}
+
+# Protected endpoint
+@app.route('/api/protected')
+@requires_auth
+def protected():
+    return {"message": "This is protected"}

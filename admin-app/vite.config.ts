@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '..', '')
   return {
     plugins: [react()],
+    build: {
+        outDir: '../public/app'
+    },
     base: '/app',
     server: {
       host: env.VITE_HOST,

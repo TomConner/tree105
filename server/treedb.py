@@ -10,7 +10,9 @@ import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-DB_FILE = Path(os.getenv('DB_FILE'))
+DB_DIR = Path(os.getenv('TREE_HOME', '/tree105')) / 'db' 
+DB_FILENAME = Path(os.getenv('DB_FILENAME', 'tree105.sqlite'))
+DB_FILE = DB_DIR / DB_FILENAME
 database = SqliteDatabase(DB_FILE)
 
 class TreeModel(Model):
@@ -150,52 +152,40 @@ def create_address(lookup_code, city, country, line1, line2, postal_code, state,
         return f"Error creating address: {e}"
 
 def get_last_address(lookup_code):
-    try:
-        last_address = (Address
-                        .select(
-                            Lookup.code,
-                            fn.MAX(Address.created),
-
-                            Address.name,
-                            Address.line1,
-                            Address.line2,
-                            Address.city,
-                            Address.state,
-                            Address.postal_code,
-                            Address.country,
-                            Address.email,
-                            Address.phone
-                        )
-                        .join(Lookup, on=(Lookup.code == Address.lookup))
-                        .group_by(Address.lookup)
-                        .get())
-        return model_to_dict(last_address)
-    except Address.DoesNotExist:
-        return None
+    last_address = (Address
+                    .select(
+                        Address.name,
+                        Address.line1,
+                        Address.line2,
+                        Address.city,
+                        Address.state,
+                        Address.postal_code,
+                        Address.country,
+                        Address.email,
+                        Address.phone)
+                    .join(Lookup, on(Address.lookup_id == Lookup.id))
+                    .where(Lookup.code == lookup_code)
+                    .order_by(Address.created.desc())
+                    .first())
+    return model_to_dict(last_address) if last_address else None
 
 def get_last_order(lookup_code):
-    try:
-        last_order = (Order
-                      .select()
-                      .join(Lookup, on=(Order.lookup_id == Lookup.id ))
-                      .where(Lookup.code == lookup_code)
-                      .max(Order.created)
-                      .get())
-        return model_to_dict(last_order)
-    except Order.DoesNotExist:
-        return None
+    last_order = (Order
+                .select()
+                .join(Lookup, on=(Order.lookup_id == Lookup.id))
+                .where(Lookup.code == lookup_code)
+                .order_by(Order.created.desc())  # Order by created date descending
+                .first())  # Get the first (most recent) result
+    return model_to_dict(last_order) if last_order else None
 
 def get_last_intent(lookup_code):
-    try:
-        last = (Intent
-                      .select()
-                      .join(Intent)
-                      .where(Lookup.code == lookup_code)
-                      .order_by(Intent.created.desc())
-                      .get())
-        return model_to_dict(last)
-    except Order.DoesNotExist:
-        return None
+    last = (Intent
+                  .select()
+                  .join(Intent)
+                  .where(Lookup.code == lookup_code)
+                  .order_by(Intent.created.desc())
+                  .get())
+    return model_to_dict(last) if last else None
 
 def get_pickups_peewee():
     latest_addresses = (Address

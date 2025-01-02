@@ -1,9 +1,10 @@
 #!/bin/zsh
 
-. "${HOME}/tree105/.env"
+. "/tree105/.env"
 echo Environment: ${ENV_LABEL:?}
-DB_FILE="${DB_DIR:?}/$(ls -t ${DB_DIR:?} | grep '\.sqlite' | head -1)"
-echo DB_FILE: ${DB_FILE:?}
+DB_BACKUP_FILE="/tree105/work/$(ls -t ${DB_DIR:?} | grep '\.sqlite' | head -1)"
+cp -puv "${DB_BACKUP_FILE}" "/tree105/db/tree105-dev.sqlite"
+echo DB_FILENAME: "${DB_FILENAME}"
 
 dev_admin() {
     cd "${TREE_HOME}/bin"
