@@ -1,18 +1,28 @@
-#! /usr/bin/env python3.8
+from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
+dotenv_path = Path(find_dotenv())
+load_dotenv(dotenv_path)
+
 import stripe
 import json
 import os
+import gzip
+import logging
+from io import BytesIO, StringIO
+from csv import DictWriter
 
-from flask import Flask, jsonify, request, abort
-from dotenv import load_dotenv, find_dotenv
+from flask import Flask, jsonify, request, abort, make_response
+from flask.logging import default_handler
 from playhouse.shortcuts import model_to_dict
 
-
-from treedb import create_address, get_last_address, create_order, create_intent, get_last_order, Address, Order, Lookup
+from treedb import (create_address, get_last_address, create_order, 
+                    create_intent, get_last_order, get_pickups,
+                    treedb_init,
+                    Address, Order, Lookup, Intent)
 from playhouse.shortcuts import model_to_dict
 import treedb
-
-load_dotenv(find_dotenv())
+from functools import wraps
+from flask import request, Response
 
 # For sample support and debugging, not required for production:
 # stripe.set_app_info(
@@ -26,6 +36,7 @@ stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 import logging
 import json
 from datetime import datetime
+
 
 class JsonFormatter(logging.Formatter):
     def format(self, record):
@@ -41,6 +52,7 @@ class JsonFormatter(logging.Formatter):
 
         return json.dumps(log_data)
 
+
 # Changed from request_logger to sg_logger
 sg_logger = logging.getLogger('sg_logger')
 sg_logger.setLevel(logging.INFO)
@@ -51,6 +63,10 @@ sg_logger.addHandler(handler)
 
 app = Flask(__name__)
 app.logger.setLevel("DEBUG")
+app.logger.info(f"Environment: {dotenv_path}")
+app.logger.info(f"TREE_HOME: {os.getenv('TREE_HOME')}")
+treedb_init(default_handler)
+
 def amount_from_request(data):
     app.logger.info("amount_from_request")
     app.logger.info(data)
@@ -68,6 +84,7 @@ def db_before_request():
 @app.teardown_request
 def db_teardown_request(exc):
     treedb.teardown_request()
+
 
 def to_int(s:str):
     if s is None:
@@ -88,6 +105,7 @@ def order_amount(order):
 def get_config():
     app.logger.info('config')
     return jsonify({'publishableKey': os.getenv('STRIPE_PUBLISHABLE_KEY')})
+
 
 @app.route('/api/v1/create-payment-intent/<lookup>', methods=['POST'])
 def create_payment(lookup):
@@ -213,12 +231,6 @@ def get_orders_for_lookup(lookup_code):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-
-
-
-
-
-
 # @app.route('/api/v1/lookups', methods=['GET'])
 # def get_lookups():
 #     app.logger.info(f"lookup")
@@ -243,7 +255,76 @@ def post_emailevents():
     sg_logger.info(f"emailevents", extra={"sg_data": json_data})
     return 'OK\n', 200
 
+@app.route('/api/v1/pickups', methods=['GET'])
+def get_all_pickups():
+    app.logger.info(f"GET pickups")
+    # pickups = [model_to_dict(o) for o in Lookup.select()]
+    # addresses = [model_to_dict(o) for o in Address.select()]
+    # orders = [model_to_dict(o) for o in Order.select()] 
+    # intents = [model_to_dict(o) for o in Intent.select()]
+
+    return jsonify([pickup for pickup in get_pickups()])
+
+@app.route('/api/v1/pickups_csv')
+def get_all_pickups_csv():
+    # Get pickups list from treedb
+    data = [pickup for pickup in get_pickups()]
+
+    # Create a CSV file in memory
+    si = StringIO()
+    writer = DictWriter(si, fieldnames=data[0].keys())
+    writer.writeheader()
+    writer.writerows(data)
+
+    # Create a Flask responseget_csv
+    response = make_response(si.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=pickups.csv'
+    response.headers['Content-type'] = 'text/csv'
+
+    return response
 
 if __name__ == '__main__':
-    treedb.init_or_connect()
-    app.run(host='0.0.0.0', port=4242, debug=True)
+    port = int(os.environ.get('TREE_SERVER_PORT', 4242))
+    host = os.getenv("TREE_SERVER_HOST", "0.0.0.0")
+    app.logger.info("Tree server on %s:%s", host, port)
+    os.chdir(Path(os.getenv("TREE_HOME"))/"server")
+    app.logger.info("CWD %s", Path.cwd())
+    app.run(host=host, port=port, debug=False, load_dotenv=False)
+
+
+
+
+
+# Hardcoded users - you can move this to a config file
+
+USERS = json.read('.users.json')
+
+def check_auth(username, password):
+    return username in USERS and USERS[username] == password
+
+def authenticate():
+    return Response(
+        'Could not verify your credentials', 
+        401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+# Public endpoint
+@app.route('/api/public')
+def public():
+    return {"message": "This is public"}
+
+# Protected endpoint
+@app.route('/api/protected')
+@requires_auth
+def protected():
+    return {"message": "This is protected"}
