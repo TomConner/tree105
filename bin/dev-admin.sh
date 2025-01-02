@@ -2,7 +2,7 @@
 
 . "/tree105/.env"
 echo Environment: ${ENV_LABEL:?}
-DB_BACKUP_FILE="/tree105/work/$(ls -t ${DB_DIR:?} | grep '\.sqlite' | head -1)"
+DB_BACKUP_FILE="/tree105/work/$(ls -t /tree105/work | grep '\.sqlite' | head -1)"
 cp -puv "${DB_BACKUP_FILE}" "/tree105/db/tree105-dev.sqlite"
 echo DB_FILENAME: "${DB_FILENAME}"
 

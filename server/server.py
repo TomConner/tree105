@@ -85,6 +85,34 @@ def db_before_request():
 def db_teardown_request(exc):
     treedb.teardown_request()
 
+users_env = os.getenv("USERS")
+USERS = {}
+for up in users_env.split(","):
+    u,p = up.split(':')
+    USERS[u]=p
+assert USERS
+print(USERS.keys())
+
+def check_auth(username, password):
+    # TODO REMOVE
+    print(f"username {username} pwlen {len(password)} {password[-1:]}")
+    return username in USERS and USERS[username] == password
+
+def authenticate():
+    return Response(
+        'Could not verify your credentials', 
+        401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 def to_int(s:str):
     if s is None:
@@ -96,6 +124,7 @@ def to_int(s:str):
 def order_amount(order):
     app.logger.info(f"order_amount: {order}")
     return (to_int(order['numtrees']) * 15 + to_int(order['extra'])) * 100
+
 
 #########
 #
@@ -206,11 +235,13 @@ def get_last_order_route(lookup_code):
     return jsonify(order) if order else ('', 404)
 
 @app.route('/api/v1/addresses', methods=['GET'])
+@requires_auth
 def get_all_addresses():
     addresses = [model_to_dict(address) for address in Address.select()]
     return jsonify(addresses)
 
 @app.route('/api/v1/orders', methods=['GET'])
+@requires_auth
 def get_all_orders():
     orders = [model_to_dict(order) for order in Order.select()]
     return jsonify(orders)
@@ -237,6 +268,7 @@ def get_orders_for_lookup(lookup_code):
 #     return jsonify([p for p in treedb.get_lookups()])
 
 @app.route('/api/v1/lookups', methods=['POST'])
+@requires_auth
 def post_lookup():
     app.logger.info(f"POST lookup")
     return treedb.new_lookup()
@@ -255,7 +287,14 @@ def post_emailevents():
     sg_logger.info(f"emailevents", extra={"sg_data": json_data})
     return 'OK\n', 200
 
+
+@app.route('/api/protected', methods=['GET'])
+@requires_auth
+def get_protected():
+    return 'OK\n', 200
+
 @app.route('/api/v1/pickups', methods=['GET'])
+@requires_auth
 def get_all_pickups():
     app.logger.info(f"GET pickups")
     # pickups = [model_to_dict(o) for o in Lookup.select()]
@@ -266,6 +305,7 @@ def get_all_pickups():
     return jsonify([pickup for pickup in get_pickups()])
 
 @app.route('/api/v1/pickups_csv')
+@requires_auth
 def get_all_pickups_csv():
     # Get pickups list from treedb
     data = [pickup for pickup in get_pickups()]
@@ -283,6 +323,7 @@ def get_all_pickups_csv():
 
     return response
 
+
 if __name__ == '__main__':
     port = int(os.environ.get('TREE_SERVER_PORT', 4242))
     host = os.getenv("TREE_SERVER_HOST", "0.0.0.0")
@@ -290,41 +331,3 @@ if __name__ == '__main__':
     os.chdir(Path(os.getenv("TREE_HOME"))/"server")
     app.logger.info("CWD %s", Path.cwd())
     app.run(host=host, port=port, debug=False, load_dotenv=False)
-
-
-
-
-
-# Hardcoded users - you can move this to a config file
-
-USERS = json.read('.users.json')
-
-def check_auth(username, password):
-    return username in USERS and USERS[username] == password
-
-def authenticate():
-    return Response(
-        'Could not verify your credentials', 
-        401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'}
-    )
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-
-# Public endpoint
-@app.route('/api/public')
-def public():
-    return {"message": "This is public"}
-
-# Protected endpoint
-@app.route('/api/protected')
-@requires_auth
-def protected():
-    return {"message": "This is protected"}

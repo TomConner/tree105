@@ -16,9 +16,9 @@ services:
     working_dir: /tree105/caddy
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./public:/public
       - caddy_data:/data
       - caddy_config:/config
+      - .:/tree105
     networks:
       - outside
       - default
@@ -37,17 +37,6 @@ services:
     networks:
       - default
 
-  generator:
-    build:
-      context: ./generator
-    working_dir: /tree105/generator
-    command: hugo server -s /tree105/generator --disableFastRender --forceSyncStatic --cleanDestinationDir --disableLiveReload -d /tree105/public --bind "0.0.0.0" --port 1313
-    ports:
-      - "1313:1313"
-    volumes:
-      - .:/tree105
-    networks:
-      - default
 
 volumes:
   tree105:
