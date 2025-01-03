@@ -1,4 +1,3 @@
-drop table if exists pickups;
 drop view if exists pickups;
 create view pickups as
 with latest_orders as (
