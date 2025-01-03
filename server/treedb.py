@@ -251,7 +251,7 @@ def get_pickups_peewee():
 
     return query.dicts()
 
-SQL_QUERY_PICKUPS = '''
+BYE_SQL_QUERY_PICKUPS = '''
 with latest_orders as (
     select
         lookup_id o_lid,
@@ -318,7 +318,8 @@ and lookup.id = i_lid
 '''
 
 def get_pickups():
-    cursor = database.execute_sql(SQL_QUERY_PICKUPS)
+    #cursor = database.execute_sql(SQL_QUERY_PICKUPS)
+    cursor = database.execute_sql('select * from pickups;')
 
     dicts = []
     for row in cursor.fetchall():
