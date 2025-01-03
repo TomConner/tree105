@@ -1,16 +1,24 @@
 #!/bin/zsh
 
 . "/tree105/.env"
-echo Environment: ${ENV_LABEL:?}
-DB_BACKUP_FILE="/tree105/work/$(ls -t /tree105/work | grep '\.sqlite' | head -1)"
-cp -puv "${DB_BACKUP_FILE}" "/tree105/db/tree105-dev.sqlite"
-echo DB_FILENAME: "${DB_FILENAME}"
 
-dev_admin() {
-    cd "${TREE_HOME}/bin"
-    . ./dev-admin.sh
+DB_BACKUP_FILE="/tree105/work/$(ls -t /tree105/work | grep '\.sqlite' | head -1)"
+DEV_DB="/tree105/db/tree105-dev.sqlite"
+
+echo Environment: ${ENV_LABEL:?}
+echo DB_BACKUP_FILE: "${DB_BACKUP_FILE}"
+echo DEV_DB: "${DEV_DB}"
+alias tdb="sqlite3 ${DEV_DB:?}"
+
+da() {
+    local _da=/tree105/bin/dev-admin.sh
+    vim ${_da}
+    . ${_da}
 }
-pull_backup() {
+pb() {
+    pushd /tree105
+    dc stop server
+
     local ssh_remote="tom@troop105treedrive.com"
     local remote_tree="${ssh_remote}:tree105"
     local local_work="${TREE_HOME}/work"
@@ -18,7 +26,19 @@ pull_backup() {
     ssh "$ssh_remote" "tree105/bin/daily-server.sh"
     scp "$remote_tree/work/tree105-backup.zip" "$local_work"
     unzip "$local_work/tree105-backup.zip" -d "$local_work"
-    dev_admin
+    DB_BACKUP_FILE="/tree105/work/$(ls -t /tree105/work | grep '\.sqlite' | head -1)"
+    cp -puv "${DB_BACKUP_FILE}" "${DEV_DB}"
+    echo DB_BACKUP_FILE: "${DB_BACKUP_FILE}"
+    echo DEV_DB: "${DEV_DB}"
+
+    cd server
+    tdb '.read import-stripe-charges.sql'
+    tdb '.read import-contacts.sql'
+    tdb '.read pickups-view.sql'
+    tdb '.read email-history-view.sql'
+
+    dcupd
+    popd
 }
 
 dev_front() {
@@ -30,16 +50,4 @@ dev_server() {
     cd "${TREE_HOME}/bin"
     ./server
 }
-
-tdb() {
-    sqlite3 ${DB_FILE:?}
-}
-
-which dev_admin
-which pull_backup
-which dev_front
-which dev_server
-which tdb
-
-#./emails sendem registered
 
