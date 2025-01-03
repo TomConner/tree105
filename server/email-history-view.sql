@@ -1,9 +1,17 @@
 drop view if exists email_history_full;
+
 create view email_history_full as
 with emails as (
     select lower(email) email from contacts 
     union 
     select lower(email) email from pickups 
+),
+stripe as (
+    select 
+        "Customer Email" email, 
+        sum(Amount)-sum("Amount Refunded") stripe2025 
+    from stripe_charges 
+    group by "Customer Email"
 )
 select 
     emails.email, 
@@ -20,6 +28,7 @@ select
     from emails 
     left outer join contacts on emails.email=contacts.email and numtrees2024>0
     left outer join pickups on emails.email=pickups.email
+    left outer join stripe on lower(emails.email)=lower(stripe.email)
 
     where numtrees2024>0 or numtrees2025>0 or stripe2025>0
 ;
@@ -48,3 +57,7 @@ SELECT
   stripe2025
 FROM numbered_rows
 WHERE row_num = 1;
+
+.mode table
+select count() from email_history;
+select * from email_history limit 30;

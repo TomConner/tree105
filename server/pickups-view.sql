@@ -55,8 +55,10 @@ select
     extra,
     comment,
     method 
-from 'lookup', latest_addresses, latest_orders, latest_intents
-where lookup.id = a_lid
-and lookup.id = o_lid
-and lookup.id = i_lid
+from 'lookup'
+inner join latest_addresses on lookup.id=a_lid
+inner join latest_orders on lookup.id=o_lid
+left outer join latest_intents on lookup.id= i_lid
 ;
+select count() from pickups;
+select code, name, email, line1, comment from pickups limit 20;
