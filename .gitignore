@@ -13,3 +13,7 @@ work
 .env
 *.log
 server/pickups.csv
+bin/email-confirm.json
+bin/email-history.csv
+server/contacts.csv
+server/stripe_charges.csv
