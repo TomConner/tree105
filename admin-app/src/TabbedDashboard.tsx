@@ -40,6 +40,7 @@ const TabbedDashboard = ({ pickups, emailHistory }: TabbedDashboardProps) => {
         <TabsList>
           <TabsTrigger value="current">Current Pickups</TabsTrigger>
           <TabsTrigger value="history">Pickup History</TabsTrigger>
+          <TabsTrigger value="routes">Route Planning</TabsTrigger>
         </TabsList>
 
         <TabsContent value="current">
