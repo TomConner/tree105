@@ -81,6 +81,7 @@ def sendem(batch: str, dry_run: bool = False):
     numrows = 0
     html_content = ""
     for row in emails:
+        print(f"considering {row['email']}")
         if email_log.has_event(row['email'], batch):
             if dry_run:
                 print(f"dry_run: skipping because sent previously on {batch}: {row['email']}")

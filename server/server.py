@@ -1,3 +1,4 @@
+
 from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 dotenv_path = Path(find_dotenv())
@@ -8,6 +9,7 @@ import json
 import os
 import gzip
 import logging
+from typing import Optional, Iterator, Dict, Any
 from io import BytesIO, StringIO
 from csv import DictWriter
 
@@ -16,9 +18,11 @@ from flask.logging import default_handler
 from playhouse.shortcuts import model_to_dict
 
 from treedb import (create_address, get_last_address, create_order, 
-                    create_intent, get_last_order, get_pickups,
+                    create_intent, get_last_order, get_pickups, get_email_history,
                     treedb_init,
                     Address, Order, Lookup, Intent)
+#from treestripe import (treestripe_init, StripePaymentIterator)
+
 from playhouse.shortcuts import model_to_dict
 import treedb
 from functools import wraps
@@ -35,7 +39,7 @@ stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class JsonFormatter(logging.Formatter):
@@ -66,6 +70,7 @@ app.logger.setLevel("DEBUG")
 app.logger.info(f"Environment: {dotenv_path}")
 app.logger.info(f"TREE_HOME: {os.getenv('TREE_HOME')}")
 treedb_init(default_handler)
+#treestripe_init(default_handler)
 
 def amount_from_request(data):
     app.logger.info("amount_from_request")
@@ -293,6 +298,14 @@ def post_emailevents():
 def get_protected():
     return 'OK\n', 200
 
+@app.route('/api/v1/email_history', methods=['GET'])
+@requires_auth
+def get_all_email_history():
+    app.logger.info(f"GET email history")
+    data = get_email_history()
+    return jsonify(data)
+    
+
 @app.route('/api/v1/pickups', methods=['GET'])
 @requires_auth
 def get_all_pickups():
@@ -302,11 +315,27 @@ def get_all_pickups():
     # orders = [model_to_dict(o) for o in Order.select()] 
     # intents = [model_to_dict(o) for o in Intent.select()]
 
-    return jsonify([pickup for pickup in get_pickups()])
+    # get payments
+    #pmts = get_all_payments_received()
+    # get pickups
+    pickups = get_pickups()
+    #for pickup in pickups:
+    #    email = pickup['email']
+    #    pickup['paid2025'] = pmts.get(email) or 0
+
+    return jsonify(pickups)
+
+@app.route('/api/v1/payments', methods=['GET'])
+@requires_auth
+def get_all_payments():
+    pmts = get_all_payments_received()
+    return jsonify(pmts)
+
 
 @app.route('/api/v1/pickups_csv')
 @requires_auth
 def get_all_pickups_csv():
+
     # Get pickups list from treedb
     data = [pickup for pickup in get_pickups()]
 
@@ -322,6 +351,94 @@ def get_all_pickups_csv():
     response.headers['Content-type'] = 'text/csv'
 
     return response
+
+
+def get_all_payments_received():
+    start_date = datetime.now() - timedelta(days=45)
+
+    # Create iterator
+    payment_iterator = StripePaymentIterator(
+        start_date=start_date
+    )
+
+    payments = {}
+    # Iterate through payments
+    for payment in payment_iterator:
+        if payment.customer:
+            if payment.customer.email:
+                payments[payment.customer.email] = payment
+        # Process each payment
+        print(f"Processing payment: {payment.id}")
+        print(f"Amount: {payment.amount / 100:.2f} {payment.currency.upper()}")
+        print(f"Status: {payment.status}")
+        print(f"Customer: {payment.customer.email if payment.customer else 'No customer email'}")
+        print(f"Created: {datetime.fromtimestamp(payment.created)}")
+        print("-" * 30)
+    return payments
+
+
+# --------
+
+class StripePaymentIterator:
+    def __init__(self, 
+                 start_date: Optional[datetime] = None,
+                 end_date: Optional[datetime] = None,
+                 batch_size: int = 100):
+        """
+        Initialize the Stripe payment iterator.
+        
+        Args:
+            start_date: Optional start date for filtering payments
+            end_date: Optional end date for filtering payments
+            batch_size: Number of payments to fetch per API call
+        """
+        # Prerequisite: stripe.api_key must be set
+        self.batch_size = batch_size
+        self.start_date = int(start_date.timestamp()) if start_date else None
+        self.end_date = int(end_date.timestamp()) if end_date else None
+
+    def __iter__(self) -> Iterator[Dict[str, Any]]:
+        """
+        Iterate through all payments.
+        Handles pagination automatically.
+        """
+        has_more = True
+        last_id = None
+
+        while has_more:
+            query_params = {
+                'limit': self.batch_size,
+                'expand': ['data.payment_intent', 'data.customer'],
+            }
+
+            # Add date filters if specified
+            if self.start_date:
+                query_params['created[gte]'] = self.start_date
+            if self.end_date:
+                query_params['created[lte]'] = self.end_date
+            
+            # Add starting_after for pagination
+            if last_id:
+                query_params['starting_after'] = last_id
+
+            try:
+                # Fetch payments
+                charges = stripe.Charge.list(**query_params)
+                
+                # Yield each charge
+                for charge in charges.data:
+                    yield charge
+
+                # Update pagination info
+                has_more = charges.has_more
+                if charges.data:
+                    last_id = charges.data[-1].id
+                else:
+                    has_more = False
+
+            except stripe.error.StripeError as e:
+                print(f"Error fetching Stripe payments: {str(e)}")
+                break
 
 
 if __name__ == '__main__':

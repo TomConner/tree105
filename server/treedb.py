@@ -317,9 +317,9 @@ and lookup.id = i_lid
 --join latest_addresses on lookup.id = a_lid;
 '''
 
-def get_pickups():
+def execute_sql(query: str):
     #cursor = database.execute_sql(SQL_QUERY_PICKUPS)
-    cursor = database.execute_sql('select * from pickups;')
+    cursor = database.execute_sql(query)
 
     dicts = []
     for row in cursor.fetchall():
@@ -334,3 +334,9 @@ def get_pickups():
 
     return dicts
 
+
+def get_email_history():
+    return execute_sql('select * from email_history;')
+
+def get_pickups():
+    return execute_sql('select * from pickups;')

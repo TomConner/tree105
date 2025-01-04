@@ -41,6 +41,13 @@ pb() {
     popd
 }
 
+tb() {
+    dc stop server
+    dcb
+    (cd /tree105/admin-app; npm run build)
+    dcupd
+}
+
 dev_front() {
     cd "${TREE_HOME}/admin-app"
     npm run dev
