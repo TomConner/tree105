@@ -13,20 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const formatDate = (dateString: string) => {
-  try {
-    const date = new Date(dateString.replace(' ', 'T')); // Convert to ISO format
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  } catch (error) {
-    console.error('Error parsing date:', dateString);
-    return dateString;
-  }
+  // Create date object in UTC
+  const date = new Date(dateString);
+  
+  // Convert to Eastern Time
+  const easternDate = new Date(date.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  
+  // Format as YYYY-MM-DD HH:mm
+  const year = easternDate.getFullYear();
+  const month = String(easternDate.getMonth() + 1).padStart(2, '0');
+  const day = String(easternDate.getDate()).padStart(2, '0');
+  const hours = String(easternDate.getHours()).padStart(2, '0');
+  const minutes = String(easternDate.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 interface PickupsDashboardProps {
@@ -49,11 +49,19 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
   };
 
   const sortedPickups = [...pickups].sort((a, b) => {
-    if (sortConfig.key === 'order_created') {
+    // Handle date sorting
+    if (sortConfig.key === 'order_created' || sortConfig.key === 'address_created' || sortConfig.key === 'intent_created') {
       return sortConfig.direction === 'asc'
-        ? new Date(a.order_created).getTime() - new Date(b.order_created).getTime()
-        : new Date(b.order_created).getTime() - new Date(a.order_created).getTime();
+        ? new Date(a[sortConfig.key]).getTime() - new Date(b[sortConfig.key]).getTime()
+        : new Date(b[sortConfig.key]).getTime() - new Date(a[sortConfig.key]).getTime();
     }
+    // Handle numeric sorting
+    if (sortConfig.key === 'numtrees' || sortConfig.key === 'extra') {
+      return sortConfig.direction === 'asc'
+        ? (a[sortConfig.key] || 0) - (b[sortConfig.key] || 0)
+        : (b[sortConfig.key] || 0) - (a[sortConfig.key] || 0);
+    }
+    // Default string sorting for everything else
     return sortConfig.direction === 'asc'
       ? String(a[sortConfig.key]).localeCompare(String(b[sortConfig.key]))
       : String(b[sortConfig.key]).localeCompare(String(a[sortConfig.key]));
@@ -80,7 +88,7 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
       pickup.name,
       `${pickup.line1}${pickup.line2 ? `, ${pickup.line2}` : ''}, ${pickup.city}, ${pickup.state}`,
       pickup.code,
-      pickup.method || 'Pending',
+      pickup.method || 'pending',
       pickup.numtrees,
       pickup.extra,
       pickup.comment
@@ -165,8 +173,18 @@ const PickupsDashboard = ({ pickups = [] }: PickupsDashboardProps) => {
                   Code {sortConfig.key === 'code' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead>Method</TableHead>
-                <TableHead>Trees</TableHead>
-                <TableHead>Extra</TableHead>
+                <TableHead 
+                  className="cursor-pointer"
+                  onClick={() => handleSort('numtrees')}
+                >
+                  Trees {sortConfig.key === 'numtrees' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer"
+                  onClick={() => handleSort('extra')}
+                >
+                  Extra {sortConfig.key === 'extra' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                </TableHead>
                 <TableHead>Comment</TableHead>
               </TableRow>
             </TableHeader>
