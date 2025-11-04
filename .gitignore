@@ -18,3 +18,7 @@ bin/email-history.csv
 server/contacts.csv
 server/stripe_charges.csv
 email_history.json
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
