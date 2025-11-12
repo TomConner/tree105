@@ -22,3 +22,4 @@ email_history.json
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
+.envrc
