@@ -95,7 +95,8 @@ USERS = {}
 for up in users_env.split(","):
     u,p = up.split(':')
     USERS[u]=p
-assert USERS
+if not USERS:
+    raise ValueError("No users found in USERS environment variable")
 print(USERS.keys())
 
 def check_auth(username, password):
