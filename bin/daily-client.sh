@@ -1,10 +1,10 @@
-#!/bin/zsh
+#!/bin/bash
 
 ssh_remote="tom@troop105treedrive.com"
 remote_tree="${ssh_remote}:tree105"
 export local_tree="$HOME/tree105"
 export local_work="$local_tree/work"
-mkdir -p $local_work
+mkdir -p "$local_work"
 
 ssh "$ssh_remote" "tree105/bin/daily-server.sh"
 scp "$remote_tree/work/tree105-backup.zip" "$local_work"
