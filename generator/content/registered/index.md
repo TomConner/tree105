@@ -8,13 +8,12 @@ title: "Registration Received"
 
 You're all set.
 
-We've received your registration to have your tree picked up on January 4, 2025.
-An email confirmation will be sent to you within 3 days.
+We've received your registration to have your tree picked up 
+on January 10, 2026.
 
-Additionally, you will receive an email by Friday, January 3rd as a reminder
-with last minute details about leaving your tree out for us with payment
-attached.
+If you paid online, you will receive confirmation from our payment
+processor Stripe.
 
 ## Thank You
 
-Thank you for your support.
+Thank you for your generous support of Troop 105!

@@ -1,17 +1,19 @@
 baseurl = "https://troop105treedrive.com"
 languageCode = "en"
-title = "2025 Christmas Tree Pickup"
+#title = "2025 Christmas Tree Pickup"
+title = "Annual Christmas Tree Pickup"
 theme = "soho"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 summarylength = 10
 enableEmoji = true
-paginate = 5
+pagination.pageSize = 5
 ignoreErrors = ["error-remote-getjson"]
 publishDir = "../public"
 
 [params]
-title = "2025 Christmas Tree Pickup"
+#title = "2025 Christmas Tree Pickup"
+title = "Annual Christmas Tree Pickup"
 description = "Pembroke Troop 105"
 # gravatar = "soho@example.com"
 images = ["profile-tree.png"]
