@@ -43,11 +43,6 @@ series = "series"
     disabled = false
     simple = true
 
-  [privacy.twitter]
-    disabled = false
-    enableDNT = true
-    simple = true
-
   [privacy.instagram]
     disabled = false
     simple = true
@@ -61,8 +56,11 @@ series = "series"
   [services.instagram]
     disableInlineCSS = true
 
-  [services.twitter]
+  [services.x]
     disableInlineCSS = true
+    disabled = false
+    enableDNT = true
+    simple = true
 
 [markup]
   [markup.goldmark]
