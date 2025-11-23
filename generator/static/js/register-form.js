@@ -94,10 +94,10 @@ window.addEventListener("load", (event) => {
   }
 
   // get new unique lookup code from server and load orderForm with defaults
-  function newLookup() {
+  async function newLookup() {
     console.debug("POSTing to lookups");
     // post to /api/v1/lookups
-    fetch('/api/v1/lookups', {method: "POST"})
+    await fetch('/api/v1/lookups', {method: "POST"})
       .then((response) => response.text())
       .then((lookup_code) => {
         lookup_code = lookup_code.trim();

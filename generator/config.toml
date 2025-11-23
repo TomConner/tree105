@@ -9,7 +9,6 @@ summarylength = 10
 enableEmoji = true
 pagination.pageSize = 5
 ignoreErrors = ["error-remote-getjson"]
-publishDir = "../public"
 
 [params]
 #title = "2025 Christmas Tree Pickup"
@@ -43,6 +42,11 @@ series = "series"
     disabled = false
     simple = true
 
+  [privacy.twitter]
+    disabled = false
+    enableDNT = true
+    simple = true
+
   [privacy.instagram]
     disabled = false
     simple = true
@@ -56,11 +60,8 @@ series = "series"
   [services.instagram]
     disableInlineCSS = true
 
-  [services.x]
+  [services.twitter]
     disableInlineCSS = true
-    disabled = false
-    enableDNT = true
-    simple = true
 
 [markup]
   [markup.goldmark]
