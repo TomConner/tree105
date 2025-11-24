@@ -6,14 +6,14 @@ import logging
 import random
 from playhouse.shortcuts import model_to_dict
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+TREE_DB = os.environ['TREE_DB']
 
-DB_DIR = Path(os.getenv('TREE_HOME', '/tree105')) / 'db' 
-DB_FILENAME = Path(os.getenv('DB_FILENAME', 'tree105.sqlite'))
-DB_FILE = DB_DIR / DB_FILENAME
-database = SqliteDatabase(DB_FILE)
+database = SqliteDatabase(TREE_DB)
 
 class TreeModel(Model):
     class Meta:

@@ -1,8 +1,7 @@
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from pathlib import Path
-dotenv_path = Path(find_dotenv())
-load_dotenv(dotenv_path)
+load_dotenv()
 
 import stripe
 import json
@@ -35,12 +34,13 @@ from flask import request, Response
 #     url='https://github.com/stripe-samples')
 
 stripe.api_version = '2020-08-27'
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = os.environ['STRIPE_SECRET_KEY']
+TREE_HOME = os.environ['TREE_HOME']
+USERS_ENV = os.environ["USERS"]
 
 import logging
 import json
 from datetime import datetime, timedelta
-
 
 class JsonFormatter(logging.Formatter):
     def format(self, record):
@@ -56,7 +56,6 @@ class JsonFormatter(logging.Formatter):
 
         return json.dumps(log_data)
 
-
 # Changed from request_logger to sg_logger
 sg_logger = logging.getLogger('sg_logger')
 sg_logger.setLevel(logging.INFO)
@@ -67,8 +66,7 @@ sg_logger.addHandler(handler)
 
 app = Flask(__name__)
 app.logger.setLevel("DEBUG")
-app.logger.info(f"Environment: {dotenv_path}")
-app.logger.info(f"TREE_HOME: {os.getenv('TREE_HOME')}")
+app.logger.info(f"TREE_HOME: {TREE_HOME}")
 treedb_init(default_handler)
 #treestripe_init(default_handler)
 
@@ -90,9 +88,8 @@ def db_before_request():
 def db_teardown_request(exc):
     treedb.teardown_request()
 
-users_env = os.getenv("USERS")
 USERS = {}
-for up in users_env.split(","):
+for up in USERS_ENV.split(","):
     u,p = up.split(':')
     USERS[u]=p
 if not USERS:

@@ -1,6 +1,5 @@
-public/
-themes/**
 .python-version
+public/
 .vscode
 server/.env
 *.py.swp
