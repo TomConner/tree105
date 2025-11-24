@@ -11,7 +11,7 @@ services:
     working_dir: /tree105/caddy
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./public:/public
+      - ../public:/public
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -21,20 +21,17 @@ services:
   server:
     build:
       context: ./server
-    working_dir: /tree105/server
     env_file: .env
+    environment:
+      - TREE_DB=/tree105db/tree105.sqlite
+    working_dir: /app
     command: python server.py
     ports:
       - "4242:4242"
     volumes:
-      - .:/tree105
+      - ./db:/tree105db
     networks:
       - default
-    profiles: ["debug"]
-      command: python -m debugpy --listen 0.0.0.0:5678 server.py
-      ports:
-      - "4242:4242"
-      - "5678:5678"
 
   generator:
     build:
