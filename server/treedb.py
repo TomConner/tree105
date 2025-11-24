@@ -12,6 +12,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 TREE_DB = os.environ['TREE_DB']
+TREE_DB_PATH = Path(TREE_DB)
 
 database = SqliteDatabase(TREE_DB)
 
@@ -63,14 +64,14 @@ def new_lookup():
 
 def treedb_init(handler):
     logger.addHandler(handler)
-    if not DB_FILE.exists():
-        logger.info(f'initializing database {DB_FILE}')
-        DB_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if not TREE_DB_PATH.exists():
+        logger.info(f'initializing database {TREE_DB}')
+        TREE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         database.connect()
         database.create_tables([Lookup, Order, Address])
         database.close()
     else:
-        logger.info(f'connecting to database {DB_FILE}')
+        logger.info(f'connecting to database {TREE_DB}')
         database.connect()
         database.create_tables([Intent], safe=True)
         database.close()

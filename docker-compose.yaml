@@ -11,7 +11,7 @@ services:
     working_dir: /tree105/caddy
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ../public:/public
+      - ./public:/public
       - caddy_data:/data
       - caddy_config:/config
     networks:
