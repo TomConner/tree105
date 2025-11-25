@@ -1,15 +1,19 @@
+# pyproject.toml in source control
 .python-version
+
+# generated and built by hugo and vite
 public/
 .vscode
 server/.env
 *.py.swp
 __pycache__
 .hugo_build.lock
+.env
 venv
+.venv
 caddy/Caddyfile
 db
 work
-.env
 .swp
 *.log
 server/pickups.csv

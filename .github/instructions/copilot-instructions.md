@@ -163,7 +163,6 @@ Option A (Docker multi-service):
 
 ## Deployment Checklist
 - [x] `.env` populated (Stripe, USERS, TREE_HOME)
-- [x] Database volume mounted
 - [x] Static assets rebuilt (Hugo + Admin)
 - [x] Webhook endpoint `/api/v1/webhook` reachable and STRIPE_WEBHOOK_SECRET set
 - [x] Backups scheduled (cron invoking [bin/backup.sh](bin/backup.sh))
