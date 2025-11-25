@@ -17,7 +17,6 @@ RUN groupadd --system --gid 999 nonroot \
 
 # Install the project into `/app`
 WORKDIR /app
-ENV TREE_HOME=/tree105
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
@@ -50,4 +49,6 @@ ENTRYPOINT []
 USER nonroot
 
 EXPOSE 4242
+
+WORKDIR /app
 CMD ["python", "server.py"]

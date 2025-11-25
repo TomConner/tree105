@@ -443,6 +443,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('TREE_SERVER_PORT', 4242))
     host = os.getenv("TREE_SERVER_HOST", "0.0.0.0")
     app.logger.info("Tree server on %s:%s", host, port)
-    os.chdir(Path(os.getenv("TREE_HOME"))/"server")
-    app.logger.info("CWD %s", Path.cwd())
     app.run(host=host, port=port, debug=False, load_dotenv=False)
