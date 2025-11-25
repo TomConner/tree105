@@ -271,7 +271,6 @@ def get_orders_for_lookup(lookup_code):
 #     return jsonify([p for p in treedb.get_lookups()])
 
 @app.route('/api/v1/lookups', methods=['POST'])
-@requires_auth
 def post_lookup():
     app.logger.info(f"POST lookup")
     return treedb.new_lookup()
