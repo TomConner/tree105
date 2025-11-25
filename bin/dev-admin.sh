@@ -58,3 +58,17 @@ dev_server() {
     ./server
 }
 
+alias build-deploy='git pull; hugo; dcd server; dc build; dcupd; dclf'
+
+bdpl() {
+    # build deploy
+    cd ${HOME}/tree105
+    git pull
+    cd ${HOME}/tree105/generator
+    hugo
+    cd ${HOME}/tree105
+    dcd server
+    dc build
+    dcupd
+    dclf
+}
