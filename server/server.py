@@ -21,6 +21,8 @@ from treedb import (create_address, get_last_address, create_order,
                     treedb_init,
                     Address, Order, Lookup, Intent)
 #from treestripe import (treestripe_init, StripePaymentIterator)
+import email
+from email import send_email
 
 from playhouse.shortcuts import model_to_dict
 import treedb
@@ -206,12 +208,35 @@ def webhook_received():
 #
 #  Address and Order APIs
 
+def send_confirmation(lookup_code, address_data):
+    subject = "Tree Order Confirmation"
+    order = get_last_order(lookup_code)
+    html_content = f"""
+    <p>Thank you for your order!</p>
+    <p>Lookup Code: {lookup_code}</p>
+    <p>Name: {address_data.get('name')}</p>
+    <p>Address: {address_data.get('street')}, {address_data.get('city')}, {address_data.get('state')} {address_data.get('zip')}</p>
+    <p>Order: {order.numtrees} tree{'' if order.numtrees == 1 else 's'}</p>
+    """
+    to_email = address_data.get('email')
+    if to_email:
+        app.logger.info(f"Sending confirmation email to {to_email}")
+        send_email(to_email, subject, html_content)
+    else:
+        app.logger.error(f"No email provided for lookup code {lookup_code}, cannot send confirmation.")
+
 @app.route('/api/v1/addresses/<lookup_code>', methods=['POST'])
 def post_address(lookup_code):
     data = request.json
-    app.logger.info(data)
+    app.logger.info(f"Address data: {data}")
     result = create_address(lookup_code, **data)
-    return jsonify(result), 201 if isinstance(result, dict) else 400
+    if isinstance(result, dict):
+        app.logger.info(f"Created address: {result}")
+        send_confirmation(lookup_code, data)
+        return jsonify(result), 201 
+    else:
+        app.logger.error(f"Failed to create address for lookup code {lookup_code}: {result}")
+        return 400
 
 @app.route('/api/v1/orders/<lookup_code>', methods=['POST'])
 def post_order(lookup_code):

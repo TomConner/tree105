@@ -170,7 +170,7 @@ def get_last_address(lookup_code):
                     .first())
     return model_to_dict(last_address) if last_address else None
 
-def get_last_order(lookup_code):
+def get_last_order(lookup_code) -> Order | None:
     last_order = (Order
                 .select()
                 .join(Lookup, on=(Order.lookup_id == Lookup.id))
