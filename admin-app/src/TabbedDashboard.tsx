@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import PickupsDashboard from './PickupsDashboard';
-import { Pickup } from './types';
+import { RoutePlanning } from './RoutePlanning';
+import type { Pickup } from './types';
 
 interface EmailHistory {
   email: string;
@@ -33,6 +34,8 @@ const TabbedDashboard = ({ pickups, emailHistory }: TabbedDashboardProps) => {
       (record.address2025?.toLowerCase().includes(searchText) || false)
     );
   });
+
+  console.log("TabbedDashboard received pickups:", pickups?.length);
 
   return (
     <div className="space-y-4">
@@ -93,6 +96,10 @@ const TabbedDashboard = ({ pickups, emailHistory }: TabbedDashboardProps) => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="routes" className="space-y-6">
+          <RoutePlanning pickups={pickups} />
         </TabsContent>
       </Tabs>
     </div>
