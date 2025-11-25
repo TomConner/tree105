@@ -72,7 +72,7 @@ window.addEventListener("load", (event) => {
   async function pageStart() {
     console.debug("pageStart");
     const lookup_code = getLocalItem("lookup");
-    if (lookup_code) {
+    if (lookup_code && lookup_code.length === 4 && /^[A-Z]{4}$/.test(lookup_code)) {
       console.info(`lookup code from localStorage is ${lookup_code}; fetching order`);
       try {
         const response = await fetch(`/api/v1/orders/${lookup_code}`);
