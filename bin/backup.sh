@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 name="tree105"
 db_dir="$HOME/tree105/db"
