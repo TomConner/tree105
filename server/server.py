@@ -21,8 +21,7 @@ from treedb import (create_address, get_last_address, create_order,
                     treedb_init,
                     Address, Order, Lookup, Intent)
 #from treestripe import (treestripe_init, StripePaymentIterator)
-import email
-from email import send_email
+from treemail import send_email
 
 from playhouse.shortcuts import model_to_dict
 import treedb
