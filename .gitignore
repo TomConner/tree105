@@ -1,5 +1,8 @@
 # pyproject.toml in source control
+# uv lock file in source control
 .python-version
+
+server/token.json
 
 # generated and built by hugo and vite
 public/
