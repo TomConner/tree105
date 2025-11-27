@@ -4,6 +4,7 @@ import base64
 from email.mime.text import MIMEText
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -18,6 +19,27 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 
 def get_gmail_service():
     creds = None
+    
+    try:
+        secret_info = json.loads(TREE_MAILER_SECRET)
+    except json.JSONDecodeError:
+        print("TREE_MAILER_SECRET is not valid JSON")
+        return None
+
+    if secret_info.get("type") == "service_account":
+        creds = service_account.Credentials.from_service_account_info(
+            secret_info, scopes=SCOPES
+        )
+        # Delegate to the user we want to send email as
+        creds = creds.with_subject("troop@troop105.net")
+        
+        try:
+            service = build("gmail", "v1", credentials=creds)
+            return service
+        except HttpError as error:
+            print(f"An error occurred: {error}")
+            return None
+
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
@@ -29,7 +51,7 @@ def get_gmail_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_config(json.loads(TREE_MAILER_SECRET), 
+            flow = InstalledAppFlow.from_client_config(secret_info, 
                                                        SCOPES)
             creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
