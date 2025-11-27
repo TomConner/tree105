@@ -1,0 +1,7 @@
+#!/bin/bash
+git pull
+hugo
+docker compose down server
+docker compose build
+docker compose up -d
+docker compose logs -f
