@@ -210,12 +210,19 @@ def webhook_received():
 def send_confirmation(lookup_code, address_data):
     subject = "Tree Order Confirmation"
     order = get_last_order(lookup_code)
+    line2 = address_data.get('line2')
+    if line2 is None:
+        line2 = ""
+    else:
+        line2 = line2 + "<br/>"
     html_content = f"""
     <p>Thank you for your order!</p>
     <p>Lookup Code: {lookup_code}</p>
-    <p>Name: {address_data.get('name')}</p>
-    <p>Address: {address_data.get('street')}, {address_data.get('city')}, {address_data.get('state')} {address_data.get('zip')}</p>
-    <p>Order: {order.numtrees} tree{'' if order.numtrees == 1 else 's'}</p>
+    <p>{address_data.get('name')}<br/>
+    {address_data.get('line1')}<br/>
+    {line2}
+    {address_data.get('city')}, {address_data.get('state')} {address_data.get('zip')}</p>
+    <p>Order: {order.get('numtrees')} tree{'' if order.get('numtrees') == 1 else 's'}</p>
     """
     to_email = address_data.get('email')
     if to_email:
