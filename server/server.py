@@ -12,7 +12,7 @@ from typing import Optional, Iterator, Dict, Any
 from io import BytesIO, StringIO
 from csv import DictWriter
 
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, render_template
 from flask.logging import default_handler
 from playhouse.shortcuts import model_to_dict
 
@@ -38,6 +38,7 @@ stripe.api_version = '2020-08-27'
 stripe.api_key = os.environ['STRIPE_SECRET_KEY']
 TREE_HOME = os.environ['TREE_HOME']
 USERS_ENV = os.environ["USERS"]
+TREE_PRICE = 15 # price per tree in USD
 
 import logging
 import json
@@ -207,23 +208,42 @@ def webhook_received():
 #
 #  Address and Order APIs
 
+
 def send_confirmation(lookup_code, address_data):
     subject = "Tree Order Confirmation"
     order = get_last_order(lookup_code)
+    html_content = render_template('confirmation.html', 
+                           lookup_code=lookup_code, 
+                           #{'numtrees': '1', 'extra': '0', 'comment': ''}
+                           numtrees=order.get('numtrees'),
+                           extra=order.get('extra'),
+                           comment=order.get('comment'),
+                           #{'line1': '56 River Point Drive', 'line2': None, 'city': 'Pembroke', 'country': 'US', 'postal_code': '02359', 'state': 'MA', 'name': 'Kristy Coughlin', 'phone': '+17744541219', 'email': 'kristylcoughlin@gmail.com'}
+                           line1=address_data.get('line1'),
+                           line2=address_data.get('line2'),
+                           city=address_data.get('city'),
+                           state=address_data.get('state'),
+                           zip=address_data.get('zip'),
+                           name=address_data.get('name'),
+                           email=address_data.get('email'),
+                           treeamt=int(order.get('numtrees'))*TREE_PRICE,
+                           s='' if int(order.get('numtrees')) == 1 else 's',
+                           total=int(order.get('numtrees'))*TREE_PRICE + int(order.get('extra'))
+    )
     line2 = address_data.get('line2')
     if line2 is None:
         line2 = ""
     else:
         line2 = line2 + "<br/>"
-    html_content = f"""
-    <p>Thank you for your order!</p>
-    <p>Lookup Code: {lookup_code}</p>
-    <p>{address_data.get('name')}<br/>
-    {address_data.get('line1')}<br/>
-    {line2}
-    {address_data.get('city')}, {address_data.get('state')} {address_data.get('zip')}</p>
-    <p>Order: {order.get('numtrees')} tree{'' if order.get('numtrees') == 1 else 's'}</p>
-    """
+    # html_content = f"""
+    # <p>Thank you for your order!</p>
+    # <p>Lookup Code: {lookup_code}</p>
+    # <p>{address_data.get('name')}<br/>
+    # {address_data.get('line1')}<br/>
+    # {line2}
+    # {address_data.get('city')}, {address_data.get('state')} {address_data.get('zip')}</p>
+    # <p>Order: {order.get('numtrees')} tree{'' if order.get('numtrees') == 1 else 's'}</p>
+    # """
     to_email = address_data.get('email')
     if to_email:
         app.logger.info(f"Sending confirmation email to {to_email}")
