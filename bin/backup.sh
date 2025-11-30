@@ -1,27 +1,27 @@
 #!/bin/bash
 
-name="tree105"
-db_dir="$HOME/tree105/db"
-db_file="$db_dir/$name.sqlite"
 backup_dir="$HOME/tree105/work"
-
+name="tree105"
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
 
-mkdir -p "$backup_dir"
-pushd "$backup_dir"
-pwd
+db_dir="${TREE_DB%/*}"
+TREE_DB_BACKUP="${backup_dir}/${stamp}-${TREE_DB##*/}"
 
-db_backup_file="$stamp-$name-db.sqlite"
-sqlite3 "$db_file" ".backup $db_backup_file"
-echo "$db_backup_file"
+# Extract the directory and filename using parameter expansion
+
+
+mkdir -p "$backup_dir"
+cd "$backup_dir"
+
+sqlite3 "$TREE_DB" ".backup $TREE_DB_BACKUP"
 
 compose_full_backup_file="$stamp-$name-compose-full.log"
 docker compose -f /home/tom/tree105/docker-compose.yaml logs > "$compose_full_backup_file"
-echo "$compose_full_backup_file"
+realpath "$compose_full_backup_file"
 
 compose_backup_file="$stamp-$name-compose.log"
 docker compose -f /home/tom/tree105/docker-compose.yaml logs --since 48h > "$compose_backup_file"
-echo "$compose_backup_file"
+realpath "$compose_backup_file"
 
 docker_backup_file="$stamp-$name-docker.log"
 docker events \
@@ -31,16 +31,15 @@ docker events \
     -f type=daemon \
     -f type=network \
     --since 48h --until 0s > "$docker_backup_file"
-echo "$docker_backup_file"
+realpath "$docker_backup_file"
 
 backup_zip_file="$stamp-$name-backup.zip"
 backup_zip_file_nostamp="$name-backup.zip"
 zip "$backup_zip_file" \
-        "$db_backup_file" \
+        "$TREE_DB_BACKUP" \
         "$compose_full_backup_file" \
         "$compose_backup_file" \
         "$docker_backup_file"
 cp -p "$backup_zip_file" "$backup_zip_file_nostamp"
-echo "$backup_zip_file_nostamp"
+realpath "$backup_zip_file_nostamp"
 
-popd
