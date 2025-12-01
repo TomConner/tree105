@@ -4,8 +4,9 @@ backup_dir="$HOME/tree105/work"
 name="tree105"
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
 
-db_dir="${TREE_DB%/*}"
-TREE_DB_BACKUP="${backup_dir}/${stamp}-${TREE_DB##*/}"
+db_dir="$(dirname ${TREE_DB})"
+db_file="$(basename ${TREE_DB})"
+TREE_DB_BACKUP="${backup_dir}/${stamp}-${db_file}"
 
 # Extract the directory and filename using parameter expansion
 
@@ -36,7 +37,7 @@ realpath "$docker_backup_file"
 backup_zip_file="$stamp-$name-backup.zip"
 backup_zip_file_nostamp="$name-backup.zip"
 zip "$backup_zip_file" \
-        "$TREE_DB_BACKUP" \
+        "$(basename $TREE_DB_BACKUP)" \
         "$compose_full_backup_file" \
         "$compose_backup_file" \
         "$docker_backup_file"
