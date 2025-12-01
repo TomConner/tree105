@@ -219,7 +219,7 @@ def address_lines(address_data):
     return results
 
 def send_confirmation(lookup_code, address_data):
-    subject = "Tree Order Confirmation"
+    subject = f"Registered Tree Pickup at {address_data.get('line1')}"
     order = get_last_order(lookup_code)
     html_content = render_template('confirmation.html', 
                            lookup_code=lookup_code, 
