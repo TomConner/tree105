@@ -208,6 +208,15 @@ def webhook_received():
 #
 #  Address and Order APIs
 
+def address_lines(address_data):
+    results = []
+    results.append(address_data.get('name'))
+    results.append(address_data.get('line1'))
+    line2 = address_data.get('line2')
+    if line2:
+        results.append(address_data.get('line2'))
+    results.append(f"{address_data.get('city')}, {address_data.get('state')} {address_data.get('postal_code')}")
+    return results
 
 def send_confirmation(lookup_code, address_data):
     subject = "Tree Order Confirmation"
@@ -219,12 +228,14 @@ def send_confirmation(lookup_code, address_data):
                            extra=order.get('extra'),
                            comment=order.get('comment'),
                            #{'line1': '56 River Point Drive', 'line2': None, 'city': 'Pembroke', 'country': 'US', 'postal_code': '02359', 'state': 'MA', 'name': 'Kristy Coughlin', 'phone': '+17744541219', 'email': 'kristylcoughlin@gmail.com'}
+                           address="<br>".join(address_lines(address_data)),
                            line1=address_data.get('line1'),
                            line2=address_data.get('line2'),
                            city=address_data.get('city'),
                            state=address_data.get('state'),
-                           zip=address_data.get('zip'),
+                           zip=address_data.get('postal_code'),
                            name=address_data.get('name'),
+                           phone=address_data.get('phone'),
                            email=address_data.get('email'),
                            treeamt=int(order.get('numtrees'))*TREE_PRICE,
                            s='' if int(order.get('numtrees')) == 1 else 's',
