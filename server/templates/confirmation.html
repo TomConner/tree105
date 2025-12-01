@@ -222,11 +222,13 @@
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:15px;line-height:1;text-align:center;color:#FFFFFF;"><strong>Address</strong></div>
                       </td>
                     </tr>
+                    {% for line in address.split('\n') %}
                     <tr>
-                      <td align="center" style="font-size:0px;padding:10px 25px;padding-top:10px;padding-right:25px;padding-bottom:20px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Helvetica;font-size:13px;line-height:1;text-align:center;color:#FFFFFF;">{{address}}</div>
+                      <td align="center" style="font-size:0px;padding:10px 25px;padding-top:2px;padding-right:25px;padding-bottom:2px;padding-left:25px;word-break:break-word;">
+                        <div style="font-family:Helvetica;font-size:13px;line-height:1;text-align:center;color:#FFFFFF;">{{line}}</div>
                       </td>
                     </tr>
+                    {% endfor %}
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;padding-top:20px;padding-right:25px;padding-bottom:4px;padding-left:25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:15px;line-height:1;text-align:center;color:#FFFFFF;"><strong>Comment</strong></div>
