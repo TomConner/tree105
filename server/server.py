@@ -228,7 +228,7 @@ def send_confirmation(lookup_code, address_data):
                            extra=order.get('extra'),
                            comment=order.get('comment'),
                            #{'line1': '56 River Point Drive', 'line2': None, 'city': 'Pembroke', 'country': 'US', 'postal_code': '02359', 'state': 'MA', 'name': 'Kristy Coughlin', 'phone': '+17744541219', 'email': 'kristylcoughlin@gmail.com'}
-                           address="<br>".join(address_lines(address_data)),
+                           address="\n".join(address_lines(address_data)),
                            line1=address_data.get('line1'),
                            line2=address_data.get('line2'),
                            city=address_data.get('city'),
