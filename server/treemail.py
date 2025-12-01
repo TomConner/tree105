@@ -73,6 +73,7 @@ def send_email(to_email, subject, html_content):
 
     message = MIMEText(html_content, "html")
     message["to"] = to_email
+    message["cc"] = "Troop 105 Tree Pickup <treedrive105@gmail.com>"
     message["from"] = "Troop 105 Tree Pickup <troop@troop105.net>"
     message["reply-to"] = "Troop 105 Tree Pickup Questions <troop+tree@troop105.net>"
     message["subject"] = subject

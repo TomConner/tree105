@@ -241,11 +241,6 @@ def send_confirmation(lookup_code, address_data):
                            s='' if int(order.get('numtrees')) == 1 else 's',
                            total=int(order.get('numtrees'))*TREE_PRICE + int(order.get('extra'))
     )
-    line2 = address_data.get('line2')
-    if line2 is None:
-        line2 = ""
-    else:
-        line2 = line2 + "<br/>"
     # html_content = f"""
     # <p>Thank you for your order!</p>
     # <p>Lookup Code: {lookup_code}</p>
