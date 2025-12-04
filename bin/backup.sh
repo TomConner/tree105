@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$HOME/tree105/.env"
+
 backup_dir="$HOME/tree105/work"
 name="tree105"
 stamp="$(date -u +"%Y-%m-%d.%H-%M-%S")"
