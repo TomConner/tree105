@@ -1,9 +1,0 @@
-#!/bin/bash
-git pull
-pushd generator
-hugo
-popd
-docker compose down server
-docker compose build
-docker compose up -d
-docker compose logs -f

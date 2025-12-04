@@ -31,11 +31,11 @@ function AppContent() {
               'Authorization': 'Basic ' + auth
             }
           }),
-          fetch('/api/v1/email_history', {
-            headers: {
-              'Authorization': 'Basic ' + auth
-            }
-          })
+          // fetch('/api/v1/email_history', {
+          //   headers: {
+          //     'Authorization': 'Basic ' + auth
+          //   }
+          // })
         ]);
         
         const pickupsData = await pickupsRes.json();

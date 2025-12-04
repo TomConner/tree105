@@ -17,6 +17,8 @@ services:
     networks:
       - outside
       - default
+    profiles:
+      - caddy
 
   server:
     build:

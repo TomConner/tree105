@@ -1,4 +1,4 @@
-from peewee import *
+from peewee import ForeignKeyField, Model, CharField, DateTimeField, IntegerField, fn, on
 from peewee import SqliteDatabase
 from pathlib import Path
 from datetime import datetime
@@ -50,7 +50,7 @@ class Intent(TreeModel):
     method=CharField()
 
 def random_code():
-    alphabet='ABCDEFGHJKMNPQRTUVWXYZ'
+    alphabet='ABCDEFGHJKMNPQRTVWXYZ'
     return ''.join([alphabet[random.randint(0,len(alphabet)-1)] for i in range(4)])
 
 def new_lookup():
@@ -98,7 +98,7 @@ def create_intent(lookup_code, method):
         logger.debug(f"Lookup: {lookup.id} (Created: {created}) ; Intent: {new_intent.id}")
         return model_to_dict(new_intent)
 
-    except Exception as e:
+    except Exception:
         # Handle other potential exceptions
         logger.exception("Exception creating intent")
         return None
@@ -120,7 +120,7 @@ def create_order(lookup_code, comment, numtrees, extra):
         logger.debug(f"Lookup: {lookup.id} (Created: {created}) ; Order: {new_order.id}")
         return model_to_dict(new_order)
 
-    except Exception as e:
+    except Exception:
         # Handle other potential exceptions
         logger.exception("Exception creating order")
         return None

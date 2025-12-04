@@ -1,6 +1,5 @@
 
 from dotenv import load_dotenv
-from pathlib import Path
 load_dotenv()
 
 import stripe
@@ -99,8 +98,7 @@ if not USERS:
 print(USERS.keys())
 
 def check_auth(username, password):
-    # TODO REMOVE
-    print(f"username {username} pwlen {len(password)} {password[-1:]}")
+    app.logger.info("check_auth %s", username)
     return username in USERS and USERS[username] == password
 
 def authenticate():
