@@ -3,15 +3,6 @@
 # shellcheck disable=SC1091
 . "/tree105/.env"
 
-DB_BACKUP_FILE="/tree105/work/$(ls -t /tree105/work | grep '\.sqlite' | head -1)"
-DEV_DB="/tree105/db/tree105-dev.sqlite"
-
-tstat() {
-    echo Environment: "${ENV_LABEL:?}"
-    echo DB_BACKUP_FILE: "${DB_BACKUP_FILE}"
-    echo DEV_DB: "${DEV_DB}"
-}
-
 da() {
     local _da=/tree105/bin/dev-admin.sh
     vim ${_da}

@@ -1,5 +1,3 @@
-drop view if exists email_history_full;
-
 create view email_history_full as
 with emails as (
     select lower(email) email from contacts 
@@ -32,32 +30,3 @@ select
 
     where numtrees2024>0 or numtrees2025>0 or stripe2025>0
 ;
-
-drop view if exists email_history;
-create view email_history as
-WITH numbered_rows AS (
-  SELECT 
-    email,
-    coalesce(name,sgname) name,
-    address2024,
-    address2025,
-    numtrees2024,
-    numtrees2025,
-    stripe2025,
-    ROW_NUMBER() OVER (PARTITION BY email ORDER BY numtrees2024 DESC, numtrees2025 DESC) as row_num
-  FROM email_history_full
-)
-SELECT 
-  email,
-  name,
-  address2024,
-  numtrees2024,
-  address2025,
-  numtrees2025,
-  stripe2025
-FROM numbered_rows
-WHERE row_num = 1;
-
-.mode table
-select count() from email_history;
-select * from email_history limit 30;

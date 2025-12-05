@@ -62,6 +62,12 @@ def new_lookup():
     Lookup.create(code=code)
     return code
 
+def recreate_view(view_name: str, sql_file: str):
+    database.execute_sql(f'drop view if exists {view_name};')
+    with open(Path(__file__).parent / sql_file, 'r') as f:
+        database.execute_sql(f.read())
+    logger.debug(f'{view_name} view returns %s records', len(execute_sql(f'select * from {view_name};')))
+    
 def treedb_init(handler):
     logger.addHandler(handler)
     if not TREE_DB_PATH.exists():
@@ -70,11 +76,14 @@ def treedb_init(handler):
         database.connect()
         database.create_tables([Lookup, Order, Address])
         database.close()
-    else:
-        logger.info(f'connecting to database {TREE_DB}')
-        database.connect()
-        database.create_tables([Intent], safe=True)
-        database.close()
+    logger.info(f'connecting to database {TREE_DB}')
+    
+    database.connect()
+    database.create_tables([Intent], safe=True)
+    recreate_view('pickups', 'create-pickups-view.sql')
+    recreate_view('email_history_full', 'create-email-history-full-view.sql')
+    recreate_view('email_history', 'create-email-history-view.sql')
+    database.close()
 
 def before_request():
     logger.debug('db_before_request')
@@ -250,7 +259,7 @@ def get_pickups_peewee():
         )
     )
 
-    return query.dicts()
+    return model_to_dict(query)
 
 
 def execute_sql(query: str):
@@ -275,6 +284,5 @@ def get_email_history():
     return execute_sql('select * from email_history;')
 
 def get_pickups():
-    logger.info("get_pickups")
-    return get_pickups_peewee()
-    #return execute_sql('select * from pickups;')
+    logger.info("get_pickups 2")
+    return execute_sql('select * from pickups where date(address_created) > date("2025-07-01");')

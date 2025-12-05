@@ -1,4 +1,3 @@
-drop view if exists pickups;
 create view pickups as
 with latest_orders as (
     select
@@ -60,5 +59,3 @@ inner join latest_addresses on lookup.id=a_lid
 inner join latest_orders on lookup.id=o_lid
 left outer join latest_intents on lookup.id= i_lid
 ;
-select count() from pickups;
-select code, name, email, line1, comment from pickups limit 20;
