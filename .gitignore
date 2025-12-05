@@ -3,12 +3,19 @@
 .python-version
 
 server/token.json
+server/pickups.csv
+bin/email-confirm.json
+bin/email-history.csv
+server/contacts.csv
+server/stripe_charges.csv
+email_history.json
 
 # generated and built by hugo and vite
 public/
+
 .vscode
-server/.env
 *.py.swp
+
 __pycache__
 .hugo_build.lock
 .env
@@ -19,12 +26,7 @@ db
 work
 .swp
 *.log
-server/pickups.csv
-bin/email-confirm.json
-bin/email-history.csv
-server/contacts.csv
-server/stripe_charges.csv
-email_history.json
+
 
 .envrc
 node_modules

@@ -1,8 +1,3 @@
-
-from dotenv import load_dotenv
-load_dotenv()
-
-import stripe
 import json
 import os
 import gzip
@@ -11,21 +6,24 @@ from typing import Optional, Iterator, Dict, Any
 from io import BytesIO, StringIO
 from csv import DictWriter
 
-from flask import Flask, jsonify, request, abort, make_response, render_template
+from dotenv import load_dotenv
+load_dotenv()
+# flake8: noqa: E402
+import stripe
+
+from flask import Flask, jsonify, request, Response, make_response, render_template
 from flask.logging import default_handler
 from playhouse.shortcuts import model_to_dict
 
 from treedb import (create_address, get_last_address, create_order, 
                     create_intent, get_last_order, get_pickups, get_email_history,
                     treedb_init,
-                    Address, Order, Lookup, Intent)
+                    Address, Order, Lookup)
 #from treestripe import (treestripe_init, StripePaymentIterator)
 from treemail import send_email
 
-from playhouse.shortcuts import model_to_dict
 import treedb
 from functools import wraps
-from flask import request, Response
 
 # For sample support and debugging, not required for production:
 # stripe.set_app_info(

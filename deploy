@@ -16,8 +16,8 @@ docker compose down server
 echo "docker build"
 docker compose build
 
-echo "docker compose up server"
-docker compose up -d server
+echo "docker compose up"
+docker compose up -d
 
 echo "docker compose logs follow"
 docker compose logs -f
