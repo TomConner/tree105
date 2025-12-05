@@ -1,4 +1,4 @@
-from peewee import ForeignKeyField, Model, CharField, DateTimeField, IntegerField, fn, on
+from peewee import ForeignKeyField, Model, CharField, DateTimeField, IntegerField, fn
 from peewee import SqliteDatabase
 from pathlib import Path
 from datetime import datetime
