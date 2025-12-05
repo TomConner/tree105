@@ -275,4 +275,6 @@ def get_email_history():
     return execute_sql('select * from email_history;')
 
 def get_pickups():
-    return execute_sql('select * from pickups;')
+    logger.info("get_pickups")
+    return get_pickups_peewee()
+    #return execute_sql('select * from pickups;')
