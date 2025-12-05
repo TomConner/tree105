@@ -29,9 +29,6 @@ facebook_title = "Troop 105 Annual Tree Pickup"
 ## Set custom theme color.
 # themeColor = "#fc2803"
 
-
-
-
 [taxonomies]
 category = "categories"
 tag = "tags"
