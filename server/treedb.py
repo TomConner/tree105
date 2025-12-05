@@ -81,8 +81,8 @@ def treedb_init(handler):
     database.connect()
     database.create_tables([Intent], safe=True)
     recreate_view('pickups', 'create-pickups-view.sql')
-    recreate_view('email_history_full', 'create-email-history-full-view.sql')
-    recreate_view('email_history', 'create-email-history-view.sql')
+    #recreate_view('email_history_full', 'create-email-history-full-view.sql')
+    #recreate_view('email_history', 'create-email-history-view.sql')
     database.close()
 
 def before_request():

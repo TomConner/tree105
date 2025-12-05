@@ -2,22 +2,36 @@ http:// {
 	redir https://{host}{uri}
 }
 
-https://dev.troop105treedrive.com {
+# This is Dev.
+# Do not redirect from www
+#
+
+dev.troop105treedrive.com {
 	# Handle API calls
 	handle /api/* {
 		reverse_proxy tree105-server-1:4242
 	}
 
-	# Handle well-known files (e.g., for SSL)
+	# Serve the React app
+	#handle /app/* {
+	# reverse_proxy tree105-app-1:3000
+	#}
+
+	# Serve well-known files with `browse` enabled
 	handle /.well-known/* {
-		root * /tree105/public
-		file_server
+		root * /public
+		file_server browse
 	}
 
-	# Handle the SPA
+	# Serve static files
 	handle /* {
-		root * /tree105/public
+		root * /public
 		try_files {path} {path}/index.html
 		file_server
 	}
+
+	# Serve all other static files
+	#file_server /* {
+	#    root /public
+	#}
 }
