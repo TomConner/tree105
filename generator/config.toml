@@ -1,4 +1,4 @@
-baseurl = "https://troop105treedrive.com"
+#baseUrl is set via HUGO_BASEURL environment variable
 languageCode = "en"
 #title = "2025 Christmas Tree Pickup"
 title = "Annual Christmas Tree Pickup"
