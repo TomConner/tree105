@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
 set -e
+cd ${HOME}/tree105
 
 echo "git pull"
-cd ${HOME}/tree105
 git pull
-
-echo "hugo build"
-cd ${HOME}/tree105/generator
-hugo
-
-echo "vite build"
-cd ${HOME}/tree105/admin-app
-vite build --emptyOutDir
 
 echo "caddy reformat and reload"
 docker compose exec --workdir /etc/caddy caddy caddy fmt --overwrite
 docker compose exec --workdir /etc/caddy caddy caddy reload
 
 echo "docker down"
-cd ${HOME}/tree105
 docker compose down server
 
 echo "docker build"

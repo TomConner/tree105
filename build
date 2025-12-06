@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+(cd admin-app; vite build --emptyOutDir)
+(cd generator; hugo)
+git add public
+
