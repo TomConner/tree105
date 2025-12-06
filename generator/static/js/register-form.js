@@ -1,62 +1,41 @@
-  // function urlencodeFormData(fd){
-  //   var s = '';
-  //   function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
-  //   for(var pair of fd.entries()){
-  //       if(typeof pair[1]=='string'){
-  //           s += (s?'&':'') + encode(pair[0])+'='+encode(pair[1]);
-  //       }
-  //   }
-  //   return s;
-  // }
+// ------- UI helpers from stripe-payment.js -------
 
-  // function displayPaymentInstructions() {
-  //   if (intend_pay_venmo) {
-  //     messageVenmo.hidden = false;
-  //     window.location.assign('venmoinstructions');
-  //   } else if (intend_pay_card) {
-  //     messageVenmo.hidden = true;
-  //     message2.innerText = "";
-  //     message1.innerText = `Please continue to payment of $${amount}. You can use your PayPal or a credit/debit card.`;
-  //   } else {
-  //     messageVenmo.hidden = true;
-  //     window.location.assign('registered');
-  //   }
-  // }
+function showAddressMessage(messageText) {
+  const messageContainer = document.querySelector("#address-message");
 
-  // function formSubmit(event) {
-  //   var url = "https://tree105-reg-mcme3i32aq-uc.a.run.app";
-  //   var request = new XMLHttpRequest();
-  //   request.open('POST', url, true);
-  //   message1 = document.getElementById("message1")
-  //   message2 = document.getElementById("message2")
-  //   intend_pay_card = document.getElementById("card").checked;
-  //   intend_pay_venmo = document.getElementById("venmo").checked;
-  //   amount = parseInt(document.getElementById("amount").innerText);
+  messageContainer.classList.remove("hidden");
+  messageContainer.textContent = messageText;
+}
 
-  //   request.onload = function() { // request successful
-  //     // we can use server response to our request now
-  //     console.log(request.responseText);
-  //     displayPaymentInstructions();
-  //   };
+function clearAddressMessage() {
+  const messageContainer = document.querySelector("#address-message");
+  messageContainer.classList.add("hidden");
+  messageContainer.textContent = "";
+}
 
-  //   request.onerror = function() {
-  //     console.log(request.responseText);
-  //     // request failed
-  //     message1.innerText =
-  //       "Registration failed. Please try again later or contact treedrive105@gmail.com";
-  //    };
+function showPaymentMessage(messageText) {
+  const messageContainer = document.querySelector("#payment-message");
 
-  //   message1.innerText = "Processing";
-  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
-  //   request.send(urlencodeFormData(new FormData(event.target)));
-  //   event.preventDefault();
+  messageContainer.classList.remove("hidden");
+  messageContainer.textContent = messageText;
 
-  //   if (intend_pay_card) {
-  //     renderPaypalButtons(amount);
-  //   }
-  // }
+  setTimeout(function () {
+    messageContainer.classList.add("hidden");
+    messageContainer.textContent = "";
+  }, 4000);
+}
 
-
+// Show a spinner on payment submission
+function setLoading(isLoading) {
+  if (isLoading) {
+    // Disable the button and show a spinner
+    document.querySelector("#spinner").classList.remove("hidden");
+    document.querySelector("#button-text").classList.add("hidden");
+  } else {
+    document.querySelector("#spinner").classList.add("hidden");
+    document.querySelector("#button-text").classList.remove("hidden");
+  }
+}
 
 window.addEventListener("load", (event) => {
 
@@ -65,8 +44,6 @@ window.addEventListener("load", (event) => {
   const rextra = document.getElementById("rextra");
   const rcomment = document.getElementById("rcomment");
   const ramount = document.getElementById("amount");
-
-  const stripeFrame = document.getElementById("stripe-frame");
 
   // establish lookup code, retrieve any order from server, and load orderForm
   async function pageStart() {
@@ -121,9 +98,6 @@ window.addEventListener("load", (event) => {
       rextra.value = order.extra;
       rcomment.value = order.comment;
     } else {
-      // document.getElementById("registerform").addEventListener("submit", formSubmit);
-
-      //document.getElementById("cashcheck").checked = true;
       rnumtrees.value = 1;
       rextra.value = 0;
       rcomment.value = "";
@@ -136,7 +110,6 @@ window.addEventListener("load", (event) => {
 
     document.getElementById("spinner-register").hidden = true;
     orderForm.hidden = false;
-    //orderForm.scrollIntoView();
     document.getElementById("logo-image").scrollIntoView();
   }
 
@@ -151,7 +124,7 @@ window.addEventListener("load", (event) => {
     ramount.value = amount;
   }
 
-  // on Continue button: POST order, then hand off to stripeFrame
+  // on Continue button: POST order, then hand off to Stripe logic
   orderForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const order = JSON.stringify({
@@ -167,7 +140,7 @@ window.addEventListener("load", (event) => {
         })
         .then((response_lookup_code) => {
             const trimmed_code = response_lookup_code.trim();
-            console.log(`new lookup code is ${trimmed_code}`);  // And here
+            console.log(`new lookup code is ${trimmed_code}`);
             localStorage.setItem("lookup", trimmed_code);
         });
     }
@@ -188,55 +161,231 @@ window.addEventListener("load", (event) => {
     }).then((response) => {
       if (response.ok) {
         console.log(response);
-
-        loadStripeFrame();
+        initializeStripe(lookup_code);
       } else {
         console.error(response);
       }
     });
   });
 
-  // load stripeFrame and hand off to it
-  function loadStripeFrame() {
-    console.log("Load stripe frame");
-    const lookup_code = getLocalItem("lookup");
-    stripeFrame.src = `/register?q=${lookup_code}`;
-    stripeFrame.hidden = false;
-    stripeFrame.scrollIntoView();
+  // ------- Stripe Logic Merged -------
+
+  async function initializeStripe(lookup_code) {
+    console.log("Initializing Stripe with lookup_code:", lookup_code);
+
+    // Show the stripe section
+    const stripeSection = document.getElementById("stripe-section");
+    stripeSection.hidden = false;
+    stripeSection.scrollIntoView();
+
+    // fetch publishable key
+    const {publishableKey} = await fetch(`/api/v1/config`).then((r) => r.json());
+    if (!publishableKey) {
+      console.error('no publishableKey');
+      return;
+    }
+    const stripe = Stripe(publishableKey, {
+      apiVersion: '2020-08-27',
+    });
+
+    function postIntent(method) {
+        console.info(`posting intent ${lookup_code}`);
+        fetch(`/api/v1/intents/${lookup_code}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            "method": method
+          })
+        }).then((response) => {
+          if (response.ok) {
+            console.log(response);
+          } else {
+            console.error(response);
+          }
+        });
+    }
+
+    // show payment choices tabset
+    function loadPaymentChoices() {
+      const tabsPaymentMethod = document.getElementById("tabs-payment-method");
+      tabsPaymentMethod.classList.remove("hidden");
+      tabsPaymentMethod.scrollIntoView();
+
+      const tablink_pay_stripe = document.getElementById("tablink-pay-stripe");
+      const tablink_pay_on_tree = document.getElementById("tablink-pay-on-tree");
+
+      const tabcontent_pay_stripe = document.getElementById("tab-pay-stripe");
+      const tabcontent_pay_on_tree = document.getElementById("tab-pay-on-tree");
+
+      const buttonLoadStripe = document.getElementById("button-load-stripe");
+
+      document.getElementById("button-pay-on-tree").onclick = (event) => {
+        event.preventDefault();
+        postIntent("cashcheck");
+        window.location.assign("/registered");
+      }
+
+      // Note: Stripe payments redirect to "/return"
+
+      tablink_pay_stripe.addEventListener("click", (event) => {
+        event.preventDefault();
+        tablink_pay_stripe.classList.add("active"); // activate
+        tablink_pay_on_tree.classList.remove("active");
+
+        tabcontent_pay_stripe.classList.remove("hidden"); // show
+        tabcontent_pay_on_tree.classList.add("hidden");
+      });
+
+      tablink_pay_on_tree.addEventListener("click", (event) => {
+        event.preventDefault();
+        tablink_pay_stripe.classList.remove("active");
+        tablink_pay_on_tree.classList.add("active"); // activate
+
+        tabcontent_pay_stripe.classList.add("hidden");
+        const stripePayment = document.getElementById('stripe-payment');
+        stripePayment.classList.add('hidden');
+        tabcontent_pay_on_tree.classList.remove("hidden"); // show
+      });
+
+      tablink_pay_stripe.click();
+    }
+
+    // create PaymentIntent on server and fetch clientSecret
+    const {
+      error: backendError,
+      clientSecret
+    } = await fetch(`/api/v1/create-payment-intent/${lookup_code}`, {
+      method: "POST"
+    }).then(r => r.json());
+    if (backendError) {
+      console.log(backendError.message);
+    }
+    console.log(`client secret returned`);
+
+    // initialize Stripe Elements with the PaymentIntent's clientSecret
+    const elements = stripe.elements({ clientSecret });
+
+    // create and mount the linkAuthentication Element
+    const linkAuthenticationElement = elements.create("linkAuthentication");
+    linkAuthenticationElement.mount("#link-authentication-element");
+    console.log(`link mounted`);
+
+    // obtain the email entered
+    let emailAddress = '';
+    linkAuthenticationElement.on('change', (event) => {
+      if (event.complete) {
+        const email = event.value.email;
+        console.log(`email ${email}`);
+        console.log(event);
+        emailAddress = email;
+        setLocalItem("email", email);
+      }
+    })
+
+    // create and mount the address element
+    const options = {
+      mode: 'shipping',
+      autocomplete: {
+        mode: 'automatic',
+      },
+      fields: {
+        phone: 'always',
+      },
+      validation: {
+        phone: {required: 'always'},
+      },
+      defaultValues: {
+        address: {
+          city: 'Pembroke',
+          state: 'MA',
+          postal_code: '02359',
+          country: 'US',
+        }
+      },
+    };
+    const addressElement = elements.create('address', options);
+    addressElement.mount('#address-element');
+
+    // on address input, save address in localStorage
+    addressElement.on('change', (event) => {
+      if (event.complete) {
+        // Extract potentially complete address
+        const address = event.value.address;
+        console.log(address);
+        setLocalItem("address", JSON.stringify(address));
+
+        // post address to server
+        fetch(`/api/v1/addresses/${lookup_code}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(address)
+        }).then((response) => {
+            if (response.ok) {
+              console.log(response);
+
+              loadPaymentChoices();
+            } else {
+              console.error(response);
+            }
+          });
+      }
+    });
+
+    // on stripe button, hand off to stripe payment
+    const buttonLoadStripe = document.getElementById('button-load-stripe');
+    buttonLoadStripe.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      // show stripe payment section
+      const stripePayment = document.getElementById('stripe-payment');
+      stripePayment.classList.remove("hidden");
+      stripePayment.scrollIntoView();
+
+      // create and mount payment element
+      const paymentElementOptions = {
+        layout: "tabs",
+      };
+      const paymentElement = elements.create('payment', paymentElementOptions);
+      paymentElement.mount('#payment-element');
+
+      // submit payment
+      let submitted = false;
+      const paymentForm = document.getElementById('payment-form');
+      paymentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Disable double submission of the form
+        if(submitted) { return; }
+        submitted = true;
+        const buttonPay = document.getElementById('button-pay');
+        buttonPay.disabled = true;
+
+        postIntent("stripe");
+
+        // confirm payment as needed
+        const {error: stripeError} = await stripe.confirmPayment({
+          elements,
+          confirmParams: {
+            return_url: `${window.location.origin}/return?lookup=${lookup_code}`,
+            receipt_email: emailAddress,
+          }
+        });
+
+        if (stripeError) {
+          showPaymentMessage(stripeError.message);
+
+          // reenable the form.
+          submitted = false;
+          buttonPay.disabled = false;
+          return;
+        }
+      });
+    });
   }
-
-  // dispatch messages from stripeFrame
-  window.addEventListener('message', (event) => {
-    // only trust messages from my own iframe
-    const expectedOrigins = ['null', window.location.origin, 'https://js.stripe.com'];
-    console.info(event);
-    // Check if the origin of the message is the expected one
-    if (event.origin &&  !(expectedOrigins.includes(event.origin))) {
-        console.error('Invalid origin:', event.origin);
-        return; // Ignore the message
-    } else {
-        console.info('Valid origin:', event.origin);
-
-    }
-
-    // Handle the message here
-
-    switch (event.data.m) {
-      case 'frame_scrollIntoView':
-        stripeFrame.scrollIntoView();
-        break;
-
-      //TODO height of frame
-
-      case 'navigate':
-        window.location.assign(event.data.location);
-
-      default:
-        console.debug(`message from ${event.origin}:`);
-        console.debug(event.data);
-        break;
-    }
-  });
 
   // localStorage helpers
   function getLocalItem(key) {
