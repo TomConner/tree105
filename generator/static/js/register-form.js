@@ -240,17 +240,7 @@ window.addEventListener("load", (event) => {
 
   // localStorage helpers
   function getLocalItem(key) {
-    try {
-      const item = window.localStorage.getItem(key);
-      if (item == 'null') {
-          window.localStorage.setItem(key, null);
-          return null;
-      }
-      return item ? item : null;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    return window.localStorage.getItem(key);
   }
   function setLocalItem(key, value) {
     window.localStorage.setItem(key, value);
