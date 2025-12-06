@@ -281,7 +281,7 @@ def execute_sql(query: str):
 
 
 def get_email_history():
-    return execute_sql('select * from email_history;')
+    return [{}] #execute_sql('select * from email_history;')
 
 def get_pickups():
     logger.info("get_pickups 2")
