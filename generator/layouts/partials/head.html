@@ -2,6 +2,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script>window.siteBaseURL = "{{ .Site.BaseURL | absURL }}";</script>
   {{ hugo.Generator }}
   {{ $summary := trim (.Summary | plainify | htmlUnescape) "\n\r"    | default .Title }}
   <meta name="description" content="{{ $summary }}">

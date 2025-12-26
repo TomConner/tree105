@@ -17,9 +17,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     clientSecret
   );
   var height = document.body.scrollHeight;
+  console.log(`siteBaseURL is ${window.siteBaseURL}`);
   window.parent.postMessage({
       'frameHeight': height
-  }, 'https://troop105treedrive.com');
+  }, window.siteBaseURL);
 
   // Helper for displaying status messages.
   const addMessage = (message) => {
