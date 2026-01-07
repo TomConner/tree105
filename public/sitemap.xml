@@ -2,31 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://troop105treedrive.com/</loc>
+    <loc>/</loc>
     <lastmod>2019-03-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://troop105treedrive.com/lostfound/</loc>
+    <loc>/lostfound/</loc>
     <lastmod>2019-03-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://troop105treedrive.com/return/</loc>
+    <loc>/return/</loc>
     <lastmod>2019-03-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://troop105treedrive.com/paypalsent/</loc>
+    <loc>/venmoinstructions/</loc>
     <lastmod>2019-03-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://troop105treedrive.com/venmoinstructions/</loc>
-    <lastmod>2019-03-29T00:00:00+00:00</lastmod>
+    <loc>/confirm/</loc>
   </url><url>
-    <loc>https://troop105treedrive.com/confirm/</loc>
+    <loc>/register/</loc>
   </url><url>
-    <loc>https://troop105treedrive.com/register/</loc>
+    <loc>/categories/</loc>
   </url><url>
-    <loc>https://troop105treedrive.com/categories/</loc>
+    <loc>/registered/</loc>
   </url><url>
-    <loc>https://troop105treedrive.com/registered/</loc>
+    <loc>/series/</loc>
   </url><url>
-    <loc>https://troop105treedrive.com/series/</loc>
-  </url><url>
-    <loc>https://troop105treedrive.com/tags/</loc>
+    <loc>/tags/</loc>
   </url>
 </urlset>
