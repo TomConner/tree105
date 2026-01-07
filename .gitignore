@@ -11,7 +11,7 @@ server/stripe_charges.csv
 email_history.json
 
 # generated and built by hugo and vite
-
+public
 
 .vscode
 *.py.swp
