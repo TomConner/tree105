@@ -5,8 +5,10 @@ cd ${HOME}/tree105
 echo "git pull"
 git pull
 
-echo "caddy reformat and reload"
-docker compose exec --workdir /etc/caddy caddy caddy fmt --overwrite
+echo "build"
+./build
+
+echo "caddy reload"
 docker compose exec --workdir /etc/caddy caddy caddy reload
 
 echo "docker down"

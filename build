@@ -1,3 +1,24 @@
 #!/usr/bin/env bash
-(cd admin-app; vite build --emptyOutDir)
-(cd generator; hugo)
+set -e
+buildroot="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+
+printf "building\n"
+
+printf "removing public\n"
+cd "$buildroot"
+rm -rf public
+mkdir -v public
+
+printf "building hugo\n"
+cd "$buildroot/generator"
+hugo
+
+printf "building vite\n"
+cd "$buildroot/admin-app"
+vite build --emptyOutDir
+
+printf "listing public\n"
+cd "$buildroot"
+fdfind . public
+
+printf "build complete\n\n"
