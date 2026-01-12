@@ -3,7 +3,7 @@ title: Christmas Tree Pickup & Recycling
 ---
 
 <div style="font-size: 110%; background: #fff3e0; border-left: 4px solid #f57c00; padding: 1rem; margin: 1rem 0;">
-  <strong>Pickup is this Saturday, January 10!</strong> 
+  <strong>Pickup is <i>Tomorrow,</i> Saturday, January 10!</strong> 
     <br/>
     Register Now!
 </div>
