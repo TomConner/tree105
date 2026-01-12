@@ -3,7 +3,7 @@ title: Christmas Tree Pickup & Recycling
 ---
 
 <div style="font-size: 110%; background: #fff3e0; border-left: 4px solid #f57c00; padding: 1rem; margin: 1rem 0;">
-  <strong>This year's pickup is complete! Thank you Pembroke!</strong> 
+  <strong>This year&apos;s pickup is complete! Thank you Pembroke!</strong> 
 </div>
 
 * Christmas Tree Pickup & Recycling for residents of Pembroke, MA.
@@ -18,5 +18,5 @@ title: Christmas Tree Pickup & Recycling
 
 Your donations help fund our troop activities. We're grateful for your support!
 
-### Register for 2026 Tree Pickup
+### Register for 2027 Tree Pickup
 {{< register-form >}}
