@@ -3,12 +3,11 @@ title: Christmas Tree Pickup & Recycling
 ---
 
 <div style="font-size: 110%; background: #fff3e0; border-left: 4px solid #f57c00; padding: 1rem; margin: 1rem 0;">
-  <strong>Pickup is <i>Tomorrow,</i> Saturday, January 10!</strong> 
-    <br/>
-    Register Now!
+  <strong>This year's pickup is complete! Thank you Pembroke!</strong> 
 </div>
 
 * Christmas Tree Pickup & Recycling for residents of Pembroke, MA.
+* Next years pickup will be in early January 2027.
 * Registration required.
 * Donate $15 per tree (pay online or attach cash or check to the tree).
 * No tinsel, nails/screws or ornaments should be left on the tree.
